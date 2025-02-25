@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { IdeaPulseLogo } from "~~/components/assets/IdeaPulseLogo";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 type HeaderMenuLink = {
@@ -21,12 +21,8 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/",
   },
   {
-    label: "Crowdfunding",
-    href: "/crowdfunding",
-  },
-  {
-    label: "Tasks",
-    href: "/tasks",
+    label: "Projects",
+    href: "/projects",
   },
   {
     label: "Dashboard",
@@ -52,8 +48,8 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive ? "shadow-md bg-secondary" : ""
-              } hover:bg-secondary hover:shadow-md focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
+                isActive ? "bg-primary/20" : ""
+              } hover:bg-primary/20 hover:shadow-md focus:!bg-primary/20 active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col transition-all duration-200`}
             >
               {icon}
               <span>{label}</span>
@@ -80,46 +76,47 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky top-0 z-20 flex-shrink-0 justify-between px-0 min-h-0 shadow-md lg:static navbar bg-base-100 shadow-secondary sm:px-2">
-      <div className="w-auto navbar-start lg:w-1/2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </label>
-          {isDrawerOpen && (
-            <ul
-              tabIndex={0}
-              className="p-2 mt-3 w-52 shadow menu menu-compact dropdown-content bg-base-100 rounded-box"
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            >
+    <div className="fixed top-0 z-50 w-full bg-base-100 shadow-md">
+      <div className="px-4 mx-auto max-w-7xl">
+        <div className="flex justify-between items-center py-3">
+          <div className="flex items-center gap-4">
+            <div className="lg:hidden dropdown" ref={burgerMenuRef}>
+              <label
+                tabIndex={0}
+                className={`btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary/20" : "hover:bg-transparent"}`}
+                onClick={() => {
+                  setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
+                }}
+              >
+                <Bars3Icon className="w-6 h-6" />
+              </label>
+              {isDrawerOpen && (
+                <ul
+                  tabIndex={0}
+                  className="p-2 mt-3 w-52 shadow-lg menu menu-compact dropdown-content bg-base-100 rounded-xl"
+                  onClick={() => {
+                    setIsDrawerOpen(false);
+                  }}
+                >
+                  <HeaderMenuLinks />
+                </ul>
+              )}
+            </div>
+            <Link href="/" passHref className="flex items-center gap-2 shrink-0">
+              <IdeaPulseLogo />
+              <div className="flex flex-col">
+                <span className="font-bold leading-tight tracking-wide">IdeaPulse</span>
+                <span className="text-xs tracking-widest opacity-75">INNOVATION HUB</span>
+              </div>
+            </Link>
+            <ul className="hidden ml-4 lg:flex items-center gap-2">
               <HeaderMenuLinks />
             </ul>
-          )}
+          </div>
+          <div className="flex items-center gap-2">
+            <RainbowKitCustomConnectButton />
+          </div>
         </div>
-        <Link href="/" passHref className="hidden gap-2 items-center mr-6 ml-4 lg:flex shrink-0">
-          <div className="flex relative w-10 h-10">
-            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold leading-tight">IdeaPulse</span>
-            <span className="text-xs">AI-Powered Web3 Incubator</span>
-          </div>
-        </Link>
-        <ul className="hidden gap-2 px-1 lg:flex lg:flex-nowrap menu menu-horizontal">
-          <HeaderMenuLinks />
-        </ul>
-      </div>
-      <div className="flex-grow mr-4 navbar-end">
-        <RainbowKitCustomConnectButton />
-        {isLocalNetwork && <FaucetButton />}
       </div>
     </div>
   );

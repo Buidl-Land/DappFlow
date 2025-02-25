@@ -1,356 +1,271 @@
-export type Project = {
-  id: string;
-  title: string;
-  summary: string;
-  tags: string[];
-  aiAssessment: {
-    riskScore: number;
-    technicalFeasibility: number;
-    valuationRange: {
-      min: number;
-      max: number;
-    };
-  };
-  fundingGoal: number;
-  raisedAmount: number;
-  participants: number;
-  startDate: string;
-  endDate: string;
-  description: string;
-  fundAllocation: {
-    development: number;
-    operations: number;
-    community: number;
-  };
-  tokenDistribution: {
-    crowdfunding: number;
-    team: number;
-    ecosystem: number;
-  };
-  roadmap: Array<{
-    phase: string;
-    description: string;
-    timeline: string;
-    completed: boolean;
-  }>;
-};
+export type TaskStatus = "open" | "in_progress" | "completed";
+export type ProjectStatus = "active" | "completed" | "failed";
 
-export type Task = {
+export interface Task {
   id: string;
   title: string;
   description: string;
-  category: "development" | "design" | "marketing";
-  difficulty: "easy" | "medium" | "hard";
-  reward: {
-    amount: number;
-    token: string;
-  };
+  reward: number;
+  status: TaskStatus;
+  assignee?: string;
+  completedDate?: string;
+}
+
+export interface ProjectUpdate {
+  title: string;
+  content: string;
+  date: string;
+}
+
+export interface Milestone {
+  title: string;
+  description: string;
+  deliverables: string;
   deadline: string;
-  status: "open" | "assigned" | "in_progress" | "completed" | "verified";
-  requirements: {
-    skills: string[];
-    experienceLevel: string;
-  };
-  timeline: {
-    createdAt: string;
-    estimatedHours: number;
-  };
-  assignedTo?: string;
-};
+  status: "pending" | "completed";
+}
 
-export type UserParticipation = {
+export interface UnlockSchedule {
+  date: string;
+  percentage: number;
+  unlocked: boolean;
+}
+
+export interface UserParticipation {
   projectId: string;
   investedAmount: number;
   tokenAmount: number;
   status: "active" | "completed" | "failed";
-  unlockSchedule: Array<{
-    date: string;
-    percentage: number;
-    unlocked: boolean;
-  }>;
-};
+  unlockSchedule: UnlockSchedule[];
+}
 
-export type UserTask = {
+export interface TaskReward {
+  amount: number;
+  token: string;
+}
+
+export interface UserTask {
   taskId: string;
-  status: "applied" | "in_progress" | "submitted" | "completed";
+  status: "applied" | "in_progress" | "completed";
   appliedDate: string;
-  completedDate?: string;
-};
+}
 
-// Mock data for projects
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  summary: string;
+  fundingGoal: number;
+  raisedAmount: number;
+  endDate: string;
+  creator: string;
+  category: string;
+  status: ProjectStatus;
+  tags: string[];
+  participants: {
+    address: string;
+    contribution: number;
+  }[];
+  tasks: Task[];
+  roadmap: Milestone[];
+  updates: ProjectUpdate[];
+}
+
+// Mock Projects Data
 export const mockProjects: Project[] = [
   {
     id: "1",
-    title: "DeFi Lending Protocol",
-    summary: "Next-generation lending platform with dynamic interest rates",
-    tags: ["DeFi", "Lending", "Yield"],
-    aiAssessment: {
-      riskScore: 65,
-      technicalFeasibility: 85,
-      valuationRange: {
-        min: 5000000,
-        max: 8000000,
-      },
-    },
-    fundingGoal: 500000,
-    raisedAmount: 325000,
-    participants: 128,
-    startDate: "2025-01-15",
-    endDate: "2025-03-15",
+    title: "Decentralized Identity Solution",
     description:
-      "Our DeFi lending protocol introduces innovative risk assessment algorithms that dynamically adjust interest rates based on market conditions. The platform supports multiple assets and includes a governance token for community-driven decision making.",
-    fundAllocation: {
-      development: 70,
-      operations: 20,
-      community: 10,
-    },
-    tokenDistribution: {
-      crowdfunding: 60,
-      team: 25,
-      ecosystem: 15,
-    },
+      "Building a privacy-focused identity verification system using zero-knowledge proofs and blockchain technology. Our solution enables users to prove their identity without revealing sensitive information.",
+    summary: "Privacy-focused blockchain identity verification",
+    fundingGoal: 50000,
+    raisedAmount: 35000,
+    endDate: "2024-04-01",
+    creator: "0x1234567890123456789012345678901234567890",
+    category: "Identity",
+    status: "active",
+    tags: ["Privacy", "ZK-Proofs", "Identity"],
+    participants: [
+      { address: "0xabc...123", contribution: 10000 },
+      { address: "0xdef...456", contribution: 25000 },
+    ],
+    tasks: [
+      {
+        id: "1-1",
+        title: "Implement zk-SNARK Circuit",
+        description: "Design and implement the zero-knowledge circuit for identity verification.",
+        reward: 5000,
+        status: "open",
+      },
+      {
+        id: "1-2",
+        title: "Smart Contract Integration",
+        description: "Develop and audit smart contracts for the identity registry.",
+        reward: 4000,
+        status: "in_progress",
+        assignee: "0x9876543210987654321098765432109876543210",
+      },
+    ],
     roadmap: [
       {
-        phase: "Phase 1: MVP",
-        description: "Launch basic lending functionality with 3 major assets",
-        timeline: "Q1 2025",
-        completed: true,
+        title: "Research & Design",
+        description: "Complete system architecture and cryptographic protocol design",
+        deliverables: "System architecture document, Protocol specifications, Security analysis report",
+        deadline: "2024-02-15",
+        status: "completed",
       },
       {
-        phase: "Phase 2: Advanced Features",
-        description: "Implement risk assessment algorithm and yield optimizers",
-        timeline: "Q2 2025",
-        completed: false,
+        title: "MVP Development",
+        description: "Develop core protocol components and smart contracts",
+        deliverables: "Working prototype, Smart contract implementation, Technical documentation",
+        deadline: "2024-04-30",
+        status: "pending",
+      },
+    ],
+    updates: [
+      {
+        title: "Research Phase Completed",
+        content: "Successfully completed the research phase with comprehensive security analysis and protocol design.",
+        date: "2024-02-15",
       },
       {
-        phase: "Phase 3: Governance",
-        description: "Launch governance token and community voting system",
-        timeline: "Q3 2025",
-        completed: false,
+        title: "Development Progress Update",
+        content: "Smart contract implementation is 60% complete with initial security audit findings addressed.",
+        date: "2024-03-01",
       },
     ],
   },
   {
     id: "2",
-    title: "NFT Marketplace",
-    summary: "Multi-chain NFT platform with creator royalties and fractionalization",
-    tags: ["NFT", "Marketplace", "Multi-Chain"],
-    aiAssessment: {
-      riskScore: 45,
-      technicalFeasibility: 90,
-      valuationRange: {
-        min: 3000000,
-        max: 7000000,
-      },
-    },
-    fundingGoal: 350000,
-    raisedAmount: 175000,
-    participants: 82,
-    startDate: "2025-02-01",
-    endDate: "2025-04-01",
+    title: "DeFi Lending Protocol",
     description:
-      "Our NFT marketplace enables artists and creators to mint and trade NFTs across multiple blockchains. The platform features automatic royalty distribution, fractionalized ownership, and advanced curation mechanisms.",
-    fundAllocation: {
-      development: 65,
-      operations: 25,
-      community: 10,
-    },
-    tokenDistribution: {
-      crowdfunding: 55,
-      team: 30,
-      ecosystem: 15,
-    },
+      "A novel lending protocol with dynamic interest rates and multi-token collateral pools. Our system uses advanced algorithms to optimize lending efficiency.",
+    summary: "Advanced DeFi lending with dynamic rates",
+    fundingGoal: 75000,
+    raisedAmount: 45000,
+    endDate: "2024-05-15",
+    creator: "0x2345678901234567890123456789012345678901",
+    category: "DeFi",
+    status: "active",
+    tags: ["DeFi", "Lending", "Yield"],
+    participants: [
+      { address: "0xghi...789", contribution: 20000 },
+      { address: "0xjkl...012", contribution: 25000 },
+    ],
+    tasks: [
+      {
+        id: "2-1",
+        title: "Interest Rate Model",
+        description: "Develop and simulate the dynamic interest rate model.",
+        reward: 3000,
+        status: "completed",
+        assignee: "0x8765432109876543210987654321098765432109",
+        completedDate: "2024-02-20",
+      },
+      {
+        id: "2-2",
+        title: "Liquidation Engine",
+        description: "Implement efficient liquidation mechanisms.",
+        reward: 4500,
+        status: "open",
+      },
+    ],
     roadmap: [
       {
-        phase: "Phase 1: Core Platform",
-        description: "Launch marketplace with basic buying and selling features",
-        timeline: "Q1 2025",
-        completed: true,
+        title: "Protocol Design",
+        description: "Design interest rate models and liquidation mechanisms",
+        deliverables: "Interest rate model documentation, Liquidation mechanism specifications",
+        deadline: "2024-03-01",
+        status: "completed",
       },
       {
-        phase: "Phase 2: Multi-chain Support",
-        description: "Add support for Ethereum, Polygon, and Solana",
-        timeline: "Q2 2025",
-        completed: false,
+        title: "Smart Contract Development",
+        description: "Implement core lending protocol contracts",
+        deliverables: "Core smart contracts, Test suite, Integration guide",
+        deadline: "2024-05-30",
+        status: "pending",
+      },
+    ],
+    updates: [
+      {
+        title: "Interest Rate Model Implementation",
+        content: "Successfully completed and tested the dynamic interest rate model.",
+        date: "2024-02-20",
       },
       {
-        phase: "Phase 3: Advanced Features",
-        description: "Implement fractionalization and NFT-Fi lending",
-        timeline: "Q3 2025",
-        completed: false,
+        title: "Security Audit Initiated",
+        content: "Engaged with top security firms for comprehensive protocol audit.",
+        date: "2024-03-10",
       },
     ],
   },
   {
     id: "3",
-    title: "Decentralized Identity Solution",
-    summary: "Self-sovereign identity platform with zero-knowledge proofs",
-    tags: ["Identity", "Privacy", "ZK-proofs"],
-    aiAssessment: {
-      riskScore: 75,
-      technicalFeasibility: 70,
-      valuationRange: {
-        min: 4000000,
-        max: 9000000,
-      },
-    },
-    fundingGoal: 600000,
-    raisedAmount: 150000,
-    participants: 43,
-    startDate: "2025-02-10",
-    endDate: "2025-04-10",
+    title: "NFT Gaming Platform",
     description:
-      "Our decentralized identity solution uses zero-knowledge proofs to enable secure, private identity verification without revealing personal data. The platform integrates with existing web2 services while maintaining full user control over data.",
-    fundAllocation: {
-      development: 75,
-      operations: 15,
-      community: 10,
-    },
-    tokenDistribution: {
-      crowdfunding: 60,
-      team: 25,
-      ecosystem: 15,
-    },
+      "Create a cross-chain gaming platform with interoperable NFT assets and play-to-earn mechanics. Features include cross-chain asset transfers and in-game marketplaces.",
+    summary: "Cross-chain NFT gaming ecosystem",
+    fundingGoal: 100000,
+    raisedAmount: 80000,
+    endDate: "2024-06-30",
+    creator: "0x3456789012345678901234567890123456789012",
+    category: "Gaming",
+    status: "active",
+    tags: ["Gaming", "NFT", "Cross-chain"],
+    participants: [
+      { address: "0xmno...345", contribution: 40000 },
+      { address: "0xpqr...678", contribution: 40000 },
+    ],
+    tasks: [
+      {
+        id: "3-1",
+        title: "Asset Bridge Implementation",
+        description: "Develop cross-chain NFT bridge contracts.",
+        reward: 6000,
+        status: "open",
+      },
+      {
+        id: "3-2",
+        title: "Game Smart Contracts",
+        description: "Create core gaming smart contracts.",
+        reward: 5500,
+        status: "in_progress",
+        assignee: "0x7654321098765432109876543210987654321098",
+      },
+    ],
     roadmap: [
       {
-        phase: "Phase 1: Core Protocol",
-        description: "Develop core identity registration and verification protocol",
-        timeline: "Q1 2025",
-        completed: true,
+        title: "Core Mechanics",
+        description: "Implement basic game mechanics and NFT integration",
+        deliverables: "Game mechanics documentation, NFT standard implementation, Test environment",
+        deadline: "2024-04-15",
+        status: "pending",
       },
       {
-        phase: "Phase 2: ZK Integration",
-        description: "Implement zero-knowledge proof system for private verification",
-        timeline: "Q2 2025",
-        completed: false,
+        title: "Cross-chain Bridge",
+        description: "Develop and audit cross-chain asset bridge",
+        deliverables: "Bridge smart contracts, Security audit report, Integration documentation",
+        deadline: "2024-07-01",
+        status: "pending",
+      },
+    ],
+    updates: [
+      {
+        title: "Game Design Complete",
+        content: "Finalized core game mechanics and tokenomics design.",
+        date: "2024-02-28",
       },
       {
-        phase: "Phase 3: Web2 Integrations",
-        description: "Launch plugins for major web2 services and social platforms",
-        timeline: "Q4 2025",
-        completed: false,
+        title: "NFT Standard Development",
+        content: "Completed the implementation of cross-chain NFT standard.",
+        date: "2024-03-15",
       },
     ],
   },
 ];
 
-// Mock data for tasks
-export const mockTasks: Task[] = [
-  {
-    id: "task1",
-    title: "Frontend Development - Project Listing Page",
-    description:
-      "Implement a responsive project listing page with filtering and sorting functionality. The page should display project cards with key information and support mobile and desktop views.",
-    category: "development",
-    difficulty: "medium",
-    reward: {
-      amount: 500,
-      token: "MON",
-    },
-    deadline: "2025-03-20",
-    status: "open",
-    requirements: {
-      skills: ["React", "TypeScript", "Tailwind CSS"],
-      experienceLevel: "Intermediate",
-    },
-    timeline: {
-      createdAt: "2025-02-15",
-      estimatedHours: 40,
-    },
-  },
-  {
-    id: "task2",
-    title: "Design UI/UX for Dashboard",
-    description:
-      "Create a modern, intuitive UI/UX design for the participant dashboard. Include mockups for portfolio view, project tracking, and token release schedule visualization.",
-    category: "design",
-    difficulty: "hard",
-    reward: {
-      amount: 800,
-      token: "MON",
-    },
-    deadline: "2025-03-15",
-    status: "assigned",
-    requirements: {
-      skills: ["Figma", "UI/UX", "Web3 Design"],
-      experienceLevel: "Advanced",
-    },
-    timeline: {
-      createdAt: "2025-02-10",
-      estimatedHours: 60,
-    },
-    assignedTo: "designer1",
-  },
-  {
-    id: "task3",
-    title: "Social Media Campaign for Platform Launch",
-    description:
-      "Plan and execute a comprehensive social media campaign to promote the platform launch. Create content for Twitter, Discord, and Medium focused on the key features and benefits.",
-    category: "marketing",
-    difficulty: "medium",
-    reward: {
-      amount: 600,
-      token: "MON",
-    },
-    deadline: "2025-04-05",
-    status: "in_progress",
-    requirements: {
-      skills: ["Social Media Marketing", "Content Creation", "Community Management"],
-      experienceLevel: "Intermediate",
-    },
-    timeline: {
-      createdAt: "2025-02-20",
-      estimatedHours: 50,
-    },
-    assignedTo: "marketer1",
-  },
-  {
-    id: "task4",
-    title: "Smart Contract Integration - Wallet Connect",
-    description:
-      "Implement wallet connection functionality with support for MetaMask, WalletConnect, and Coinbase Wallet. Ensure proper error handling and connection state management.",
-    category: "development",
-    difficulty: "hard",
-    reward: {
-      amount: 750,
-      token: "MON",
-    },
-    deadline: "2025-03-25",
-    status: "open",
-    requirements: {
-      skills: ["TypeScript", "ethers.js", "Web3Modal"],
-      experienceLevel: "Advanced",
-    },
-    timeline: {
-      createdAt: "2025-02-18",
-      estimatedHours: 45,
-    },
-  },
-  {
-    id: "task5",
-    title: "Documentation - User Guide",
-    description:
-      "Create comprehensive user documentation explaining how to use the platform. Include step-by-step guides for project participation, task submission, and wallet integration.",
-    category: "development",
-    difficulty: "easy",
-    reward: {
-      amount: 350,
-      token: "MON",
-    },
-    deadline: "2025-04-10",
-    status: "open",
-    requirements: {
-      skills: ["Technical Writing", "Documentation", "Markdown"],
-      experienceLevel: "Beginner",
-    },
-    timeline: {
-      createdAt: "2025-02-25",
-      estimatedHours: 30,
-    },
-  },
-];
-
-// Mock user participation data
+// Mock data for dashboard
 export const mockUserParticipations: UserParticipation[] = [
   {
     projectId: "1",
@@ -358,104 +273,45 @@ export const mockUserParticipations: UserParticipation[] = [
     tokenAmount: 50000,
     status: "active",
     unlockSchedule: [
-      {
-        date: "2025-03-20",
-        percentage: 40,
-        unlocked: true,
-      },
-      {
-        date: "2025-04-20",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-05-20",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-06-20",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-07-20",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-08-20",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-09-20",
-        percentage: 10,
-        unlocked: false,
-      },
+      { date: "2024-03-01", percentage: 20, unlocked: true },
+      { date: "2024-04-01", percentage: 30, unlocked: false },
+      { date: "2024-05-01", percentage: 50, unlocked: false },
     ],
   },
   {
     projectId: "2",
-    investedAmount: 2500,
-    tokenAmount: 25000,
+    investedAmount: 3000,
+    tokenAmount: 30000,
     status: "active",
     unlockSchedule: [
-      {
-        date: "2025-04-05",
-        percentage: 40,
-        unlocked: false,
-      },
-      {
-        date: "2025-05-05",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-06-05",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-07-05",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-08-05",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-09-05",
-        percentage: 10,
-        unlocked: false,
-      },
-      {
-        date: "2025-10-05",
-        percentage: 10,
-        unlocked: false,
-      },
+      { date: "2024-03-15", percentage: 25, unlocked: true },
+      { date: "2024-04-15", percentage: 25, unlocked: false },
+      { date: "2024-05-15", percentage: 50, unlocked: false },
     ],
   },
 ];
 
-// Mock user tasks
 export const mockUserTasks: UserTask[] = [
   {
-    taskId: "task1",
-    status: "applied",
-    appliedDate: "2025-02-16",
-  },
-  {
-    taskId: "task4",
-    status: "in_progress",
-    appliedDate: "2025-02-19",
-  },
-  {
-    taskId: "task5",
+    taskId: "1-1",
     status: "completed",
-    appliedDate: "2025-02-26",
-    completedDate: "2025-03-05",
+    appliedDate: "2024-02-01",
+  },
+  {
+    taskId: "2-2",
+    status: "in_progress",
+    appliedDate: "2024-02-15",
   },
 ];
+
+// Mock tasks with full details
+export const mockTasks = mockProjects.flatMap(project =>
+  project.tasks.map(task => ({
+    ...task,
+    projectId: project.id,
+    reward: {
+      amount: task.reward,
+      token: "USDT",
+    },
+  })),
+);
