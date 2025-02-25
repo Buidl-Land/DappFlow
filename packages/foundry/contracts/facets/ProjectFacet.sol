@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract ProjectFacet {
     using Counters for Counters.Counter;
 
-    // Diamond storage pattern
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("diamond.projects.storage");
 
     struct Project {
@@ -15,59 +13,53 @@ contract ProjectFacet {
         address creator;
         string title;
         string description;
-        uint256 fundingGoal;
-        uint256 raisedAmount;
-        uint256 startTime;
-        uint256 endTime;
-        bool isFunded;
-        mapping(address => uint256) contributions;
-        Task[] tasks;
-        uint256 totalTasks;
-        mapping(uint256 => bool) taskCompleted;
-        mapping(uint256 => address) taskAssignee;
+        string[] tags;
+        ProjectMetadata metadata;
         ProjectStatus status;
+        uint256 createdAt;
+        uint256 updatedAt;
     }
 
-    struct Task {
-        uint256 id;
-        string title;
-        string description;
-        uint256 reward;
-        uint256 deadline;
-        TaskStatus status;
-        string[] requiredSkills;
-        uint256 estimatedHours;
+    struct ProjectMetadata {
+        string aiEvaluation;
+        uint256 marketScore;
+        string techFeasibility;
+        uint256 minValuation;
+        uint256 maxValuation;
     }
 
     enum ProjectStatus {
+        Draft,
         Active,
         Funded,
         Completed,
-        Failed
-    }
-
-    enum TaskStatus {
-        Open,
-        Assigned,
-        InProgress,
-        Completed,
-        Verified
+        Failed,
+        Cancelled
     }
 
     struct DiamondStorage {
-        address usdtToken;
         Counters.Counter projectIds;
         mapping(uint256 => Project) projects;
         mapping(address => uint256[]) userProjects;
-        mapping(address => uint256[]) userTasks;
     }
 
-    event ProjectCreated(uint256 indexed projectId, address indexed creator, string title, uint256 fundingGoal);
-    event ProjectFunded(uint256 indexed projectId, address indexed contributor, uint256 amount);
-    event TaskCreated(uint256 indexed projectId, uint256 indexed taskId, string title, uint256 reward);
-    event TaskAssigned(uint256 indexed projectId, uint256 indexed taskId, address indexed assignee);
-    event TaskCompleted(uint256 indexed projectId, uint256 indexed taskId, address indexed assignee);
-    event TaskVerified(uint256 indexed projectId, uint256 indexed taskId, address indexed verifier);
+    event ProjectCreated(
+        uint256 indexed projectId,
+        address indexed creator,
+        string title,
+        uint256 timestamp
+    );
+    event ProjectUpdated(
+        uint256 indexed projectId,
+        string title,
+        ProjectStatus status,
+        uint256 timestamp
+    );
+    event ProjectStatusChanged(
+        uint256 indexed projectId,
+        ProjectStatus oldStatus,
+        ProjectStatus newStatus
+    );
 
     function diamondStorage() internal pure returns (DiamondStorage storage ds) {
         bytes32 position = DIAMOND_STORAGE_POSITION;
@@ -76,17 +68,11 @@ contract ProjectFacet {
         }
     }
 
-    function initialize(address _usdtToken) external {
-        DiamondStorage storage ds = diamondStorage();
-        require(ds.usdtToken == address(0), "Already initialized");
-        ds.usdtToken = _usdtToken;
-    }
-
     function createProject(
-        string calldata _title,
-        string calldata _description,
-        uint256 _fundingGoal,
-        uint256 _duration
+        string calldata title,
+        string calldata description,
+        string[] calldata tags,
+        ProjectMetadata calldata metadata
     ) external returns (uint256) {
         DiamondStorage storage ds = diamondStorage();
         ds.projectIds.increment();
@@ -95,175 +81,101 @@ contract ProjectFacet {
         Project storage project = ds.projects[newProjectId];
         project.id = newProjectId;
         project.creator = msg.sender;
-        project.title = _title;
-        project.description = _description;
-        project.fundingGoal = _fundingGoal;
-        project.startTime = block.timestamp;
-        project.endTime = block.timestamp + _duration;
-        project.status = ProjectStatus.Active;
+        project.title = title;
+        project.description = description;
+        project.tags = tags;
+        project.metadata = metadata;
+        project.status = ProjectStatus.Draft;
+        project.createdAt = block.timestamp;
+        project.updatedAt = block.timestamp;
 
         ds.userProjects[msg.sender].push(newProjectId);
 
-        emit ProjectCreated(newProjectId, msg.sender, _title, _fundingGoal);
+        emit ProjectCreated(newProjectId, msg.sender, title, block.timestamp);
         return newProjectId;
     }
 
-    function contribute(uint256 _projectId, uint256 _amount) external {
+    function updateProject(
+        uint256 projectId,
+        string calldata title,
+        string calldata description,
+        string[] calldata tags
+    ) external {
         DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
-        require(block.timestamp <= project.endTime, "Funding period ended");
-        require(project.status == ProjectStatus.Active, "Project not active");
+        Project storage project = ds.projects[projectId];
+        require(msg.sender == project.creator, "Not project creator");
+        require(project.status == ProjectStatus.Draft, "Project not in draft");
 
-        IERC20(ds.usdtToken).transferFrom(msg.sender, address(this), _amount);
-        project.contributions[msg.sender] += _amount;
-        project.raisedAmount += _amount;
+        project.title = title;
+        project.description = description;
+        project.tags = tags;
+        project.updatedAt = block.timestamp;
 
-        if (project.raisedAmount >= project.fundingGoal) {
-            project.status = ProjectStatus.Funded;
-            project.isFunded = true;
-        }
-
-        emit ProjectFunded(_projectId, msg.sender, _amount);
+        emit ProjectUpdated(projectId, title, project.status, block.timestamp);
     }
 
-    function createTask(
-        uint256 _projectId,
-        string calldata _title,
-        string calldata _description,
-        uint256 _reward,
-        uint256 _deadline,
-        string[] calldata _requiredSkills,
-        uint256 _estimatedHours
-    ) external returns (uint256) {
+    function updateProjectMetadata(
+        uint256 projectId,
+        ProjectMetadata calldata metadata
+    ) external {
         DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
-        require(msg.sender == project.creator, "Only creator can add tasks");
-        require(project.isFunded, "Project not funded");
+        Project storage project = ds.projects[projectId];
+        require(msg.sender == project.creator, "Not project creator");
 
-        uint256 taskId = project.totalTasks++;
-        Task memory newTask = Task({
-            id: taskId,
-            title: _title,
-            description: _description,
-            reward: _reward,
-            deadline: _deadline,
-            status: TaskStatus.Open,
-            requiredSkills: _requiredSkills,
-            estimatedHours: _estimatedHours
-        });
-
-        project.tasks.push(newTask);
-        emit TaskCreated(_projectId, taskId, _title, _reward);
-        return taskId;
+        project.metadata = metadata;
+        project.updatedAt = block.timestamp;
     }
 
-    function assignTask(uint256 _projectId, uint256 _taskId, address _assignee) external {
+    function updateProjectStatus(uint256 projectId, ProjectStatus newStatus) external {
         DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
-        require(msg.sender == project.creator, "Only creator can assign tasks");
-        require(_taskId < project.totalTasks, "Invalid task ID");
-        require(project.tasks[_taskId].status == TaskStatus.Open, "Task not available");
+        Project storage project = ds.projects[projectId];
+        require(msg.sender == project.creator, "Not project creator");
 
-        project.tasks[_taskId].status = TaskStatus.Assigned;
-        project.taskAssignee[_taskId] = _assignee;
-        ds.userTasks[_assignee].push(_taskId);
+        ProjectStatus oldStatus = project.status;
+        project.status = newStatus;
+        project.updatedAt = block.timestamp;
 
-        emit TaskAssigned(_projectId, _taskId, _assignee);
+        emit ProjectStatusChanged(projectId, oldStatus, newStatus);
     }
 
-    function completeTask(uint256 _projectId, uint256 _taskId) external {
+    function isProjectOwner(uint256 projectId, address account) external view returns (bool) {
         DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
-        require(msg.sender == project.taskAssignee[_taskId], "Not task assignee");
-        require(project.tasks[_taskId].status == TaskStatus.InProgress, "Task not in progress");
-
-        project.tasks[_taskId].status = TaskStatus.Completed;
-        emit TaskCompleted(_projectId, _taskId, msg.sender);
+        return ds.projects[projectId].creator == account;
     }
 
-    function verifyTask(uint256 _projectId, uint256 _taskId) external {
-        DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
-        require(msg.sender == project.creator, "Only creator can verify");
-        require(project.tasks[_taskId].status == TaskStatus.Completed, "Task not completed");
-
-        project.tasks[_taskId].status = TaskStatus.Verified;
-        project.taskCompleted[_taskId] = true;
-
-        // Transfer reward to assignee
-        address assignee = project.taskAssignee[_taskId];
-        uint256 reward = project.tasks[_taskId].reward;
-        IERC20(ds.usdtToken).transfer(assignee, reward);
-
-        emit TaskVerified(_projectId, _taskId, msg.sender);
-    }
-
-    // View functions
-    function getProject(uint256 _projectId) external view returns (
+    function getProject(uint256 projectId) external view returns (
+        uint256 id,
         address creator,
         string memory title,
         string memory description,
-        uint256 fundingGoal,
-        uint256 raisedAmount,
-        uint256 startTime,
-        uint256 endTime,
-        bool isFunded,
+        string[] memory tags,
+        ProjectMetadata memory metadata,
         ProjectStatus status,
-        uint256 totalTasks
+        uint256 createdAt,
+        uint256 updatedAt
     ) {
         DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
+        Project storage project = ds.projects[projectId];
         return (
+            project.id,
             project.creator,
             project.title,
             project.description,
-            project.fundingGoal,
-            project.raisedAmount,
-            project.startTime,
-            project.endTime,
-            project.isFunded,
+            project.tags,
+            project.metadata,
             project.status,
-            project.totalTasks
+            project.createdAt,
+            project.updatedAt
         );
     }
 
-    function getTask(uint256 _projectId, uint256 _taskId) external view returns (
-        string memory title,
-        string memory description,
-        uint256 reward,
-        uint256 deadline,
-        TaskStatus status,
-        string[] memory requiredSkills,
-        uint256 estimatedHours,
-        address assignee
-    ) {
+    function getUserProjects(address user) external view returns (uint256[] memory) {
         DiamondStorage storage ds = diamondStorage();
-        Project storage project = ds.projects[_projectId];
-        Task storage task = project.tasks[_taskId];
-        return (
-            task.title,
-            task.description,
-            task.reward,
-            task.deadline,
-            task.status,
-            task.requiredSkills,
-            task.estimatedHours,
-            project.taskAssignee[_taskId]
-        );
+        return ds.userProjects[user];
     }
 
-    function getUserProjects(address _user) external view returns (uint256[] memory) {
+    function getProjectCount() external view returns (uint256) {
         DiamondStorage storage ds = diamondStorage();
-        return ds.userProjects[_user];
-    }
-
-    function getUserTasks(address _user) external view returns (uint256[] memory) {
-        DiamondStorage storage ds = diamondStorage();
-        return ds.userTasks[_user];
-    }
-
-    function getContribution(uint256 _projectId, address _contributor) external view returns (uint256) {
-        DiamondStorage storage ds = diamondStorage();
-        return ds.projects[_projectId].contributions[_contributor];
+        return ds.projectIds.current();
     }
 }
