@@ -1,21 +1,17 @@
 import React from "react";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 
-export const IdeaPulseLogo = ({
-  className = "",
-  withAnimation = true,
-}: {
-  className?: string;
-  withAnimation?: boolean;
-}) => {
+export const IdeaPulseLogo = ({ className = "" }: { className?: string; withAnimation?: boolean }) => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-
   return (
-    <img
-      src={`/${withAnimation ? "logo" : "logo-static"}${isDarkMode ? "" : "-light"}.svg`}
+    <Image
+      src={`/${isDarkMode ? "logo-dark" : "logo-light"}.svg`}
       alt="IdeaPulse Logo"
-      className={`h-10 w-auto ${className}`}
+      className={`w-auto h-10 ${className}`}
+      width={40}
+      height={40}
     />
   );
 };
