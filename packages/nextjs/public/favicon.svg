@@ -5,15 +5,6 @@
 
     <!-- Gradients -->
     <defs>
-        <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#00F2FF" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="#0F1A2F" stop-opacity="0.1"/>
-        </linearGradient>
-        <linearGradient id="lightningFlashGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#F6D10F" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="#00F2FF" stop-opacity="0.5"/>
-        </linearGradient>
-
         <!-- Filter for lightning glow effect -->
         <filter id="lightning-glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
@@ -23,16 +14,9 @@
                 <feMergeNode in="SourceGraphic"/>
             </feMerge>
         </filter>
-
-        <!-- Filter for electric blur -->
-        <filter id="electric-blur" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-            <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0 0 0 0 0 0.95 0 0 0 0 1 0 0 0 0.7 0"/>
-        </filter>
-        </filter>
     </defs>
 
-    <!-- Main Lightning Bolt from First SVG (Properly centered and scaled to fit within circle) -->
+    <!-- Main Lightning Bolt (Properly centered and scaled) -->
     <g transform="translate(175, 110) scale(0.2)">
         <path class="lightning-main" filter="url(#lightning-glow)" fill="#F6D10F" d="M430.485 189.652C432.611 189.7 432.754 189.599 434.332 190.987C435.24 193.135 435.403 195.188 435.369 197.504C435.135 213.474 432.663 230.007 431.539 245.999L421.195 393.815C419.75 415.366 416.839 437.163 416.8 458.776C437.646 461.065 597.665 459.253 602.471 463.606C603.572 464.604 603.953 466.506 603.952 467.938C603.948 471.994 602.217 476.059 600.489 479.652C594.007 493.132 586.497 506.293 579.779 519.696L511.303 656.047L442.46 794.5C437.567 804.35 418.695 846.359 412.79 852.224C411.551 853.478 411.586 853.72 409.748 853.835C408.633 852.683 408.041 851.985 408.023 850.266C407.916 840.235 409.142 829.82 409.934 819.799L412.817 779.351L423.548 624.76C425.362 598.186 428.381 571.126 428.568 544.517C412.568 544.243 245.485 542.58 241.686 540.055C241.295 539.795 241.339 539.797 241.309 539.383C240.993 535.059 244.67 528.994 246.632 525.207C259.173 501 272.748 477.235 285.705 453.238L383.71 273.334L410.094 224.474C416.221 213.018 421.855 199.317 430.485 189.652Z"/>
         <path fill="#34549E" d="M764.706 449.82L765.315 451.256C765.781 449.352 765.908 447.04 767.335 445.683C771.139 446.746 774.41 449.213 778.187 450.181C792.318 453.801 808.139 453.651 822.614 453.605C825.955 453.594 836.498 452.422 838.374 454.145C840.385 461.587 834.765 468.129 837.367 475.968C837.088 490.648 827.447 523.781 822.898 538.638C807.504 588.912 781.795 638.633 748.005 679.142C719.039 713.867 684.743 744.132 667.447 786.976C647.123 837.323 644.358 893.958 641.681 947.546C640.673 967.726 641.338 990.418 635.865 1009.9C629.376 1033 614.752 1052.75 593.62 1064.48C584.52 1069.54 573.797 1073.8 563.737 1076.44C541.547 1082.27 480.015 1089.43 459.303 1083.39C450.62 1080.86 442.931 1075.27 438.574 1067.25C433.874 1058.6 432.941 1047.36 435.828 1037.98C439.347 1026.56 448.674 1016.89 460.186 1013.43C468.357 1010.98 477.952 1012.37 486.402 1012.25C502.614 1012.02 538.713 1009.74 552.303 1002.24C557.59 999.326 561.375 995.623 563.186 989.803C567.799 974.982 566.874 947.813 567.891 931.397C571.557 872.222 575.142 813.403 597.575 757.741C609.374 728.465 627.188 701.784 648.308 678.398C661.169 664.158 674.843 650.745 687.023 635.877Q694.382 626.875 701.124 617.401Q707.866 607.928 713.961 598.025Q720.055 588.122 725.474 577.835Q730.894 567.547 735.614 556.921C745.62 534.892 754.185 510.35 758.699 486.551C760.96 474.631 761.404 461.355 764.706 449.82Z"/>
@@ -45,60 +29,7 @@
         <path fill="#2CACDF" d="M355.172 1416.22C360.381 1418.82 454.281 1417.57 468.006 1417.51C475.272 1417.48 490.53 1415.9 497.103 1418.2C498.433 1418.66 498.827 1418.91 499.386 1420.23C501.863 1426.08 496.724 1438.73 494.255 1444.38C491.57 1450.53 481.642 1468.07 475.295 1470.56C474.899 1471.32 474.498 1471.9 473.926 1472.56C467.784 1479.58 456.806 1481.49 447.937 1481.94C432.691 1482.71 393.152 1483.47 379.945 1479.15C374.758 1477.45 369.912 1473.92 365.922 1470.28C351.902 1457.47 342.404 1435.77 341.686 1416.94C342.165 1417.2 342.246 1417.28 342.858 1417.42C346.026 1418.17 352.368 1417.78 355.172 1416.22Z"/>
     </g>
 
-    <!-- Enhanced Pulse Effect -->
-    <circle cx="256" cy="256" r="200"
-            stroke="url(#pulseGradient)"
-            stroke-width="2"
-            stroke-dasharray="4 8"
-            fill="none">
-        <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from="0 256 256"
-            to="360 256 256"
-            dur="8s"
-            repeatCount="indefinite"/>
-    </circle>
-
-    <!-- Enhanced Lightning Flash Effects -->
-    <circle cx="256" cy="256" r="170"
-            stroke="url(#lightningFlashGradient)"
-            stroke-width="3"
-            stroke-dasharray="10 5"
-            fill="none">
-        <animate attributeName="r" values="170;180;170" dur="2.5s" repeatCount="indefinite" />
-        <animate attributeName="stroke-opacity" values="0.7;0.3;0.7" dur="2.5s" repeatCount="indefinite" />
-    </circle>
-
-    <!-- Lightning flash streaks -->
-    <g class="lightning-effects">
-        <!-- Electric streaks emanating from center -->
-        <path class="lightning-streak" d="M256 186 L276 126" stroke="#F6D10F" stroke-width="2" stroke-linecap="round" filter="url(#electric-blur)">
-            <animate attributeName="opacity" values="0;1;0" dur="0.8s" begin="0.1s" repeatCount="indefinite"/>
-        </path>
-        <path class="lightning-streak" d="M256 186 L236 126" stroke="#F6D10F" stroke-width="2" stroke-linecap="round" filter="url(#electric-blur)">
-            <animate attributeName="opacity" values="0;1;0" dur="0.7s" begin="0.3s" repeatCount="indefinite"/>
-        </path>
-        <path class="lightning-streak" d="M256 186 L316 166" stroke="#F6D10F" stroke-width="2" stroke-linecap="round" filter="url(#electric-blur)">
-            <animate attributeName="opacity" values="0;1;0" dur="0.9s" begin="0.5s" repeatCount="indefinite"/>
-        </path>
-        <path class="lightning-streak" d="M256 186 L196 166" stroke="#F6D10F" stroke-width="2" stroke-linecap="round" filter="url(#electric-blur)">
-            <animate attributeName="opacity" values="0;1;0" dur="1.1s" begin="0.7s" repeatCount="indefinite"/>
-        </path>
-    </g>
-
-    <!-- Glowing orb in the center -->
-    <circle cx="256" cy="256" r="20" fill="url(#glowGradient)" opacity="0.7">
-        <animate attributeName="r" values="15;25;15" dur="3s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite" />
-    </circle>
-
-    <!-- Lightning bolt flashes -->
-    <path class="lightning-bolt" d="M270 150 L260 200 L280 210 L250 300" stroke="#F6D10F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#lightning-glow)" opacity="0">
-        <animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="1s" repeatCount="indefinite"/>
-    </path>
-    <path class="lightning-bolt" d="M240 150 L250 210 L230 220 L260 300" stroke="#F6D10F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#lightning-glow)" opacity="0">
-        <animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="2s" repeatCount="indefinite"/>
-    </path>
+    <!-- Static center glow -->
+    <circle cx="256" cy="256" r="20" fill="url(#glowGradient)" opacity="0.7"/>
 </svg>
 

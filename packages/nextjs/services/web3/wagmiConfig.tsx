@@ -22,7 +22,7 @@ export const wagmiConfig = createConfig({
     const alchemyHttpUrl = getAlchemyHttpUrl(chain.id);
     if (alchemyHttpUrl) {
       const isUsingDefaultKey = scaffoldConfig.alchemyApiKey === DEFAULT_ALCHEMY_API_KEY;
-      // If using default Scaffold-ETH 2 API key, we prioritize the default RPC
+      // If using default IdeaPulse API key, we prioritize the default RPC
       rpcFallbacks = isUsingDefaultKey ? [http(), http(alchemyHttpUrl)] : [http(alchemyHttpUrl), http()];
     }
 

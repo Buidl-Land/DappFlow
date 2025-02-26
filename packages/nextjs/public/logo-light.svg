@@ -13,10 +13,6 @@
             <stop offset="0%" stop-color="#FF9500" stop-opacity="0.8"/>
             <stop offset="100%" stop-color="#0078A0" stop-opacity="0.5"/>
         </linearGradient>
-        <linearGradient id="glowGradientLight" x1="50%" y1="0%" x2="50%" y2="100%">
-            <stop offset="0%" stop-color="#FF9500" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#FF9500" stop-opacity="0.1"/>
-        </linearGradient>
 
         <!-- Filter for lightning glow effect - Light Mode -->
         <filter id="lightning-glow-light" x="-50%" y="-50%" width="200%" height="200%">

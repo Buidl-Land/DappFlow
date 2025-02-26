@@ -1,4 +1,4 @@
-# 🏗 Scaffold-ETH 2
+# 🏗 IdeaPulse
 
 <h4 align="center">
   <a href="https://docs.scaffoldeth.io">Documentation</a> |
@@ -27,7 +27,7 @@ Before you begin, you need to install the following tools:
 
 ## Quickstart
 
-To get started with Scaffold-ETH 2, follow the steps below:
+To get started with IdeaPulse, follow the steps below:
 
 1. Install dependencies if it was skipped in CLI:
 
@@ -69,12 +69,12 @@ Run smart contract test with `yarn foundry:test`
 
 ## Documentation
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with IdeaPulse.
 
 To know more about its features, check out our [website](https://scaffoldeth.io).
 
-## Contributing to Scaffold-ETH 2
+## Contributing to IdeaPulse
 
-We welcome contributions to Scaffold-ETH 2!
+We welcome contributions to IdeaPulse!
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to IdeaPulse.
