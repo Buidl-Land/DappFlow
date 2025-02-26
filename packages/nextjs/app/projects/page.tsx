@@ -38,21 +38,21 @@ const ProjectsPage = () => {
   });
 
   return (
-    <div className="flex flex-col min-h-screen pt-24 animate-fade-in">
+    <div className="flex flex-col pt-24 min-h-screen animate-fade-in">
       {/* Header Section */}
-      <div className="w-full bg-gradient-to-b from-base-200/50 to-transparent">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold mb-6 animate-slide-up">
+      <div className="w-full bg-gradient-to-b to-transparent from-base-200/50">
+        <div className="px-4 py-12 mx-auto max-w-7xl">
+          <h1 className="mb-6 text-4xl font-bold animate-slide-up">
             Explore <span className="text-primary">Projects</span>
           </h1>
-          <p className="text-lg opacity-80 mb-8 animate-slide-up delay-100 max-w-3xl">
+          <p className="mb-8 max-w-3xl text-lg opacity-80 delay-100 animate-slide-up">
             Discover innovative blockchain projects and contribute through funding or tasks.
           </p>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-slide-up delay-200">
+          <div className="flex flex-col gap-4 mb-8 delay-200 sm:flex-row animate-slide-up">
             {/* Filter Group */}
-            <div className="join bg-base-100 shadow-md rounded-lg">
+            <div className="rounded-lg shadow-md join bg-base-100">
               <button
                 className={`btn join-item ${filter === "all" ? "btn-primary" : ""}`}
                 onClick={() => setFilter("all")}
@@ -74,7 +74,7 @@ const ProjectsPage = () => {
             </div>
 
             {/* Status Group */}
-            <div className="join bg-base-100 shadow-md rounded-lg">
+            <div className="rounded-lg shadow-md join bg-base-100">
               <button
                 className={`btn join-item ${status === "all" ? "btn-secondary" : ""}`}
                 onClick={() => setStatus("all")}
@@ -99,7 +99,7 @@ const ProjectsPage = () => {
             <input
               type="text"
               placeholder="Search projects..."
-              className="input input-bordered bg-base-100 shadow-md w-full sm:max-w-xs"
+              className="w-full shadow-md input input-bordered bg-base-100 sm:max-w-xs"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
@@ -108,8 +108,8 @@ const ProjectsPage = () => {
       </div>
 
       {/* Projects Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="px-4 py-12 mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project, index) => (
             <div key={project.id} className={`animate-scale-up delay-${(index % 3) * 100}`}>
               <ProjectCard project={project} />
@@ -118,7 +118,7 @@ const ProjectsPage = () => {
         </div>
 
         {filteredProjects.length === 0 && (
-          <div className="card bg-base-100 shadow-lg text-center py-16">
+          <div className="py-16 text-center shadow-lg card bg-base-100">
             <p className="text-lg opacity-60">No projects found matching your criteria.</p>
           </div>
         )}

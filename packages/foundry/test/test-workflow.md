@@ -1,14 +1,16 @@
-# Test Workflow Diagrams
+# Test Workflow Documentation
 
-## Project Tests Workflow
+This document outlines the test workflows for different components of the IdeaPulse protocol.
+
+## Project Lifecycle Tests
 
 ```mermaid
 graph TD
     A[Project Tests] --> B[Create Project]
-    B --> C[Update Project]
-    C --> D[Update Metadata]
-    D --> E[Update Status]
-    B --> F[Get User Projects]
+    B --> C[Update Project Information]
+    C --> D[Update Project Metadata]
+    D --> E[Change Project Status]
+    B --> F[Query User Projects]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
@@ -18,15 +20,15 @@ graph TD
     style F fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
-## Token Tests Workflow
+## Token Distribution Tests
 
 ```mermaid
 graph TD
     A[Token Tests] --> B[Create Project Token]
-    B --> C[Token Distribution]
-    C --> D[Initial Token Claim]
-    D --> E[Vesting Schedule]
-    E --> F[Multiple Contributors]
+    B --> C[Verify Token Distribution]
+    C --> D[Initial Token Claims]
+    D --> E[Test Vesting Schedule]
+    E --> F[Test Multiple Contributors]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
@@ -36,17 +38,17 @@ graph TD
     style F fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
-## Crowdfunding Tests Workflow
+## Crowdfunding Functionality Tests
 
 ```mermaid
 graph TD
     A[Crowdfunding Tests] --> B[Initialize Funding]
-    B --> C[Contribute]
-    C --> D[Check Progress]
-    D --> E{Goal Met?}
-    E -->|Yes| F[Success]
-    E -->|No| G[Failure]
-    G --> H[Refund]
+    B --> C[Process Contributions]
+    C --> D[Monitor Funding Progress]
+    D --> E{Funding Goal Met?}
+    E -->|Yes| F[Funding Success Path]
+    E -->|No| G[Funding Failure Path]
+    G --> H[Process Refunds]
     F --> I[Token Distribution]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
@@ -60,20 +62,20 @@ graph TD
     style I fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
-## Task Market Tests Workflow
+## Task Market Tests
 
 ```mermaid
 graph TD
-    A[Task Tests] --> B[Create Task]
+    A[Task Market Tests] --> B[Create Task]
     B --> C[Apply for Task]
     C --> D[Assign Task]
     D --> E[Start Task]
     E --> F[Complete Task]
     F --> G[Verify Task]
-    G --> H[Reward Distribution]
+    G --> H[Distribute Rewards]
 
-    B -.-> I[Multiple Applications]
-    F -.-> J[Revision Request]
+    B -.-> I[Handle Multiple Applications]
+    F -.-> J[Request Task Revisions]
     J --> F
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
@@ -88,16 +90,16 @@ graph TD
     style J fill:#fbb,stroke:#333,stroke-width:2px,stroke-dasharray: 5
 ```
 
-## Integration Test Flow
+## Integration Test Workflow
 
 ```mermaid
 graph TD
     A[Integration Tests] --> B[Create Project]
-    B --> C[Initialize Funding]
-    C --> D[Contribute]
-    D --> E[Create Tasks]
+    B --> C[Initialize Project Funding]
+    C --> D[Process User Contributions]
+    D --> E[Create Project Tasks]
     E --> F[Assign & Complete Tasks]
-    F --> G[Verify & Reward]
+    F --> G[Verify & Distribute Rewards]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
@@ -108,9 +110,19 @@ graph TD
     style G fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
-Colors Legend:
+## Legend
+
 - 🟣 Test Suite Entry Point
 - 🔵 Standard Test Steps
 - 🔴 Error/Failure Cases
 - 🟢 Success/Completion Steps
 - ⚪ Optional/Alternative Flows
+
+## Test Flow Recommendations
+
+1. **Unit Testing First**: Start with unit tests for each facet independently
+2. **Mock Dependencies**: Use mock implementations for dependencies when testing individual facets
+3. **Integration Testing**: After unit tests pass, proceed to integration testing
+4. **Fuzz Testing**: For critical functions, implement fuzz testing with various inputs
+5. **Edge Cases**: Ensure all edge cases are covered, especially for financial operations
+6. **Gas Optimization**: Include gas usage tests to monitor contract efficiency

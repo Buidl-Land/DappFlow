@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./AccessControlFacet.sol";
 
 interface IProjectFacet {
     function isProjectOwner(uint256 projectId, address account) external view returns (bool);
@@ -71,6 +72,17 @@ contract TaskMarketFacet {
         _;
     }
 
+    modifier onlyTaskCreator() {
+        AccessControlFacet accessControl = AccessControlFacet(address(this));
+        require(
+            accessControl.hasRole(accessControl.TASK_CREATOR_ROLE(), msg.sender) ||
+            accessControl.isAdmin(msg.sender) ||
+            accessControl.hasRole(accessControl.AI_AGENT_ROLE(), msg.sender),
+            "TaskMarketFacet: caller is not a task creator"
+        );
+        _;
+    }
+
     function diamondStorage() internal pure returns (DiamondStorage storage ds) {
         bytes32 position = DIAMOND_STORAGE_POSITION;
         assembly {
@@ -93,7 +105,7 @@ contract TaskMarketFacet {
         uint256 deadline,
         string[] calldata requiredSkills,
         uint256 estimatedHours
-    ) external onlyProjectOwner(projectId) returns (uint256) {
+    ) external onlyTaskCreator returns (uint256) {
         require(ICrowdfundingFacet(address(this)).isFunded(projectId), "Project not funded");
 
         DiamondStorage storage ds = diamondStorage();

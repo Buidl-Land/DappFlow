@@ -3,6 +3,13 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import "./AccessControlFacet.sol";
+
+// Interface to interact with CrowdfundingFacet
+interface ITokenCrowdfundingFacet {
+    function getContribution(uint256 projectId, address contributor) external view returns (uint256);
+    function getRaisedAmount(uint256 projectId) external view returns (uint256);
+}
 
 contract ProjectTokenFacet {
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("diamond.project.token.storage");
@@ -26,6 +33,16 @@ contract ProjectTokenFacet {
     event ProjectTokenCreated(uint256 indexed projectId, address indexed tokenAddress, string name, string symbol);
     event TokensClaimed(uint256 indexed projectId, address indexed beneficiary, uint256 amount);
 
+    modifier onlyFundingManager() {
+        AccessControlFacet accessControl = AccessControlFacet(address(this));
+        require(
+            accessControl.hasRole(accessControl.FUNDING_MANAGER_ROLE(), msg.sender) ||
+            accessControl.isAdmin(msg.sender),
+            "ProjectTokenFacet: caller is not a funding manager"
+        );
+        _;
+    }
+
     function diamondStorage() internal pure returns (DiamondStorage storage ds) {
         bytes32 position = DIAMOND_STORAGE_POSITION;
         assembly {
@@ -42,6 +59,15 @@ contract ProjectTokenFacet {
     ) external {
         DiamondStorage storage ds = diamondStorage();
         require(ds.projectTokens[projectId].tokenAddress == address(0), "Token already exists");
+
+        // Check if caller is funding manager or the crowdfunding facet itself
+        AccessControlFacet accessControl = AccessControlFacet(address(this));
+        require(
+            accessControl.hasRole(accessControl.FUNDING_MANAGER_ROLE(), msg.sender) ||
+            accessControl.isAdmin(msg.sender) ||
+            msg.sender == address(this),
+            "ProjectTokenFacet: unauthorized"
+        );
 
         // Deploy new token contract
         ProjectToken token = new ProjectToken(name, symbol, totalSupply);
@@ -67,11 +93,14 @@ contract ProjectTokenFacet {
         TokenInfo storage tokenInfo = ds.projectTokens[projectId];
         require(tokenInfo.tokenAddress != address(0), "Token not created");
 
+        // Use the interface to call CrowdfundingFacet
+        ITokenCrowdfundingFacet crowdfundingFacet = ITokenCrowdfundingFacet(address(this));
+
         // Calculate vested amount
-        uint256 contribution = this.getContribution(projectId, msg.sender);
+        uint256 contribution = crowdfundingFacet.getContribution(projectId, msg.sender);
         require(contribution > 0, "No contribution found");
 
-        uint256 totalVestingAmount = (contribution * tokenInfo.crowdfundingPool) / this.getRaisedAmount(projectId);
+        uint256 totalVestingAmount = (contribution * tokenInfo.crowdfundingPool) / crowdfundingFacet.getRaisedAmount(projectId);
         uint256 vestedAmount = _calculateVestedAmount(
             totalVestingAmount,
             block.timestamp,
@@ -134,15 +163,14 @@ contract ProjectTokenFacet {
         return ds.projectTokens[projectId].claimedAmount[account];
     }
 
-    // Interface for external contracts
-    interface IProjectFacet {
-        function getContribution(uint256 projectId, address contributor) external virtual view returns (uint256);
-        function getRaisedAmount(uint256 projectId) external virtual view returns (uint256);
+    // Helper functions to get data from CrowdfundingFacet
+    function getContribution(uint256 projectId, address contributor) external view returns (uint256) {
+        return ITokenCrowdfundingFacet(address(this)).getContribution(projectId, contributor);
     }
 
-    // These functions will be implemented by ProjectFacet
-    function getContribution(uint256 projectId, address contributor) external virtual view returns (uint256);
-    function getRaisedAmount(uint256 projectId) external virtual view returns (uint256);
+    function getRaisedAmount(uint256 projectId) external view returns (uint256) {
+        return ITokenCrowdfundingFacet(address(this)).getRaisedAmount(projectId);
+    }
 }
 
 // Project Token Implementation

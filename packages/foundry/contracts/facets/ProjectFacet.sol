@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "../libraries/Counters.sol";
+import "./AccessControlFacet.sol";
 
 contract ProjectFacet {
     using Counters for Counters.Counter;
@@ -61,6 +62,16 @@ contract ProjectFacet {
         ProjectStatus newStatus
     );
 
+    modifier onlyProjectCreator() {
+        AccessControlFacet accessControl = AccessControlFacet(address(this));
+        require(
+            accessControl.hasRole(accessControl.PROJECT_CREATOR_ROLE(), msg.sender) ||
+            accessControl.isAdmin(msg.sender),
+            "ProjectFacet: caller is not a project creator"
+        );
+        _;
+    }
+
     function diamondStorage() internal pure returns (DiamondStorage storage ds) {
         bytes32 position = DIAMOND_STORAGE_POSITION;
         assembly {
@@ -73,7 +84,7 @@ contract ProjectFacet {
         string calldata description,
         string[] calldata tags,
         ProjectMetadata calldata metadata
-    ) external returns (uint256) {
+    ) external onlyProjectCreator returns (uint256) {
         DiamondStorage storage ds = diamondStorage();
         ds.projectIds.increment();
         uint256 newProjectId = ds.projectIds.current();
@@ -103,7 +114,14 @@ contract ProjectFacet {
     ) external {
         DiamondStorage storage ds = diamondStorage();
         Project storage project = ds.projects[projectId];
-        require(msg.sender == project.creator, "Not project creator");
+
+        AccessControlFacet accessControl = AccessControlFacet(address(this));
+        require(
+            msg.sender == project.creator ||
+            accessControl.isAdmin(msg.sender),
+            "Not project creator or admin"
+        );
+
         require(project.status == ProjectStatus.Draft, "Project not in draft");
 
         project.title = title;

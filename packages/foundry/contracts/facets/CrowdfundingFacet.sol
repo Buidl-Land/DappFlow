@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./AccessControlFacet.sol";
 
 interface IProjectTokenFacet {
     function createProjectToken(
@@ -33,7 +34,7 @@ contract CrowdfundingFacet {
         uint256 raisedAmount;
         uint256 startTime;
         uint256 endTime;
-        bool isFunded;
+        bool hasMetFundingGoal;
         mapping(address => uint256) contributions;
         address paymentToken; // USDC/USDT token address
         bool tokenCreated;
@@ -54,7 +55,17 @@ contract CrowdfundingFacet {
         FundingInfo storage funding = ds.projectFunding[projectId];
         require(block.timestamp >= funding.startTime, "Funding not started");
         require(block.timestamp <= funding.endTime, "Funding ended");
-        require(!funding.isFunded, "Already funded");
+        require(!funding.hasMetFundingGoal, "Already funded");
+        _;
+    }
+
+    modifier onlyFundingManager() {
+        AccessControlFacet accessControl = AccessControlFacet(address(this));
+        require(
+            accessControl.hasRole(accessControl.FUNDING_MANAGER_ROLE(), msg.sender) ||
+            accessControl.isAdmin(msg.sender),
+            "CrowdfundingFacet: caller is not a funding manager"
+        );
         _;
     }
 
@@ -70,7 +81,7 @@ contract CrowdfundingFacet {
         uint256 fundingGoal,
         uint256 duration,
         address paymentToken
-    ) external {
+    ) external onlyFundingManager {
         DiamondStorage storage ds = diamondStorage();
         FundingInfo storage funding = ds.projectFunding[projectId];
 
@@ -103,7 +114,7 @@ contract CrowdfundingFacet {
         emit ContributionMade(projectId, msg.sender, amount);
 
         if (funding.raisedAmount >= funding.fundingGoal) {
-            funding.isFunded = true;
+            funding.hasMetFundingGoal = true;
             emit FundingSuccessful(projectId, funding.raisedAmount);
 
             // Create project token if funding successful and token not yet created
@@ -126,7 +137,7 @@ contract CrowdfundingFacet {
         FundingInfo storage funding = ds.projectFunding[projectId];
 
         require(block.timestamp > funding.endTime, "Funding period not ended");
-        require(!funding.isFunded, "Project was funded");
+        require(!funding.hasMetFundingGoal, "Project was funded");
 
         uint256 contribution = funding.contributions[msg.sender];
         require(contribution > 0, "No contribution found");
@@ -142,7 +153,7 @@ contract CrowdfundingFacet {
         uint256 raisedAmount,
         uint256 startTime,
         uint256 endTime,
-        bool isFunded,
+        bool hasMetFundingGoal,
         address paymentToken
     ) {
         DiamondStorage storage ds = diamondStorage();
@@ -153,7 +164,7 @@ contract CrowdfundingFacet {
             funding.raisedAmount,
             funding.startTime,
             funding.endTime,
-            funding.isFunded,
+            funding.hasMetFundingGoal,
             funding.paymentToken
         );
     }
@@ -167,16 +178,14 @@ contract CrowdfundingFacet {
         DiamondStorage storage ds = diamondStorage();
         return ds.userContributions[user];
     }
-}
 
-// Helper function to check if array contains a value
-library ArrayHelper {
-    function contains(uint256[] storage arr, uint256 value) internal view returns (bool) {
-        for (uint256 i = 0; i < arr.length; i++) {
-            if (arr[i] == value) {
-                return true;
-            }
-        }
-        return false;
+    function isFunded(uint256 projectId) external view returns (bool) {
+        DiamondStorage storage ds = diamondStorage();
+        return ds.projectFunding[projectId].hasMetFundingGoal;
+    }
+
+    function getRaisedAmount(uint256 projectId) external view returns (uint256) {
+        DiamondStorage storage ds = diamondStorage();
+        return ds.projectFunding[projectId].raisedAmount;
     }
 }
