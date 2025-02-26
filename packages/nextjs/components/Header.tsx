@@ -92,26 +92,26 @@ export const Header = () => {
   return (
     <div
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "shadow-lg backdrop-blur-lg bg-base-100/80" : "bg-transparent"
+        isScrolled ? "shadow-lg backdrop-blur-lg bg-base-100/90" : "bg-transparent"
       }`}
     >
       <div className="px-4 mx-auto max-w-7xl">
         <div className="flex justify-between items-center py-3">
-          <div className="flex gap-4 items-center">
-            <div className="lg:hidden dropdown" ref={burgerMenuRef}>
+          <div className="flex gap-2 sm:gap-4 items-center">
+            <div className="dropdown" ref={burgerMenuRef}>
               <label
                 tabIndex={0}
-                className={`btn btn-ghost btn-circle ${isDrawerOpen ? "hover:bg-primary/20" : "hover:bg-transparent"}`}
+                className={`btn btn-ghost btn-sm sm:btn-md btn-circle ${isDrawerOpen ? "hover:bg-primary/20" : "hover:bg-transparent"} lg:hidden`}
                 onClick={() => {
                   setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
                 }}
               >
-                <Bars3Icon className="w-6 h-6" />
+                <Bars3Icon className="w-5 h-5 sm:w-6 sm:h-6" />
               </label>
               {isDrawerOpen && (
                 <ul
                   tabIndex={0}
-                  className="p-4 mt-3 w-60 shadow-lg backdrop-blur-lg menu menu-compact dropdown-content bg-base-100/90 rounded-box"
+                  className="p-2 sm:p-4 mt-3 w-52 sm:w-60 shadow-lg backdrop-blur-lg menu menu-compact dropdown-content bg-base-100/90 rounded-box z-[100]"
                   onClick={() => {
                     setIsDrawerOpen(false);
                   }}
@@ -120,15 +120,15 @@ export const Header = () => {
                 </ul>
               )}
             </div>
-            <Link href="/" passHref className="flex gap-3 items-center group shrink-0">
+            <Link href="/" passHref className="flex gap-2 sm:gap-3 items-center group shrink-0">
               <div className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
-                <IdeaPulseLogo className="w-10 h-10" />
+                <IdeaPulseLogo className="w-8 h-8 sm:w-10 sm:h-10" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-bold tracking-wide leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                <span className="text-sm sm:text-lg font-bold tracking-wide leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                   IdeaPulse
                 </span>
-                <span className="text-xs tracking-widest opacity-75">INNOVATION HUB</span>
+                <span className="text-[8px] sm:text-xs tracking-widest opacity-75">INNOVATION HUB</span>
               </div>
             </Link>
             <ul className="hidden gap-1 items-center ml-6 lg:flex">

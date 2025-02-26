@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
@@ -8,6 +8,17 @@ import { loadFull } from "tsparticles";
 export const ParticlesBackground = () => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
 
   // Use a type assertion to bypass the type checking for this specific function
   const particlesInit = useCallback(async (engine: any) => {
@@ -31,7 +42,7 @@ export const ParticlesBackground = () => {
           },
           links: {
             color: isDarkMode ? "#8B5CF6" : "#4F46E5",
-            distance: 150,
+            distance: isMobile ? 100 : 150,
             enable: true,
             opacity: 0.3,
             width: 1,
@@ -43,7 +54,7 @@ export const ParticlesBackground = () => {
               default: "bounce",
             },
             random: false,
-            speed: 1,
+            speed: isMobile ? 0.8 : 1,
             straight: false,
           },
           number: {
@@ -51,7 +62,7 @@ export const ParticlesBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 80,
+            value: isMobile ? 40 : 80,
           },
           opacity: {
             value: 0.2,
@@ -64,6 +75,21 @@ export const ParticlesBackground = () => {
           },
         },
         detectRetina: true,
+        responsive: [
+          {
+            maxWidth: 500,
+            options: {
+              particles: {
+                number: {
+                  value: 30,
+                },
+                move: {
+                  speed: 0.6,
+                },
+              },
+            },
+          },
+        ],
       }}
     />
   );

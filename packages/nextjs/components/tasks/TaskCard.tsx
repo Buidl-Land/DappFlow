@@ -58,38 +58,38 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <MouseTracker>
-      <Link href={`/tasks/${task.id}`} className="block">
-        <div className="card card-hover animate-slide-up">
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-xl font-bold text-content-primary">{task.title}</h3>
-              <div className="flex gap-2 items-center">
+      <Link href={`/tasks/${task.id}`} className="block w-full">
+        <div className="card card-hover animate-slide-up transition-all duration-300 hover:translate-y-[-5px] border border-base-300 bg-base-100 hover:shadow-xl hover:shadow-primary/10">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
+              <h3 className="text-lg sm:text-xl font-bold text-content-primary">{task.title}</h3>
+              <div className="flex flex-wrap gap-2 items-center">
                 <span className={`tag ${getDifficultyColor(task.difficulty)}`}>{task.difficulty}</span>
                 <span className={`tag ${getStatusColor(task.status)}`}>{task.status.replace("_", " ")}</span>
               </div>
             </div>
 
-            <p className="mb-4 text-content-secondary">{task.description}</p>
+            <p className="mb-4 text-content-secondary text-sm line-clamp-2">{task.description}</p>
 
             <div className="flex flex-wrap gap-2 mb-4">
               {task.requirements.skills.map(skill => (
-                <span key={skill} className="tag">
+                <span key={skill} className="tag text-xs py-1 px-2">
                   {skill}
                 </span>
               ))}
             </div>
 
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex gap-4 items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
+              <div className="flex flex-wrap gap-4 items-center">
                 <div>
-                  <span className="text-sm text-content-secondary">Reward</span>
-                  <div className="text-lg font-semibold gradient-text-primary">
+                  <span className="text-xs text-content-secondary">Reward</span>
+                  <div className="text-base sm:text-lg font-semibold gradient-text-primary">
                     {task.reward.amount} {task.reward.token}
                   </div>
                 </div>
                 <div>
-                  <span className="text-sm text-content-secondary">Deadline</span>
-                  <div className="text-base text-content-primary">{formattedDeadline}</div>
+                  <span className="text-xs text-content-secondary">Deadline</span>
+                  <div className="text-sm sm:text-base text-content-primary">{formattedDeadline}</div>
                 </div>
               </div>
 

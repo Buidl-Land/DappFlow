@@ -31,65 +31,48 @@ const Home: NextPage = () => {
   return (
     <div className="flex overflow-hidden flex-col items-center pt-20 min-h-screen">
       {/* Hero Section with Enhanced Background */}
-      <section className="relative px-4 py-20 w-full bg-gradient-to-b to-transparent from-base-200/50">
-        {/* Tech Grid Background */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 10px 10px, rgba(79, 70, 229, 0.15) 2px, transparent 0), radial-gradient(circle at 25px 25px, rgba(79, 70, 229, 0.1) 2px, transparent 0)",
-            backgroundSize: "30px 30px, 60px 60px",
-          }}
-        ></div>
-
-        {/* Neural Network SVG Background */}
-        <div className="overflow-hidden absolute inset-0 z-0 opacity-10">
-          <svg
-            className="absolute top-0 left-0 w-full h-full"
-            viewBox="0 0 1000 1000"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+      <section className="relative px-4 py-12 md:py-20 w-full bg-gradient-to-b to-transparent from-base-200/50">
+        {/* Enhanced Geometric SVG Background */}
+        <div className="absolute inset-0 z-0 opacity-10 overflow-hidden">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="techGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="var(--color-primary)" />
-                <stop offset="50%" stopColor="var(--color-secondary)" />
-                <stop offset="100%" stopColor="var(--color-accent)" />
+              <pattern id="hexagonPattern" width="56" height="100" patternUnits="userSpaceOnUse">
+                <path
+                  d="M28,0 L56,16.6 L56,49.8 L28,66.4 L0,49.8 L0,16.6 Z M28,100 L0,83.4 L0,50.2 L28,33.6 L56,50.2 L56,83.4 Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
+              </pattern>
+              <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="var(--color-secondary)" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0.3" />
               </linearGradient>
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
               </filter>
             </defs>
-
-            {/* Neural Network Nodes & Connections - Abstract Tech Pattern */}
+            <rect width="100%" height="100%" fill="url(#hexagonPattern)" />
             <g filter="url(#glow)">
-              {Array.from({ length: 15 }).map((_, i) => (
-                <circle
-                  key={`circle-${i}`}
-                  cx={Math.random() * 1000}
-                  cy={Math.random() * 1000}
-                  r={Math.random() * 8 + 2}
-                  fill="url(#techGradient)"
-                />
-              ))}
+              {/* Glowing nodes at key intersections */}
+              <circle cx="14%" cy="20%" r="3" fill="var(--color-primary)" />
+              <circle cx="42%" cy="30%" r="2" fill="var(--color-secondary)" />
+              <circle cx="75%" cy="15%" r="2.5" fill="var(--color-accent)" />
+              <circle cx="25%" cy="60%" r="2" fill="var(--color-secondary)" />
+              <circle cx="65%" cy="70%" r="3" fill="var(--color-primary)" />
+              <circle cx="85%" cy="40%" r="2.5" fill="var(--color-accent)" />
 
-              {Array.from({ length: 25 }).map((_, i) => (
-                <path
-                  key={`path-${i}`}
-                  d={`M${Math.random() * 1000},${Math.random() * 1000} Q${Math.random() * 1000},${Math.random() * 1000} ${Math.random() * 1000},${Math.random() * 1000}`}
-                  stroke="url(#techGradient)"
-                  strokeWidth="1"
-                  fill="none"
-                />
-              ))}
-
-              {/* Circuit Board Lines */}
+              {/* Connection lines between nodes */}
               <path
-                d="M0,200 H1000 M0,400 H1000 M0,600 H1000 M0,800 H1000 M200,0 V1000 M400,0 V1000 M600,0 V1000 M800,0 V1000"
-                stroke="url(#techGradient)"
-                strokeWidth="0.5"
-                strokeDasharray="10,20"
-                opacity="0.3"
+                d="M14%,20% L42%,30% L75%,15% M42%,30% L25%,60% L65%,70% L85%,40% L42%,30%"
+                stroke="url(#glowGradient)"
+                strokeWidth="1"
+                fill="none"
               />
             </g>
           </svg>

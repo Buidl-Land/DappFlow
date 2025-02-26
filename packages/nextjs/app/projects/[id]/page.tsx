@@ -99,28 +99,59 @@ const ProjectDetails = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen animate-fade-in pt-24">
-      <div className="w-full bg-base-200/30 py-12">
+    <div className="flex flex-col min-h-screen animate-fade-in pt-20 sm:pt-24">
+      {/* SVG Background */}
+      <div className="fixed inset-0 z-[-1] opacity-5">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="circuit" width="100" height="100" patternUnits="userSpaceOnUse">
+              <circle cx="50" cy="50" r="1" fill="currentColor" />
+              <circle cx="0" cy="0" r="1" fill="currentColor" />
+              <circle cx="0" cy="100" r="1" fill="currentColor" />
+              <circle cx="100" cy="0" r="1" fill="currentColor" />
+              <circle cx="100" cy="100" r="1" fill="currentColor" />
+              <path
+                d="M50,0 L50,50 M0,50 L50,50 M50,50 L100,50 M50,50 L50,100"
+                stroke="currentColor"
+                strokeWidth="0.5"
+                fill="none"
+              />
+              <path
+                d="M25,25 Q50,0 75,25 T75,75 Q100,50 75,75 T25,75 Q0,50 25,25"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="0.5"
+                strokeDasharray="2,4"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#circuit)" />
+        </svg>
+      </div>
+
+      <div className="w-full bg-base-200/30 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Left Column - Project Info & Tabs */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
               {/* Project Header */}
-              <div className="card bg-base-100 shadow-lg p-6">
-                <div className="flex flex-wrap gap-2 mb-4">
+              <div className="card bg-base-100 shadow-lg p-4 sm:p-6">
+                <div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4">
                   {project.tags.map(tag => (
-                    <span key={tag} className="badge badge-primary">
+                    <span key={tag} className="badge badge-primary text-[10px] sm:text-xs">
                       {tag}
                     </span>
                   ))}
                 </div>
-                <h1 className="text-4xl font-bold mb-4">{project.title}</h1>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm opacity-70">
+                <h1 className="text-2xl sm:text-4xl font-bold mb-3 sm:mb-4">{project.title}</h1>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                  <span className="text-xs sm:text-sm opacity-70">
                     Created by {project.creator.slice(0, 6)}...{project.creator.slice(-4)}
                   </span>
-                  <span className="text-sm opacity-70">•</span>
-                  <span className={`badge ${project.status === "active" ? "badge-primary" : "badge-ghost"}`}>
+                  <span className="text-xs sm:text-sm opacity-70 hidden sm:inline">•</span>
+                  <span
+                    className={`badge badge-sm sm:badge-md ${project.status === "active" ? "badge-primary" : "badge-ghost"}`}
+                  >
                     {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
                   </span>
                 </div>
@@ -128,75 +159,75 @@ const ProjectDetails = () => {
 
               {/* Tab Navigation */}
               <div className="card bg-base-100 shadow-lg">
-                <div className="tabs tabs-boxed bg-base-200/50 rounded-t-2xl p-2">
+                <div className="tabs tabs-boxed bg-base-200/50 rounded-t-2xl p-1 sm:p-2">
                   <button
-                    className={`tab flex-1 ${activeTab === "details" ? "tab-active" : ""}`}
+                    className={`tab text-xs sm:text-sm flex-1 ${activeTab === "details" ? "tab-active" : ""}`}
                     onClick={() => setActiveTab("details")}
                   >
                     Details
                   </button>
                   <button
-                    className={`tab flex-1 ${activeTab === "roadmap" ? "tab-active" : ""}`}
+                    className={`tab text-xs sm:text-sm flex-1 ${activeTab === "roadmap" ? "tab-active" : ""}`}
                     onClick={() => setActiveTab("roadmap")}
                   >
                     Roadmap
                   </button>
                   <button
-                    className={`tab flex-1 ${activeTab === "tasks" ? "tab-active" : ""}`}
+                    className={`tab text-xs sm:text-sm flex-1 ${activeTab === "tasks" ? "tab-active" : ""}`}
                     onClick={() => setActiveTab("tasks")}
                   >
                     Tasks
                   </button>
                 </div>
-                <div className="p-6">{tabContent[activeTab]}</div>
+                <div className="p-4 sm:p-6">{tabContent[activeTab]}</div>
               </div>
             </div>
 
             {/* Right Column - Funding & Support */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* Funding Progress */}
-              <div className="card bg-base-100 shadow-lg p-6">
-                <h2 className="text-xl font-bold mb-4">Funding Progress</h2>
+              <div className="card bg-base-100 shadow-lg p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Funding Progress</h2>
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-2xl font-bold">
+                    <span className="text-lg sm:text-2xl font-bold">
                       {project.raisedAmount.toLocaleString()} / {project.fundingGoal.toLocaleString()} {selectedToken}
                     </span>
-                    <span className="text-lg opacity-70">{Math.round(progress)}%</span>
+                    <span className="text-base sm:text-lg opacity-70">{Math.round(progress)}%</span>
                   </div>
-                  <div className="w-full bg-base-300 rounded-full h-3">
+                  <div className="w-full bg-base-300 rounded-full h-2 sm:h-3">
                     <div
-                      className="bg-primary rounded-full h-3 transition-all duration-500"
+                      className="bg-primary rounded-full h-2 sm:h-3 transition-all duration-500"
                       style={{ width: `${Math.min(100, progress)}%` }}
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 text-center mb-6">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center mb-4 sm:mb-6">
                   <div>
-                    <div className="text-2xl font-bold">{daysLeft}</div>
-                    <div className="text-sm opacity-70">Days Left</div>
+                    <div className="text-lg sm:text-2xl font-bold">{daysLeft}</div>
+                    <div className="text-xs sm:text-sm opacity-70">Days Left</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold">{project.participants.length}</div>
-                    <div className="text-sm opacity-70">Backers</div>
+                    <div className="text-lg sm:text-2xl font-bold">{project.participants.length}</div>
+                    <div className="text-xs sm:text-sm opacity-70">Backers</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold">
+                    <div className="text-lg sm:text-2xl font-bold">
                       {project.tasks.filter(task => task.status === "open").length}
                     </div>
-                    <div className="text-sm opacity-70">Open Tasks</div>
+                    <div className="text-xs sm:text-sm opacity-70">Open Tasks</div>
                   </div>
                 </div>
 
                 {project.status === "active" && (
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <label htmlFor="token-select" className="font-semibold">
+                      <label htmlFor="token-select" className="font-semibold text-sm sm:text-base">
                         Select Token:
                       </label>
                       <select
                         id="token-select"
-                        className="select select-bordered select-sm"
+                        className="select select-bordered select-xs sm:select-sm"
                         value={selectedToken}
                         onChange={e => setSelectedToken(e.target.value)}
                         aria-label="Select payment token"
@@ -205,20 +236,20 @@ const ProjectDetails = () => {
                         <option value="USDC">USDC</option>
                       </select>
                     </div>
-                    <button className="btn btn-primary btn-block">Back This Project</button>
+                    <button className="btn btn-primary btn-sm sm:btn-md w-full">Back This Project</button>
                   </div>
                 )}
               </div>
 
               {/* Project Updates */}
-              <div className="card bg-base-100 shadow-lg p-6">
-                <h2 className="text-xl font-bold mb-4">Latest Updates</h2>
+              <div className="card bg-base-100 shadow-lg p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Latest Updates</h2>
                 <div className="space-y-4">
                   {project.updates?.map((update, index) => (
-                    <div key={index} className="border-b border-base-300 last:border-0 pb-4 last:pb-0">
-                      <h3 className="font-semibold mb-2">{update.title}</h3>
-                      <p className="text-sm opacity-70 mb-2">{update.content}</p>
-                      <span className="text-xs opacity-60">{update.date}</span>
+                    <div key={index} className="border-b border-base-300 last:border-0 pb-3 sm:pb-4 last:pb-0">
+                      <h3 className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">{update.title}</h3>
+                      <p className="text-xs sm:text-sm opacity-70 mb-2">{update.content}</p>
+                      <span className="text-[10px] sm:text-xs opacity-60">{update.date}</span>
                     </div>
                   ))}
                 </div>
