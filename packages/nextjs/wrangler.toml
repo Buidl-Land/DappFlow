@@ -2,7 +2,3 @@ name = "idea-pulse-evm"
 compatibility_date = "2025-03-02"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
-
-[build]
-command = "yarn next:build"
-cwd = "."
