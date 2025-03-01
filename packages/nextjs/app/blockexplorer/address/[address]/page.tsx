@@ -1,6 +1,6 @@
 import { isZeroAddress } from "~~/utils/scaffold-eth/common";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 type PageProps = {
   params: { address: string };
@@ -40,10 +40,11 @@ const AddressPage = async ({ params }: PageProps) => {
               ></path>
             </svg>
             <div>
-              <h3 className="font-bold">Simplified Interface</h3>
+              <h3 className="font-bold">Limited Interface in Cloud Deployment</h3>
               <div className="text-sm">
-                In the Cloudflare environment, contract bytecode and assembly data cannot be loaded. Please use the
-                local development environment to view the full functionality.
+                This is a simplified view of the contract address details. The complete interactive UI with bytecode
+                analysis, contract verification, and assembly details is only available when running the application
+                locally in development mode.
               </div>
             </div>
           </div>

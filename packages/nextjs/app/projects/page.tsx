@@ -65,18 +65,18 @@ const ProjectsContent = () => {
 
       {/* Header Section */}
       <div className="w-full bg-gradient-to-b to-transparent from-base-200/50">
-        <div className="px-4 py-8 sm:py-12 mx-auto max-w-7xl">
-          <h1 className="mb-4 sm:mb-6 text-3xl sm:text-4xl font-bold animate-slide-up">
+        <div className="px-4 py-8 mx-auto max-w-7xl sm:py-12">
+          <h1 className="mb-4 text-3xl font-bold sm:mb-6 sm:text-4xl animate-slide-up">
             Explore <span className="text-primary">Projects</span>
           </h1>
-          <p className="mb-6 sm:mb-8 max-w-3xl text-base sm:text-lg opacity-80 delay-100 animate-slide-up">
+          <p className="mb-6 max-w-3xl text-base opacity-80 delay-100 sm:mb-8 sm:text-lg animate-slide-up">
             Discover innovative blockchain projects and contribute through funding or tasks.
           </p>
 
           {/* Filters */}
-          <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8 delay-200 sm:flex-row animate-slide-up">
+          <div className="flex flex-col gap-3 mb-6 delay-200 sm:gap-4 sm:mb-8 sm:flex-row animate-slide-up">
             {/* Filter Group */}
-            <div className="rounded-lg shadow-md join bg-base-100 overflow-x-auto flex-nowrap">
+            <div className="overflow-x-auto flex-nowrap rounded-lg shadow-md join bg-base-100">
               <button
                 className={`btn join-item btn-sm sm:btn-md ${filter === "all" ? "btn-primary" : ""}`}
                 onClick={() => setFilter("all")}
@@ -98,7 +98,7 @@ const ProjectsContent = () => {
             </div>
 
             {/* Status Group */}
-            <div className="rounded-lg shadow-md join bg-base-100 overflow-x-auto flex-nowrap">
+            <div className="overflow-x-auto flex-nowrap rounded-lg shadow-md join bg-base-100">
               <button
                 className={`btn join-item btn-sm sm:btn-md ${status === "all" ? "btn-secondary" : ""}`}
                 onClick={() => setStatus("all")}
@@ -132,7 +132,7 @@ const ProjectsContent = () => {
       </div>
 
       {/* Projects Grid */}
-      <div className="px-4 py-8 sm:py-12 mx-auto max-w-7xl">
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:py-12">
         <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project, index) => (
             <div key={project.id} className={`animate-scale-up delay-${(index % 3) * 100}`}>
@@ -142,7 +142,7 @@ const ProjectsContent = () => {
         </div>
 
         {filteredProjects.length === 0 && (
-          <div className="py-12 sm:py-16 text-center shadow-lg card bg-base-100">
+          <div className="py-12 text-center shadow-lg sm:py-16 card bg-base-100">
             <p className="text-lg opacity-60">No projects found matching your criteria.</p>
             <button
               className="mx-auto mt-4 btn btn-primary btn-sm"

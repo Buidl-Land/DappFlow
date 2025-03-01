@@ -13,21 +13,12 @@ const nextConfig = {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },
+  // Only enable static export for production builds, not for development
+  output: process.env.NODE_ENV === "production" ? 'export' : undefined,
+  images: {
+    unoptimized: true,
+  },
+  trailingSlash: process.env.NODE_ENV === "production",
 };
-
-// Conditionally add setupDevPlatform for development
-if (process.env.NODE_ENV === "development") {
-  // Using dynamic import because setupDevPlatform uses await
-  const setupEnvironment = async () => {
-    try {
-      const { setupDevPlatform } = await import("@cloudflare/next-on-pages/next-dev");
-      await setupDevPlatform();
-    } catch (error) {
-      console.warn("Failed to setup development platform:", error);
-    }
-  };
-
-  setupEnvironment();
-}
 
 module.exports = nextConfig;

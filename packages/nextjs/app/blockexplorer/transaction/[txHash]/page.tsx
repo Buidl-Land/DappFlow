@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { Hash } from "viem";
 import { isZeroAddress } from "~~/utils/scaffold-eth/common";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 type PageProps = {
   params: { txHash?: Hash };
@@ -42,10 +42,11 @@ const TransactionPage: NextPage<PageProps> = ({ params }: PageProps) => {
               ></path>
             </svg>
             <div>
-              <h3 className="font-bold">Simplified Interface</h3>
+              <h3 className="font-bold">Limited Interface in Cloud Deployment</h3>
               <div className="text-sm">
-                In the Cloudflare environment, transaction details functionality has been simplified. Please use the
-                local development environment to view the full functionality.
+                This is a simplified view of the transaction details. The complete interactive UI with transaction
+                decoding, event logs, and method analysis is only available when running the application locally in
+                development mode.
               </div>
             </div>
           </div>

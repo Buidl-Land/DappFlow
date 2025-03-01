@@ -1,3 +1,8 @@
 {
-  "installCommand": "yarn install"
+  "installCommand": "yarn install",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": true
 }
