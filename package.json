@@ -47,6 +47,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.8",
     "husky": "^8.0.3",
     "lint-staged": "~13.2.2"
   },
