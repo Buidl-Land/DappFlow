@@ -1,84 +1,13 @@
-import fs from "fs";
-import path from "path";
-import { foundry } from "viem/chains";
-import { AddressComponent } from "~~/app/blockexplorer/_components/AddressComponent";
-import deployedContracts from "~~/contracts/deployedContracts";
 import { isZeroAddress } from "~~/utils/scaffold-eth/common";
-import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
+
+export const runtime = "edge";
 
 type PageProps = {
   params: { address: string };
 };
 
-async function fetchByteCodeAndAssembly(buildInfoDirectory: string, contractPath: string) {
-  const buildInfoFiles = fs.readdirSync(buildInfoDirectory);
-  let bytecode = "";
-  let assembly = "";
-
-  for (let i = 0; i < buildInfoFiles.length; i++) {
-    const filePath = path.join(buildInfoDirectory, buildInfoFiles[i]);
-
-    const buildInfo = JSON.parse(fs.readFileSync(filePath, "utf8"));
-
-    if (buildInfo.output.contracts[contractPath]) {
-      for (const contract in buildInfo.output.contracts[contractPath]) {
-        bytecode = buildInfo.output.contracts[contractPath][contract].evm.bytecode.object;
-        assembly = buildInfo.output.contracts[contractPath][contract].evm.bytecode.opcodes;
-        break;
-      }
-    }
-
-    if (bytecode && assembly) {
-      break;
-    }
-  }
-
-  return { bytecode, assembly };
-}
-
-const getContractData = async (address: string) => {
-  const contracts = deployedContracts as GenericContractsDeclaration | null;
-  const chainId = foundry.id;
-  let contractPath = "";
-
-  const buildInfoDirectory = path.join(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "..",
-    "..",
-    "..",
-    "..",
-    "foundry",
-    "out",
-    "build-info",
-  );
-
-  if (!fs.existsSync(buildInfoDirectory)) {
-    throw new Error(`Directory ${buildInfoDirectory} not found.`);
-  }
-
-  const deployedContractsOnChain = contracts ? contracts[chainId] : {};
-  for (const [contractName, contractInfo] of Object.entries(deployedContractsOnChain)) {
-    if (contractInfo.address.toLowerCase() === address.toLowerCase()) {
-      contractPath = `contracts/${contractName}.sol`;
-      break;
-    }
-  }
-
-  if (!contractPath) {
-    // No contract found at this address
-    return null;
-  }
-
-  const { bytecode, assembly } = await fetchByteCodeAndAssembly(buildInfoDirectory, contractPath);
-
-  return { bytecode, assembly };
-};
-
 export function generateStaticParams() {
-  // An workaround to enable static exports in Next.js, generating single dummy page.
+  // A workaround to enable static exports in Next.js, generating a single dummy page.
   return [{ address: "0x0000000000000000000000000000000000000000" }];
 }
 
@@ -87,8 +16,54 @@ const AddressPage = async ({ params }: PageProps) => {
 
   if (isZeroAddress(address)) return null;
 
-  const contractData: { bytecode: string; assembly: string } | null = await getContractData(address);
-  return <AddressComponent address={address} contractData={contractData} />;
+  // Simplified page version - only shows address and guides users to use local environment for full functionality
+  return (
+    <div className="flex flex-col gap-6 py-8 px-4 sm:px-6 lg:px-8 w-full max-w-[1440px] mx-auto">
+      <div className="shadow-xl card bg-base-100">
+        <div className="card-body">
+          <h2 className="mb-4 text-xl card-title sm:text-2xl">Contract Address Information</h2>
+          <p className="mb-4">
+            Address: <code className="bg-base-300 px-1 py-0.5 rounded">{address}</code>
+          </p>
+          <div className="alert alert-info">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="w-6 h-6 stroke-current shrink-0"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <div>
+              <h3 className="font-bold">Simplified Interface</h3>
+              <div className="text-sm">
+                In the Cloudflare environment, contract bytecode and assembly data cannot be loaded. Please use the
+                local development environment to view the full functionality.
+              </div>
+            </div>
+          </div>
+          <div className="mt-4">
+            <p className="font-semibold">
+              You can still use a block explorer to view more information about this address:
+            </p>
+            <a
+              href={`https://etherscan.io/address/${address}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 btn btn-sm btn-primary"
+            >
+              View on Etherscan
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default AddressPage;
