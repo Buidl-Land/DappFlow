@@ -6,7 +6,9 @@ import { useAccount } from "wagmi";
 import { mockProjects, mockTasks, mockUserParticipations, mockUserTasks } from "~~/data/mockData";
 
 const DashboardPage = () => {
-  const { address: connectedAddress } = useAccount();
+  const {
+    /* address: connectedAddress */
+  } = useAccount();
   const [activeTab, setActiveTab] = useState("projects");
 
   // Get projects the user has participated in

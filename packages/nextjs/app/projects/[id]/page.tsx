@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAccount } from "wagmi";
-import { Project, TaskStatus } from "~~/data/mockData";
+import {
+  /* Project, */
+  TaskStatus,
+} from "~~/data/mockData";
 import { mockProjects } from "~~/data/mockData";
 
 const TaskStatusBadge = ({ status }: { status: TaskStatus }) => {
@@ -27,7 +30,9 @@ type TabType = "details" | "roadmap" | "tasks";
 
 const ProjectDetails = () => {
   const { id } = useParams();
-  const { address: connectedAddress } = useAccount();
+  const {
+    /* address: connectedAddress */
+  } = useAccount();
   const [selectedToken, setSelectedToken] = useState("USDT");
   const [activeTab, setActiveTab] = useState<TabType>("details");
   const project = mockProjects.find(p => p.id === String(id));

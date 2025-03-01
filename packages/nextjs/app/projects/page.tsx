@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProjectCard } from "~~/components/shared/ProjectCard";
 import { mockProjects } from "~~/data/mockData";
@@ -8,7 +8,7 @@ import { mockProjects } from "~~/data/mockData";
 type ProjectFilter = "all" | "funding" | "tasks";
 type ProjectStatus = "all" | "active" | "completed";
 
-const ProjectsPage = () => {
+const ProjectsContent = () => {
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<ProjectFilter>((searchParams.get("filter") as ProjectFilter) || "all");
   const [status, setStatus] = useState<ProjectStatus>((searchParams.get("status") as ProjectStatus) || "all");
@@ -158,6 +158,14 @@ const ProjectsPage = () => {
         )}
       </div>
     </div>
+  );
+};
+
+const ProjectsPage = () => {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading projects...</div>}>
+      <ProjectsContent />
+    </Suspense>
   );
 };
 
