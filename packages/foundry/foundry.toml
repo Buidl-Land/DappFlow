@@ -14,13 +14,13 @@ remappings = [
 contracts = { contracts = ["*"] }
 
 [profile.default.compiler]
-solc_version = "0.8.27"
+solc_version = "0.8.19"
 evm_version = "london"
 optimizer = true
 optimizer_runs = 1000
 
 [profile.verify]
-solc_version = "0.8.27"
+solc_version = "0.8.19"
 optimizer = true
 optimizer_runs = 1000
 verifier = "blockscout"

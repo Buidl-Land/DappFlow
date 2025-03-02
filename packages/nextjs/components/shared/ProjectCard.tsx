@@ -19,6 +19,7 @@ interface Project {
   endDate: string;
   creator: string;
   tasks: Task[];
+  participants: { address: string; contribution: number }[];
 }
 
 export const ProjectCard = ({ project }: { project: Project }) => {
@@ -69,8 +70,8 @@ export const ProjectCard = ({ project }: { project: Project }) => {
           <div className="text-[10px] sm:text-xs opacity-70">Open Tasks</div>
         </div>
         <div>
-          <div className="text-base sm:text-lg font-bold">{totalTasks}</div>
-          <div className="text-[10px] sm:text-xs opacity-70">Total Tasks</div>
+          <div className="text-base sm:text-lg font-bold">{project.participants.length}</div>
+          <div className="text-[10px] sm:text-xs opacity-70">Backers</div>
         </div>
       </div>
 

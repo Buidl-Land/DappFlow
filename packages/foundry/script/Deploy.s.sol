@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
 import "../contracts/core/Diamond.sol";
@@ -19,11 +19,8 @@ import "../contracts/mocks/MockUSDC.sol";
  */
 contract DeployScript is ScaffoldETHDeploy {
     function run() external ScaffoldEthDeployerRunner {
-        // Set higher gas price and limit for faster confirmation
-        vm.txGasPrice(100000000000); // 10 gwei (降低了gas价格)
-        
         // Get deployer address from vm
-        (, address deployerAddress,) = vm.readCallers();
+        address deployerAddress = msg.sender;
 
         // Deploy DiamondCutFacet
         DiamondCutFacet diamondCutFacet = new DiamondCutFacet();
