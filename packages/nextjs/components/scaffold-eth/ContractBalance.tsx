@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { Address } from "viem";
 import { useAccount, useReadContract } from "wagmi";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import externalContracts from "~~/contracts/externalContracts";
 import { useDisplayUsdMode } from "~~/hooks/scaffold-eth/useDisplayUsdMode";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
 
 type ContractBalanceProps = {
@@ -24,12 +24,12 @@ export const ContractBalance = ({ className = "", usdMode }: ContractBalanceProp
   const [isError, setIsError] = useState(false);
   const nativeCurrencyPrice = useGlobalState(state => state.nativeCurrency.price);
   const isNativeCurrencyPriceFetching = useGlobalState(state => state.nativeCurrency.isFetching);
-  
+
   const { displayUsdMode, toggleDisplayUsdMode } = useDisplayUsdMode({ defaultUsdMode: usdMode });
 
   // 获取Aurora测试网上的SimpleTransaction合约
   const contractConfig = externalContracts[1313161555]?.SimpleTransaction;
-  
+
   const { data, refetch } = useReadContract({
     address: contractConfig?.address as Address,
     abi: contractConfig?.abi,
@@ -65,7 +65,7 @@ export const ContractBalance = ({ className = "", usdMode }: ContractBalanceProp
     fetchBalance();
     // 设置定时器，每10秒刷新一次余额
     const intervalId = setInterval(fetchBalance, 10000);
-    
+
     return () => clearInterval(intervalId);
   }, [userAddress, refetch]);
 
@@ -113,4 +113,4 @@ export const ContractBalance = ({ className = "", usdMode }: ContractBalanceProp
       </div>
     </button>
   );
-}; 
+};

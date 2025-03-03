@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Path to the Next.js cache
-const nextDir = path.join(__dirname, '.next');
-const manifestPath = path.join(nextDir, 'server', 'middleware-manifest.json');
-const buildManifestPath = path.join(nextDir, 'server', 'middleware-build-manifest.js');
-const tracePath = path.join(nextDir, 'trace');
+const nextDir = path.join(__dirname, ".next");
+const manifestPath = path.join(nextDir, "server", "middleware-manifest.json");
+const buildManifestPath = path.join(nextDir, "server", "middleware-build-manifest.js");
+const tracePath = path.join(nextDir, "trace");
 
-console.log('Attempting to remove problematic Next.js cache files...');
+console.log("Attempting to remove problematic Next.js cache files...");
 
 // Function to safely delete a file
 function safelyDeleteFile(filePath) {

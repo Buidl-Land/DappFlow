@@ -14,7 +14,7 @@ const nextConfig = {
     return config;
   },
   // Only enable static export for production builds, not for development
-  output: process.env.NODE_ENV === "production" ? 'export' : undefined,
+  output: process.env.NODE_ENV === "production" ? "export" : undefined,
   images: {
     unoptimized: true,
   },

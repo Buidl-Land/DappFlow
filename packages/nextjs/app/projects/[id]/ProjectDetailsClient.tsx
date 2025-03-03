@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Address } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
+import externalContracts from "~~/contracts/externalContracts";
 import { Project, TaskStatus } from "~~/data/mockData";
+import { useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import externalContracts from "~~/contracts/externalContracts";
 import { notification } from "~~/utils/scaffold-eth";
 
 // Component for rendering task status badges
@@ -35,23 +36,25 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
   const [isTransacting, setIsTransacting] = useState(false);
   const [currentRaisedAmount, setCurrentRaisedAmount] = useState(project.raisedAmount);
   const [contributionAmount, setContributionAmount] = useState<number>(100);
+  const { address } = useAccount();
   
+  // Commented out unused variable
+  // const targetNetwork = useTargetNetwork();
+  
+  const [investmentAmount, setInvestmentAmount] = useState("");
+
   // 获取合约交互所需的hooks
-  const { address: userAddress } = useAccount();
-  const { targetNetwork } = useTargetNetwork();
   const writeTxn = useTransactor();
   const { writeContractAsync } = useWriteContract();
 
- 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentRaisedAmount(prevAmount => {
-     
         const newAmount = prevAmount + 2000;
         return newAmount <= project.fundingGoal ? newAmount : project.fundingGoal;
       });
-    }, 150000); // 
- 
+    }, 150000); //
+
     return () => clearInterval(interval);
   }, [project.fundingGoal]);
 
@@ -66,7 +69,7 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
 
   // 处理"Back This Project"按钮点击事件
   const handleBackProject = async () => {
-    if (!userAddress) {
+    if (!address) {
       notification.error("Please connect your wallet first");
       return;
     }
@@ -83,7 +86,7 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
 
     try {
       setIsTransacting(true);
-      
+
       const makeWriteWithParams = () =>
         writeContractAsync({
           address: contractConfig.address as Address,
@@ -91,12 +94,12 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
           functionName: "executeTransaction",
           args: [],
         });
-      
+
       await writeTxn(makeWriteWithParams);
-      
+
       // 更新已筹集金额
       setCurrentRaisedAmount(prevAmount => Math.min(prevAmount + contributionAmount, project.fundingGoal));
-      
+
       notification.success("Transaction completed successfully!");
     } catch (error) {
       console.error("Transaction failed:", error);
@@ -110,7 +113,7 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
     details: (
       <div className="space-y-6">
         <p className="text-lg">{project.description}</p>
-        
+
         {project.id === "1" && (
           <div>
             <h3 className="mb-4 text-xl font-semibold">
@@ -147,12 +150,15 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
                 </div>
               </div>
               <p className="mt-4 text-sm italic">
-                This token model is designed to create a decentralized, community-driven ecosystem where AI agents and token holders collaboratively incubate and develop the project. Through transparent governance and dynamic staking mechanisms, we aim to break the monopoly of traditional VCs while ensuring sustainable value creation and equitable reward distribution for all participants.
+                This token model is designed to create a decentralized, community-driven ecosystem where AI agents and
+                token holders collaboratively incubate and develop the project. Through transparent governance and
+                dynamic staking mechanisms, we aim to break the monopoly of traditional VCs while ensuring sustainable
+                value creation and equitable reward distribution for all participants.
               </p>
             </div>
           </div>
         )}
-        
+
         <div>
           <h3 className="mb-4 text-xl font-semibold">
             <span className="material-icons text-primary text-sm align-text-bottom mr-1">description</span>
@@ -173,8 +179,9 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
                 Mission
               </h3>
               <p className="text-base">
-                The goal is to support African wildlife conservation efforts through a blockchain-based fundraising mechanism. 
-                By issuing a token (WCT), we aim to create a transparent and automated way for donors to contribute to wildlife protection.
+                The goal is to support African wildlife conservation efforts through a blockchain-based fundraising
+                mechanism. By issuing a token (WCT), we aim to create a transparent and automated way for donors to
+                contribute to wildlife protection.
               </p>
             </div>
 
@@ -185,27 +192,44 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
               </h3>
               <ol className="space-y-3 list-decimal list-inside">
                 <li className="text-base">
-                  <span className="font-semibold">Issuance of Tokens:</span> A fixed total supply of WCT tokens (100 million tokens) will be minted. 
-                  The tokens will be available for purchase through various channels, including crypto exchanges, directly from the project website, or via smart contracts.
+                  <span className="font-semibold">Issuance of Tokens:</span> A fixed total supply of WCT tokens (100
+                  million tokens) will be minted. The tokens will be available for purchase through various channels,
+                  including crypto exchanges, directly from the project website, or via smart contracts.
                 </li>
                 <li className="text-base">
-                  <span className="font-semibold">Smart Contract Setup:</span> Each WCT token will be linked to a smart contract that automates donations. 
-                  A percentage of every transaction (buy/sell) will be directed toward verified conservation organizations. 
-                  This can be set to auto-distribute funds to different projects within the ecosystem, depending on real-time data and conservation needs.
+                  <span className="font-semibold">Smart Contract Setup:</span> Each WCT token will be linked to a smart
+                  contract that automates donations. A percentage of every transaction (buy/sell) will be directed
+                  toward verified conservation organizations. This can be set to auto-distribute funds to different
+                  projects within the ecosystem, depending on real-time data and conservation needs.
                 </li>
                 <li className="text-base">
                   <span className="font-semibold">Token Utility:</span>
                   <ul className="pl-6 mt-2 space-y-2 list-disc">
-                    <li>Donor Engagement: Holders of WCT will receive updates about their contributions, along with detailed reports on the conservation projects funded by their donations.</li>
-                    <li>Incentives for Donors: Token holders can receive badges, rewards, or access to exclusive content (like behind-the-scenes footage of conservation projects or virtual wildlife experiences).</li>
-                    <li>Partnerships: Conservation organizations can partner with the project to receive automatic donations based on token transactions.</li>
+                    <li>
+                      Donor Engagement: Holders of WCT will receive updates about their contributions, along with
+                      detailed reports on the conservation projects funded by their donations.
+                    </li>
+                    <li>
+                      Incentives for Donors: Token holders can receive badges, rewards, or access to exclusive content
+                      (like behind-the-scenes footage of conservation projects or virtual wildlife experiences).
+                    </li>
+                    <li>
+                      Partnerships: Conservation organizations can partner with the project to receive automatic
+                      donations based on token transactions.
+                    </li>
                   </ul>
                 </li>
                 <li className="text-base">
                   <span className="font-semibold">Token Distribution:</span>
                   <ul className="pl-6 mt-2 space-y-2 list-disc">
-                    <li>Initial Token Distribution: Tokens will be distributed to early backers, wildlife experts, and conservation NGOs. A portion will be reserved for a public sale and community rewards.</li>
-                    <li>Charitable Donation Allocation: 80% of proceeds will go directly to animal conservation efforts. 10% will fund project development, and 10% will cover operational costs.</li>
+                    <li>
+                      Initial Token Distribution: Tokens will be distributed to early backers, wildlife experts, and
+                      conservation NGOs. A portion will be reserved for a public sale and community rewards.
+                    </li>
+                    <li>
+                      Charitable Donation Allocation: 80% of proceeds will go directly to animal conservation efforts.
+                      10% will fund project development, and 10% will cover operational costs.
+                    </li>
                   </ul>
                 </li>
               </ol>
@@ -225,23 +249,32 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
                 }`}
               >
                 {milestone.status === "completed" && (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-3 h-3 text-white"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 )}
               </div>
               {index < project.roadmap.length - 1 && (
-                <div className={`w-0.5 h-full ${
-                  milestone.status === "completed" ? "bg-success" : "bg-base-300"
-                }`} />
+                <div className={`w-0.5 h-full ${milestone.status === "completed" ? "bg-success" : "bg-base-300"}`} />
               )}
             </div>
             <div className="flex-1 pb-8">
               <div className="flex items-center mb-1">
                 <h3 className="font-semibold text-lg">{milestone.title}</h3>
-                <span className={`ml-3 px-2 py-0.5 text-xs rounded-full ${
-                  milestone.status === "completed" ? "bg-success/20 text-success" : "bg-base-300 text-base-content/70"
-                }`}>
+                <span
+                  className={`ml-3 px-2 py-0.5 text-xs rounded-full ${
+                    milestone.status === "completed" ? "bg-success/20 text-success" : "bg-base-300 text-base-content/70"
+                  }`}
+                >
                   {milestone.status === "completed" ? "Completed" : "Pending"}
                 </span>
               </div>
@@ -249,16 +282,27 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
               <div className="p-4 mt-2 rounded-lg bg-base-200/50 border border-base-300/50">
                 <h4 className="mb-2 font-medium text-sm">Key Deliverables:</h4>
                 <ul className="space-y-1 text-sm opacity-80 list-disc list-inside">
-                  {milestone.deliverables.split(', ').map((deliverable, i) => (
+                  {milestone.deliverables.split(", ").map((deliverable, i) => (
                     <li key={i}>{deliverable}</li>
                   ))}
                 </ul>
               </div>
               <div className="flex items-center mt-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-1 opacity-60" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4 mr-1 opacity-60"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                    clipRule="evenodd"
+                  />
                 </svg>
-                <span className="text-xs opacity-70">Target Completion: {new Date(milestone.deadline).toLocaleDateString()}</span>
+                <span className="text-xs opacity-70">
+                  Target Completion: {new Date(milestone.deadline).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
@@ -328,8 +372,11 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
               <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/40 before:via-secondary/40 before:to-accent/40 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
                 {/* 添加极光效果 */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse"></div>
-                <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDelay: '2s' }}></div>
-                
+                <div
+                  className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse"
+                  style={{ animationDelay: "2s" }}
+                ></div>
+
                 <div className="relative z-10">
                   <div className="flex flex-wrap gap-1 mb-3 sm:gap-2 sm:mb-4">
                     {project.tags.map(tag => (
@@ -338,11 +385,11 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
                       </span>
                     ))}
                   </div>
-                  <h1 className="mb-3 text-2xl font-bold sm:text-4xl sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">{project.title}</h1>
+                  <h1 className="mb-3 text-2xl font-bold sm:text-4xl sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
+                    {project.title}
+                  </h1>
                   <div className="flex flex-wrap gap-2 items-center sm:gap-4">
-                    <span className="text-xs opacity-70 sm:text-sm flex items-center">
-                      Created by
-                    </span>
+                    <span className="text-xs opacity-70 sm:text-sm flex items-center">Created by</span>
                     <button className="inline-flex items-center justify-center px-2 text-xs font-medium text-primary border border-primary rounded hover:bg-primary/10 h-5 leading-none">
                       Agent
                     </button>
@@ -453,7 +500,7 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
                         <option value="USDC">USDC</option>
                       </select>
                     </div>
-                    
+
                     <div className="form-control">
                       <label htmlFor="contribution-amount" className="mb-2 text-sm font-semibold sm:text-base">
                         <span className="material-icons text-primary text-sm align-text-bottom mr-1">payments</span>
@@ -472,11 +519,11 @@ export function ProjectDetailsClient({ project }: { project: Project }) {
                         <span className="ml-2 text-sm font-medium">{selectedToken}</span>
                       </div>
                     </div>
-                    
-                    <button 
-                      className="w-full btn btn-primary btn-sm sm:btn-md" 
+
+                    <button
+                      className="w-full btn btn-primary btn-sm sm:btn-md"
                       onClick={handleBackProject}
-                      disabled={isTransacting || !userAddress || !contributionAmount || contributionAmount <= 0}
+                      disabled={isTransacting || !address || !contributionAmount || contributionAmount <= 0}
                     >
                       {isTransacting ? (
                         <>

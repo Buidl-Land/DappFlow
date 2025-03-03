@@ -25,16 +25,19 @@ const DashboardPage = () => {
     return { ...userTask, task: taskDetails };
   });
 
-  // Calculate total tokens
-  const totalTokens = userParticipations.reduce((acc, participation) => acc + participation.tokenAmount, 0);
-
+  // Mock data for token statistics - used in UI display
+  const lockedTokens = 6000;
+  
+  // Commented out unused variables
+  // const totalTokens = userParticipations.reduce((acc, participation) => acc + participation.tokenAmount, 0);
+  
   // Calculate total unlocked tokens
-  const unlockedTokens = userParticipations.reduce((acc, participation) => {
-    const unlocked = participation.unlockSchedule
-      .filter(schedule => schedule.unlocked)
-      .reduce((sum, schedule) => sum + (participation.tokenAmount * schedule.percentage) / 100, 0);
-    return acc + unlocked;
-  }, 0);
+  // const unlockedTokens = userParticipations.reduce((acc, participation) => {
+  //   const unlocked = participation.unlockSchedule
+  //     .filter(schedule => schedule.unlocked)
+  //     .reduce((sum, schedule) => sum + (participation.tokenAmount * schedule.percentage) / 100, 0);
+  //   return acc + unlocked;
+  // }, 0);
 
   return (
     <div className="flex flex-col pt-20 min-h-screen sm:pt-24 animate-fade-in">
@@ -63,10 +66,16 @@ const DashboardPage = () => {
       <div className="container max-w-7xl px-6 mx-auto sm:px-8 md:px-12">
         <h1 className="mb-8 text-2xl font-bold sm:text-3xl sm:mb-10 flex items-center gap-4 relative">
           <div className="absolute -left-4 -top-4 w-16 h-16 bg-primary/10 rounded-full blur-xl"></div>
-          <span className="material-icons text-primary text-3xl sm:text-4xl relative z-10 bg-base-100 p-3 rounded-full shadow-sm border border-base-200">dashboard</span>
+          <span className="material-icons text-primary text-3xl sm:text-4xl relative z-10 bg-base-100 p-3 rounded-full shadow-sm border border-base-200">
+            dashboard
+          </span>
           <div className="flex items-center gap-3">
-            <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Dashboard</span>
-            <span className="text-xs sm:text-sm text-base-content/70 px-3 py-1 rounded-full bg-base-200/50 whitespace-nowrap">Manage Your Investments & Tasks</span>
+            <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Dashboard
+            </span>
+            <span className="text-xs sm:text-sm text-base-content/70 px-3 py-1 rounded-full bg-base-200/50 whitespace-nowrap">
+              Manage Your Investments & Tasks
+            </span>
           </div>
         </h1>
 
@@ -106,16 +115,16 @@ const DashboardPage = () => {
                   </div>
                   <h2 className="text-lg card-title sm:text-xl">Token Balance</h2>
                 </div>
-                
+
                 <div className="flex-1 flex flex-col justify-center items-center">
                   <p className="text-3xl font-bold sm:text-5xl mb-2">4,000</p>
                   <p className="text-xl font-medium sm:text-2xl opacity-80">/ 10,000</p>
                   <p className="text-sm opacity-80 sm:text-base mt-2">Unlocked / Total</p>
                 </div>
-                
+
                 <div className="mt-4 pt-4 border-t border-white/20">
                   <div className="w-full bg-white/10 rounded-full h-2.5">
-                    <div className="bg-white h-2.5 rounded-full" style={{ width: '40%' }}></div>
+                    <div className="bg-white h-2.5 rounded-full" style={{ width: "40%" }}></div>
                   </div>
                   <div className="flex justify-between mt-2 text-sm">
                     <span>40% Unlocked</span>
@@ -216,7 +225,9 @@ const DashboardPage = () => {
                       <div className="py-8 text-center rounded-lg sm:py-10 bg-base-200/50">
                         <span className="material-icons text-5xl text-primary/50 mb-3">account_balance</span>
                         <h3 className="mb-3 text-xl font-bold sm:text-2xl">No investments yet</h3>
-                        <p className="mb-5 text-sm opacity-80 sm:text-base">You haven&apos;t invested in any projects.</p>
+                        <p className="mb-5 text-sm opacity-80 sm:text-base">
+                          You haven&apos;t invested in any projects.
+                        </p>
                         <Link href="/projects" className="btn btn-primary btn-md sm:btn-lg gap-2">
                           <span className="material-icons text-base">search</span>
                           Browse Projects
@@ -248,8 +259,13 @@ const DashboardPage = () => {
                           <tbody>
                             {participatedProjects.flatMap(investment =>
                               investment.unlockSchedule.map((schedule, index) => (
-                                <tr key={`${investment.projectId}-${index}`} className="hover:bg-base-200/50 transition-colors">
-                                  <td className="text-sm sm:text-base">{new Date(schedule.date).toLocaleDateString()}</td>
+                                <tr
+                                  key={`${investment.projectId}-${index}`}
+                                  className="hover:bg-base-200/50 transition-colors"
+                                >
+                                  <td className="text-sm sm:text-base">
+                                    {new Date(schedule.date).toLocaleDateString()}
+                                  </td>
                                   <td className="text-sm sm:text-base truncate max-w-[120px] sm:max-w-none">
                                     {investment.project ? investment.project.title : "Unknown Project"}
                                   </td>
@@ -321,10 +337,10 @@ const DashboardPage = () => {
                                   } gap-1`}
                                 >
                                   <span className="material-icons text-xs">
-                                    {userTaskWithDetails.status === "completed" 
-                                      ? "check_circle" 
-                                      : userTaskWithDetails.status === "in_progress" 
-                                        ? "pending" 
+                                    {userTaskWithDetails.status === "completed"
+                                      ? "check_circle"
+                                      : userTaskWithDetails.status === "in_progress"
+                                        ? "pending"
                                         : "help"}
                                   </span>
                                   {userTaskWithDetails.status.replace("_", " ")}

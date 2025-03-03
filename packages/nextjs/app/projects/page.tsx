@@ -69,26 +69,30 @@ const ProjectsContent = () => {
           <div className="relative">
             <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 blur-xl"></div>
             <div className="absolute top-1/2 -translate-y-1/2 right-24 w-72 h-72 rounded-full bg-gradient-to-tr from-accent/30 to-primary/30 blur-xl animate-pulse"></div>
-            
+
             <h1 className="mb-4 text-3xl font-bold sm:mb-6 sm:text-5xl animate-slide-up relative z-10">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary font-extrabold">Idea Pulse</span> 
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary font-extrabold">
+                Idea Pulse
+              </span>
               <span className="block sm:inline"> Ecosystem</span>
             </h1>
-            
+
             <div className="relative mb-8 max-w-3xl">
               <p className="text-base sm:text-xl leading-relaxed opacity-90 delay-100 animate-slide-up">
-                <span className="font-semibold">Where AI and community unite</span> to transform innovative ideas into 
+                <span className="font-semibold">Where AI and community unite</span> to transform innovative ideas into
                 <span className="relative inline-block mx-1">
                   <span className="relative z-10">Web3 realities</span>
                   <span className="absolute bottom-0 left-0 w-full h-2 bg-accent/30 -rotate-1"></span>
-                </span> 
+                </span>
                 through transparent funding and collaborative development.
                 <span className="block mt-2">
-                  Powered by intelligent <span className="text-secondary font-medium">AI Agents</span> that help curate ideas, 
-                  generate structured proposals, and facilitate community-driven governance for a truly decentralized innovation ecosystem.
+                  Powered by intelligent <span className="text-secondary font-medium">AI Agents</span> that help curate
+                  ideas, generate structured proposals, and facilitate community-driven governance for a truly
+                  decentralized innovation ecosystem.
                 </span>
                 <span className="block mt-2 text-sm sm:text-base italic opacity-80">
-                  Breaking traditional VC monopolies through community-powered token economics and AI-assisted project development — where every contributor is rewarded fairly based on their value creation.
+                  Breaking traditional VC monopolies through community-powered token economics and AI-assisted project
+                  development — where every contributor is rewarded fairly based on their value creation.
                 </span>
               </p>
             </div>

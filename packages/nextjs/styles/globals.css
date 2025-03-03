@@ -5,13 +5,24 @@
 
 body {
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
 }
 
 /* Typography */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   margin-bottom: 0.5rem;
   line-height: 1.2;
   font-weight: 700;
@@ -202,8 +213,9 @@ p {
   }
   .card-hover:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(var(--color-primary-rgb), 0.1),
-                0 8px 10px -6px rgba(var(--color-primary-rgb), 0.1);
+    box-shadow:
+      0 10px 25px -5px rgba(var(--color-primary-rgb), 0.1),
+      0 8px 10px -6px rgba(var(--color-primary-rgb), 0.1);
   }
 
   /* Enhanced shadow effects */

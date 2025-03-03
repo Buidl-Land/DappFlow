@@ -2,8 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { hardhat } from "viem/chains";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
-import { HeartIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
 
 /**
  * Site footer

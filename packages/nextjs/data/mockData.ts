@@ -105,7 +105,8 @@ export const mockProjects: Project[] = [
       {
         id: "1-1",
         title: "Smart Contract Development",
-        description: "Develop and audit smart contracts for automated donation distribution to conservation organizations.",
+        description:
+          "Develop and audit smart contracts for automated donation distribution to conservation organizations.",
         reward: 5000,
         status: "open",
       },
@@ -141,7 +142,8 @@ export const mockProjects: Project[] = [
       {
         id: "1-6",
         title: "Tokenomics Design",
-        description: "Refine token utility, governance mechanisms, and economic incentives for long-term sustainability.",
+        description:
+          "Refine token utility, governance mechanisms, and economic incentives for long-term sustainability.",
         reward: 4500,
         status: "open",
       },
@@ -163,42 +165,49 @@ export const mockProjects: Project[] = [
     roadmap: [
       {
         title: "Research & Concept Development",
-        description: "Conduct market research, analyze existing conservation funding models, and develop the token economics framework",
+        description:
+          "Conduct market research, analyze existing conservation funding models, and develop the token economics framework",
         deliverables: "Market analysis report, Token economics whitepaper, Initial partnership strategy",
         deadline: "2025-03-01",
         status: "completed",
       },
       {
         title: "Smart Contract Development",
-        description: "Develop and audit the core smart contracts for token issuance and automated donation distribution",
-        deliverables: "ERC-20 token contract, Donation distribution contract, Technical documentation, Security audit report",
+        description:
+          "Develop and audit the core smart contracts for token issuance and automated donation distribution",
+        deliverables:
+          "ERC-20 token contract, Donation distribution contract, Technical documentation, Security audit report",
         deadline: "2025-03-25",
         status: "pending",
       },
       {
         title: "Platform Development & Testing",
         description: "Build the web platform for token purchase, donation tracking, and impact reporting",
-        deliverables: "Web application MVP, User dashboard, Conservation project profiles, Integration with wallet providers",
+        deliverables:
+          "Web application MVP, User dashboard, Conservation project profiles, Integration with wallet providers",
         deadline: "2025-04-10",
         status: "pending",
       },
       {
         title: "Launch & Initial Distribution",
-        description: "Launch the token and platform, begin initial distribution to early backers and conservation partners",
+        description:
+          "Launch the token and platform, begin initial distribution to early backers and conservation partners",
         deliverables: "Public launch event, Initial token distribution, Partnership announcements, Marketing campaign",
         deadline: "2025-04-25",
         status: "pending",
-      }
+      },
     ],
     updates: [
       {
         title: "Initial Research Completed",
-        content: "I've analyzed 15 conservation projects and identified key partnership opportunities with 3 major African wildlife organizations. Preparing outreach strategy now.",
+        content:
+          "I've analyzed 15 conservation projects and identified key partnership opportunities with 3 major African wildlife organizations. Preparing outreach strategy now.",
         date: "2025-03-01",
       },
       {
         title: "Partnership Intent Established",
-        content: "Received positive responses from 2 conservation organizations. They've expressed interest in our tokenization model. Drafting preliminary agreement terms.",
+        content:
+          "Received positive responses from 2 conservation organizations. They've expressed interest in our tokenization model. Drafting preliminary agreement terms.",
         date: "2025-03-02",
       },
     ],
@@ -297,17 +306,19 @@ export const mockProjects: Project[] = [
         deliverables: "Testnet deployment, Web application, Analytics dashboard, User documentation",
         deadline: "2025-04-15",
         status: "pending",
-      }
+      },
     ],
     updates: [
       {
         title: "Algorithm Research Completed",
-        content: "I've analyzed 8 existing lending protocols and identified optimization opportunities. The proposed interest rate model could improve efficiency by 15%.",
+        content:
+          "I've analyzed 8 existing lending protocols and identified optimization opportunities. The proposed interest rate model could improve efficiency by 15%.",
         date: "2025-02-10",
       },
       {
         title: "Security Framework Outlined",
-        content: "Completed preliminary security framework design. Identified 3 top audit firms for future review. Preparing technical specifications for smart contract development.",
+        content:
+          "Completed preliminary security framework design. Identified 3 top audit firms for future review. Preparing technical specifications for smart contract development.",
         date: "2025-02-25",
       },
     ],
@@ -412,17 +423,19 @@ export const mockProjects: Project[] = [
         deliverables: "Testnet deployment, Community forum, Discord server, Initial NFT distribution to early adopters",
         deadline: "2025-04-30",
         status: "pending",
-      }
+      },
     ],
     updates: [
       {
         title: "Game Mechanics Research",
-        content: "I've analyzed 12 successful NFT games and identified key engagement patterns. Recommending a hybrid play-to-earn model with focus on asset interoperability.",
+        content:
+          "I've analyzed 12 successful NFT games and identified key engagement patterns. Recommending a hybrid play-to-earn model with focus on asset interoperability.",
         date: "2025-02-05",
       },
       {
         title: "Technical Architecture Draft",
-        content: "Completed initial technical architecture for cross-chain NFT standard. Identified ERC-1155 as optimal base with custom extensions for cross-chain functionality.",
+        content:
+          "Completed initial technical architecture for cross-chain NFT standard. Identified ERC-1155 as optimal base with custom extensions for cross-chain functionality.",
         date: "2025-02-20",
       },
     ],

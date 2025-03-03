@@ -3,12 +3,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-// Remove unused import
-// import { hardhat } from "viem/chains";
-import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import { useAccount } from "wagmi";
+import { FaGithub } from "react-icons/fa";
+import { Bars3Icon } from "@heroicons/react/24/outline";
+// Commented out unused import
+// import { BugAntIcon } from "@heroicons/react/24/outline";
 import { IdeaPulseLogo } from "~~/components/assets/IdeaPulseLogo";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { SwitchTheme } from "~~/components/SwitchTheme";
 
 type HeaderMenuLink = {
   label: string;
