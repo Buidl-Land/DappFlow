@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 
 export const SwitchTheme = ({ className }: { className?: string }) => {
   const { setTheme, resolvedTheme } = useTheme();
@@ -13,9 +13,9 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
   const handleToggle = () => {
     if (isDarkMode) {
       setTheme("light");
-      return;
+    } else {
+      setTheme("dark");
     }
-    setTheme("dark");
   };
 
   useEffect(() => {
@@ -25,18 +25,18 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
   if (!mounted) return null;
 
   return (
-    <div className={`flex space-x-2 h-8 items-center justify-center text-sm ${className}`}>
-      <input
-        id="theme-toggle"
-        type="checkbox"
-        className="toggle toggle-primary bg-primary hover:bg-primary border-primary"
-        onChange={handleToggle}
-        checked={isDarkMode}
-      />
-      <label htmlFor="theme-toggle" className={`swap swap-rotate ${!isDarkMode ? "swap-active" : ""}`}>
-        <SunIcon className="swap-on h-5 w-5" />
-        <MoonIcon className="swap-off h-5 w-5" />
-      </label>
+    <div className={`flex items-center justify-center ${className}`}>
+      <button
+        onClick={handleToggle}
+        className="p-1.5 rounded-full transition-transform hover:scale-110 focus:outline-none"
+        aria-label={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
+      >
+        {isDarkMode ? (
+          <MoonIcon className="h-7 w-7 text-blue-300" />
+        ) : (
+          <SunIcon className="h-7 w-7 text-yellow-500" />
+        )}
+      </button>
     </div>
   );
 };

@@ -38,7 +38,7 @@ const ProjectsContent = () => {
   });
 
   return (
-    <div className="flex flex-col pt-24 min-h-screen animate-fade-in">
+    <div className="flex flex-col pt-16 min-h-screen animate-fade-in">
       {/* SVG Background */}
       <div className="fixed inset-0 z-[-1] opacity-5">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +64,7 @@ const ProjectsContent = () => {
       </div>
 
       {/* Header Section */}
-      <div className="w-full bg-gradient-to-b to-transparent from-base-200/50">
+      <div className="w-full bg-gradient-to-b to-transparent from-base-200/50 mt-0">
         <div className="px-4 py-8 mx-auto max-w-7xl sm:py-12">
           <div className="relative">
             <div className="absolute -top-6 -left-6 w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 blur-xl"></div>

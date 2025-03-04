@@ -50,8 +50,10 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive ? "font-medium bg-primary/20 text-primary" : ""
-              } hover:bg-primary/10 hover:shadow-md focus:!bg-primary/20 active:!text-neutral py-1.5 px-4 text-sm rounded-full gap-2 grid grid-flow-col transition-all duration-200`}
+                isActive 
+                  ? "font-medium bg-primary/20 text-primary dark:bg-primary/30 dark:text-white" 
+                  : "dark:text-gray-200"
+              } hover:bg-primary/10 dark:hover:bg-primary/20 hover:shadow-md focus:!bg-primary/20 active:!text-neutral py-1.5 px-4 text-sm rounded-full gap-2 grid grid-flow-col transition-all duration-200`}
             >
               {icon}
               <span>{label}</span>
@@ -94,7 +96,7 @@ export const Header = () => {
     <div
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         isScrolled ? "shadow-lg backdrop-blur-lg" : ""
-      } bg-indigo-100/90`}
+      } bg-indigo-100/90 dark:bg-gray-900/90`}
     >
       <div className="px-4 mx-auto max-w-7xl">
         <div className="flex justify-between items-center py-3">
@@ -102,7 +104,7 @@ export const Header = () => {
             <div className="dropdown" ref={burgerMenuRef}>
               <label
                 tabIndex={0}
-                className={`btn btn-ghost btn-sm sm:btn-md btn-circle ${isDrawerOpen ? "hover:bg-primary/20" : "hover:bg-transparent"} lg:hidden`}
+                className={`btn btn-ghost btn-sm sm:btn-md btn-circle ${isDrawerOpen ? "hover:bg-primary/20" : "hover:bg-transparent"} lg:hidden dark:text-gray-200`}
                 onClick={() => {
                   setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
                 }}
@@ -112,12 +114,20 @@ export const Header = () => {
               {isDrawerOpen && (
                 <ul
                   tabIndex={0}
-                  className="p-2 sm:p-4 mt-3 w-52 sm:w-60 shadow-lg backdrop-blur-lg menu menu-compact dropdown-content bg-indigo-100/90 rounded-box z-[100]"
+                  className="p-2 sm:p-4 mt-3 w-52 sm:w-60 shadow-lg backdrop-blur-lg menu menu-compact dropdown-content bg-indigo-100/90 dark:bg-gray-800/95 rounded-box z-[100] dark:text-gray-200"
                   onClick={() => {
                     setIsDrawerOpen(false);
                   }}
                 >
                   <HeaderMenuLinks />
+                  <li className="mt-2 p-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">切换主题</span>
+                      <div className="ml-2">
+                        <SwitchTheme />
+                      </div>
+                    </div>
+                  </li>
                 </ul>
               )}
             </div>
@@ -129,15 +139,18 @@ export const Header = () => {
                 <span className="text-sm sm:text-lg font-bold tracking-wide leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                   IdeaPulse
                 </span>
-                <span className="text-[8px] sm:text-xs tracking-widest opacity-75">INNOVATION HUB</span>
+                <span className="text-[8px] sm:text-xs tracking-widest opacity-75 dark:text-gray-300">INNOVATION HUB</span>
               </div>
             </Link>
-            <ul className="hidden gap-1 items-center ml-6 lg:flex">
+            <ul className="hidden gap-1 items-center ml-6 lg:flex dark:text-gray-200">
               <HeaderMenuLinks />
             </ul>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-3 items-center">
             <RainbowKitCustomConnectButton />
+            <div className="ml-2 z-10">
+              <SwitchTheme />
+            </div>
           </div>
         </div>
       </div>
