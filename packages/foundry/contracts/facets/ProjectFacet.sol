@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
-import "../libraries/ProjectCounters.sol";
+import "../libraries/Counters.sol";
 import "./AccessControlFacet.sol";
 
 contract ProjectFacet {
-    using ProjectCounters for ProjectCounters.Counter;
+    using Counters for Counters.Counter;
 
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("diamond.projects.storage");
 
@@ -39,7 +39,7 @@ contract ProjectFacet {
     }
 
     struct DiamondStorage {
-        ProjectCounters.Counter projectIds;
+        Counters.Counter projectIds;
         mapping(uint256 => Project) projects;
         mapping(address => uint256[]) userProjects;
     }

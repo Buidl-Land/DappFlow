@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "./DeployHelpers.s.sol";
 import "../contracts/core/Diamond.sol";
@@ -9,7 +9,15 @@ import "../contracts/facets/ProjectFacet.sol";
 import "../contracts/facets/CrowdfundingFacet.sol";
 import "../contracts/facets/ProjectTokenFacet.sol";
 import "../contracts/facets/TaskMarketFacet.sol";
-import "../contracts/mocks/MockUSDC.sol";
+import "../contracts/libraries/LibDiamond.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+// Mock token for testing purposes
+contract MockUSDC is ERC20 {
+    constructor() ERC20("Mock USDC", "mUSDC") {
+        _mint(msg.sender, 1000000 * 10**18);
+    }
+}
 
 /**
  * @notice Main deployment script for all contracts
@@ -20,7 +28,10 @@ import "../contracts/mocks/MockUSDC.sol";
 contract DeployScript is ScaffoldETHDeploy {
     function run() external ScaffoldEthDeployerRunner {
         // Get deployer address from vm
-        address deployerAddress = msg.sender;
+        (, address deployerAddress,) = vm.readCallers();
+        console.log("Deployer address:", deployerAddress);
+        console.log("tx.origin:", tx.origin);
+        console.log("msg.sender:", msg.sender);
 
         // Deploy DiamondCutFacet
         DiamondCutFacet diamondCutFacet = new DiamondCutFacet();
@@ -32,7 +43,6 @@ contract DeployScript is ScaffoldETHDeploy {
 
         console.log("Diamond deployed at:", address(diamond));
         console.log("DiamondCutFacet deployed at:", address(diamondCutFacet));
-        console.log("Deployer address:", deployerAddress);
 
         // Deploy Facets
         AccessControlFacet accessControlFacet = new AccessControlFacet();
@@ -40,6 +50,12 @@ contract DeployScript is ScaffoldETHDeploy {
         CrowdfundingFacet crowdfundingFacet = new CrowdfundingFacet();
         ProjectTokenFacet projectTokenFacet = new ProjectTokenFacet();
         TaskMarketFacet taskMarketFacet = new TaskMarketFacet();
+
+        // Deploy mock USDC for testing
+        MockUSDC mockUSDC = new MockUSDC();
+        deployments.push(Deployment("MockUSDC", address(mockUSDC)));
+        
+        console.log("Mock USDC deployed at:", address(mockUSDC));
 
         // Record deployments
         deployments.push(Deployment("AccessControlFacet", address(accessControlFacet)));
@@ -49,60 +65,149 @@ contract DeployScript is ScaffoldETHDeploy {
         deployments.push(Deployment("TaskMarketFacet", address(taskMarketFacet)));
 
         // Add facets to diamond
-        IDiamondCut.FacetCut[] memory cut = new IDiamondCut.FacetCut[](5);
+        console.log("Adding facets to diamond...");
+        addFacets(
+            address(diamond),
+            address(accessControlFacet),
+            address(projectFacet),
+            address(crowdfundingFacet),
+            address(projectTokenFacet),
+            address(taskMarketFacet)
+        );
+        console.log("Facets added successfully");
 
-        cut[0] = IDiamondCut.FacetCut({
-            facetAddress: address(accessControlFacet),
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: getAccessControlSelectors()
-        });
+        // Initialize AccessControl with both tx.origin and deployerAddress as admin
+        console.log("Initializing AccessControl...");
+        try AccessControlFacet(address(diamond)).initializeAccessControl(deployerAddress) {
+            console.log("AccessControl initialized with deployerAddress");
+        } catch Error(string memory reason) {
+            console.log("Failed to initialize AccessControl with deployerAddress:", reason);
+            
+            // 尝试使用tx.origin初始化
+            try AccessControlFacet(address(diamond)).initializeAccessControl(tx.origin) {
+                console.log("AccessControl initialized with tx.origin");
+            } catch Error(string memory reason) {
+                console.log("Failed to initialize AccessControl with tx.origin:", reason);
+            }
+        }
 
-        cut[1] = IDiamondCut.FacetCut({
-            facetAddress: address(projectFacet),
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: getProjectSelectors()
-        });
+        // 确保tx.origin也是管理员
+        if (tx.origin != deployerAddress) {
+            console.log("tx.origin and deployerAddress are different, adding tx.origin as admin");
+            try AccessControlFacet(address(diamond)).addAdmin(tx.origin) {
+                console.log("tx.origin added as admin");
+            } catch Error(string memory reason) {
+                console.log("Failed to add tx.origin as admin:", reason);
+            }
+        }
 
-        cut[2] = IDiamondCut.FacetCut({
-            facetAddress: address(crowdfundingFacet),
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: getCrowdfundingSelectors()
-        });
-
-        cut[3] = IDiamondCut.FacetCut({
-            facetAddress: address(projectTokenFacet),
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: getProjectTokenSelectors()
-        });
-
-        cut[4] = IDiamondCut.FacetCut({
-            facetAddress: address(taskMarketFacet),
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: getTaskMarketSelectors()
-        });
-
-        // Add facets to diamond
-        DiamondCutFacet(address(diamond)).diamondCut(cut, address(0), "");
-
-        // Initialize AccessControl with deployer as admin
-        AccessControlFacet(address(diamond)).initializeAccessControl(deployerAddress);
-
-        // Grant roles to deployer
+        // Grant roles to both deployerAddress and tx.origin
         bytes32 PROJECT_CREATOR_ROLE = AccessControlFacet(address(diamond)).PROJECT_CREATOR_ROLE();
         bytes32 TASK_CREATOR_ROLE = AccessControlFacet(address(diamond)).TASK_CREATOR_ROLE();
         bytes32 FUNDING_MANAGER_ROLE = AccessControlFacet(address(diamond)).FUNDING_MANAGER_ROLE();
 
-        AccessControlFacet(address(diamond)).grantRole(PROJECT_CREATOR_ROLE, deployerAddress);
-        AccessControlFacet(address(diamond)).grantRole(TASK_CREATOR_ROLE, deployerAddress);
-        AccessControlFacet(address(diamond)).grantRole(FUNDING_MANAGER_ROLE, deployerAddress);
+        console.log("Granting roles to deployerAddress...");
+        try AccessControlFacet(address(diamond)).grantRole(PROJECT_CREATOR_ROLE, deployerAddress) {
+            console.log("PROJECT_CREATOR_ROLE granted to deployerAddress");
+        } catch Error(string memory reason) {
+            console.log("Failed to grant PROJECT_CREATOR_ROLE to deployerAddress:", reason);
+        }
+
+        try AccessControlFacet(address(diamond)).grantRole(TASK_CREATOR_ROLE, deployerAddress) {
+            console.log("TASK_CREATOR_ROLE granted to deployerAddress");
+        } catch Error(string memory reason) {
+            console.log("Failed to grant TASK_CREATOR_ROLE to deployerAddress:", reason);
+        }
+
+        try AccessControlFacet(address(diamond)).grantRole(FUNDING_MANAGER_ROLE, deployerAddress) {
+            console.log("FUNDING_MANAGER_ROLE granted to deployerAddress");
+        } catch Error(string memory reason) {
+            console.log("Failed to grant FUNDING_MANAGER_ROLE to deployerAddress:", reason);
+        }
+
+        // 如果tx.origin和deployerAddress不同，也授予tx.origin角色
+        if (tx.origin != deployerAddress) {
+            console.log("Granting roles to tx.origin...");
+            try AccessControlFacet(address(diamond)).grantRole(PROJECT_CREATOR_ROLE, tx.origin) {
+                console.log("PROJECT_CREATOR_ROLE granted to tx.origin");
+            } catch Error(string memory reason) {
+                console.log("Failed to grant PROJECT_CREATOR_ROLE to tx.origin:", reason);
+            }
+
+            try AccessControlFacet(address(diamond)).grantRole(TASK_CREATOR_ROLE, tx.origin) {
+                console.log("TASK_CREATOR_ROLE granted to tx.origin");
+            } catch Error(string memory reason) {
+                console.log("Failed to grant TASK_CREATOR_ROLE to tx.origin:", reason);
+            }
+
+            try AccessControlFacet(address(diamond)).grantRole(FUNDING_MANAGER_ROLE, tx.origin) {
+                console.log("FUNDING_MANAGER_ROLE granted to tx.origin");
+            } catch Error(string memory reason) {
+                console.log("Failed to grant FUNDING_MANAGER_ROLE to tx.origin:", reason);
+            }
+        }
+
+        // Initialize TaskMarket
+        console.log("Initializing TaskMarket...");
+        try TaskMarketFacet(address(diamond)).initialize(address(mockUSDC)) {
+            console.log("TaskMarket initialized");
+        } catch Error(string memory reason) {
+            console.log("Failed to initialize TaskMarket:", reason);
+        }
 
         console.log("All facets deployed and initialized");
+    }
 
-        // Deploy mock tokens for testing
-        MockUSDC mockUSDC = new MockUSDC();
-        deployments.push(Deployment("MockUSDC", address(mockUSDC)));
-        
-        console.log("Mock USDC deployed at:", address(mockUSDC));
+    function addFacets(
+        address _diamond,
+        address _accessControlFacet,
+        address _projectFacet,
+        address _crowdfundingFacet,
+        address _projectTokenFacet,
+        address _taskMarketFacet
+    ) internal {
+        // Create arrays of function selectors for each facet
+        bytes4[] memory accessControlSelectors = getAccessControlSelectors();
+        bytes4[] memory projectSelectors = getProjectSelectors();
+        bytes4[] memory crowdfundingSelectors = getCrowdfundingSelectors();
+        bytes4[] memory projectTokenSelectors = getProjectTokenSelectors();
+        bytes4[] memory taskMarketSelectors = getTaskMarketSelectors();
+
+        // Create FacetCut array
+        IDiamondCut.FacetCut[] memory cut = new IDiamondCut.FacetCut[](5);
+
+        cut[0] = IDiamondCut.FacetCut({
+            facetAddress: _accessControlFacet,
+            action: IDiamondCut.FacetCutAction.Add,
+            functionSelectors: accessControlSelectors
+        });
+
+        cut[1] = IDiamondCut.FacetCut({
+            facetAddress: _projectFacet,
+            action: IDiamondCut.FacetCutAction.Add,
+            functionSelectors: projectSelectors
+        });
+
+        cut[2] = IDiamondCut.FacetCut({
+            facetAddress: _crowdfundingFacet,
+            action: IDiamondCut.FacetCutAction.Add,
+            functionSelectors: crowdfundingSelectors
+        });
+
+        cut[3] = IDiamondCut.FacetCut({
+            facetAddress: _projectTokenFacet,
+            action: IDiamondCut.FacetCutAction.Add,
+            functionSelectors: projectTokenSelectors
+        });
+
+        cut[4] = IDiamondCut.FacetCut({
+            facetAddress: _taskMarketFacet,
+            action: IDiamondCut.FacetCutAction.Add,
+            functionSelectors: taskMarketSelectors
+        });
+
+        // Add facets to diamond
+        DiamondCutFacet(_diamond).diamondCut(cut, address(0), "");
     }
 
     // Define selectors for each facet

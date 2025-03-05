@@ -6,7 +6,7 @@ fs_permissions = [{ access = "read-write", path = "./"}]
 via_ir = true  # Enable the new IR-based code generator
 remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
-    "solidity-bytes-utils/=lib/solidity-bytes-utils/contracts/"
+    "solidity-bytes-utils/=lib/solidity-bytes-utils/"
 ]
 
 # Solidity compiler settings
@@ -14,13 +14,13 @@ remappings = [
 contracts = { contracts = ["*"] }
 
 [profile.default.compiler]
-solc_version = "0.8.19"
+solc_version = "0.8.27"
 evm_version = "london"
 optimizer = true
 optimizer_runs = 1000
 
 [profile.verify]
-solc_version = "0.8.19"
+solc_version = "0.8.27"
 optimizer = true
 optimizer_runs = 1000
 verifier = "blockscout"
