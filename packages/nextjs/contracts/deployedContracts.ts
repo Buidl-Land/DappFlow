@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   545: {
     DiamondCutFacet: {
-      address: "0x08859f3cb1fff723e64ae122a82a30c133894842",
+      address: "0xc02cfaca84129c2c03624820fe34eac859b77083",
       abi: [
         {
           type: "function",
@@ -93,11 +93,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
     Diamond: {
-      address: "0xc02cfaca84129c2c03624820fe34eac859b77083",
+      address: "0xf1d5891b307bfa9a53d5895668a82b68c24b7e31",
       abi: [
         {
           type: "constructor",
@@ -186,11 +186,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
     AccessControlFacet: {
-      address: "0xf1d5891b307bfa9a53d5895668a82b68c24b7e31",
+      address: "0x78d69b412af2d2d7da74dcad6efb3017c526e89d",
       abi: [
         {
           type: "function",
@@ -465,11 +465,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
     ProjectFacet: {
-      address: "0x78d69b412af2d2d7da74dcad6efb3017c526e89d",
+      address: "0x4755b74cea90eb0e1252f67227ec64f67471baf7",
       abi: [
         {
           type: "function",
@@ -854,11 +854,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
     CrowdfundingFacet: {
-      address: "0x4755b74cea90eb0e1252f67227ec64f67471baf7",
+      address: "0x1d7f1e33b1ff2ced8ef5d6695d02e3a7ea156fe3",
       abi: [
         {
           type: "function",
@@ -1134,11 +1134,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
     ProjectTokenFacet: {
-      address: "0x1d7f1e33b1ff2ced8ef5d6695d02e3a7ea156fe3",
+      address: "0x7849a4af81175c831fc4da8a3501da6d6aea153e",
       abi: [
         {
           type: "function",
@@ -1355,11 +1355,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
     TaskMarketFacet: {
-      address: "0x7849a4af81175c831fc4da8a3501da6d6aea153e",
+      address: "0x9013267fe77c3e233ad7f746b163f760fdda6a50",
       abi: [
         {
           type: "function",
@@ -1818,28 +1818,907 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160441.json",
       deploymentScript: "Deploy.s.sol",
     },
-    MockUSDC: {
-      address: "0x70a70c7907194555c9c3f927009db5b6d6ef8ea4",
+  },
+  10143: {
+    DiamondCutFacet: {
+      address: "0x986323916eebef9b6d208f0464cbf0e0cc46708d",
       abi: [
         {
-          type: "constructor",
-          inputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
           type: "function",
-          name: "allowance",
+          name: "diamondCut",
           inputs: [
             {
-              name: "owner",
+              name: "_diamondCut",
+              type: "tuple[]",
+              internalType: "struct IDiamondCut.FacetCut[]",
+              components: [
+                {
+                  name: "facetAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "action",
+                  type: "uint8",
+                  internalType: "enum IDiamondCut.FacetCutAction",
+                },
+                {
+                  name: "functionSelectors",
+                  type: "bytes4[]",
+                  internalType: "bytes4[]",
+                },
+              ],
+            },
+            {
+              name: "_init",
               type: "address",
               internalType: "address",
             },
             {
-              name: "spender",
+              name: "_calldata",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "DiamondCut",
+          inputs: [
+            {
+              name: "_diamondCut",
+              type: "tuple[]",
+              indexed: false,
+              internalType: "struct IDiamondCut.FacetCut[]",
+              components: [
+                {
+                  name: "facetAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "action",
+                  type: "uint8",
+                  internalType: "enum IDiamondCut.FacetCutAction",
+                },
+                {
+                  name: "functionSelectors",
+                  type: "bytes4[]",
+                  internalType: "bytes4[]",
+                },
+              ],
+            },
+            {
+              name: "_init",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "_calldata",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1741160622.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    Diamond: {
+      address: "0xbe59257f2b60900c3fca123dd0f91c5c1eb98501",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_contractOwner",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_diamondCutFacet",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "payable",
+        },
+        {
+          type: "fallback",
+          stateMutability: "payable",
+        },
+        {
+          type: "receive",
+          stateMutability: "payable",
+        },
+        {
+          type: "event",
+          name: "DiamondCut",
+          inputs: [
+            {
+              name: "_diamondCut",
+              type: "tuple[]",
+              indexed: false,
+              internalType: "struct IDiamondCut.FacetCut[]",
+              components: [
+                {
+                  name: "facetAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "action",
+                  type: "uint8",
+                  internalType: "enum IDiamondCut.FacetCutAction",
+                },
+                {
+                  name: "functionSelectors",
+                  type: "bytes4[]",
+                  internalType: "bytes4[]",
+                },
+              ],
+            },
+            {
+              name: "_init",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "_calldata",
+              type: "bytes",
+              indexed: false,
+              internalType: "bytes",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1741160622.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    AccessControlFacet: {
+      address: "0x3d3411c5fecb1e4d0e2ab65832e94e0e6eb9eed3",
+      abi: [
+        {
+          type: "function",
+          name: "ADMIN_ROLE",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "AI_AGENT_ROLE",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "FUNDING_MANAGER_ROLE",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "PROJECT_CREATOR_ROLE",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "TASK_CREATOR_ROLE",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "addAdmin",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "grantRole",
+          inputs: [
+            {
+              name: "role",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "hasRole",
+          inputs: [
+            {
+              name: "role",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "initializeAccessControl",
+          inputs: [
+            {
+              name: "initialAdmin",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "isAdmin",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "removeAdmin",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "revokeRole",
+          inputs: [
+            {
+              name: "role",
+              type: "bytes32",
+              internalType: "bytes32",
+            },
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "AdminAdded",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "sender",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "AdminRemoved",
+          inputs: [
+            {
+              name: "admin",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "sender",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RoleGranted",
+          inputs: [
+            {
+              name: "role",
+              type: "bytes32",
+              indexed: true,
+              internalType: "bytes32",
+            },
+            {
+              name: "account",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "sender",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RoleRevoked",
+          inputs: [
+            {
+              name: "role",
+              type: "bytes32",
+              indexed: true,
+              internalType: "bytes32",
+            },
+            {
+              name: "account",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "sender",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1741160622.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    ProjectFacet: {
+      address: "0x5e2eac26ee244e6f17a9370bd9e7448654089581",
+      abi: [
+        {
+          type: "function",
+          name: "createProject",
+          inputs: [
+            {
+              name: "title",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "description",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "tags",
+              type: "string[]",
+              internalType: "string[]",
+            },
+            {
+              name: "metadata",
+              type: "tuple",
+              internalType: "struct ProjectFacet.ProjectMetadata",
+              components: [
+                {
+                  name: "aiEvaluation",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "marketScore",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "techFeasibility",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "minValuation",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "maxValuation",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getProject",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "id",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "creator",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "title",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "description",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "tags",
+              type: "string[]",
+              internalType: "string[]",
+            },
+            {
+              name: "metadata",
+              type: "tuple",
+              internalType: "struct ProjectFacet.ProjectMetadata",
+              components: [
+                {
+                  name: "aiEvaluation",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "marketScore",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "techFeasibility",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "minValuation",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "maxValuation",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+            {
+              name: "status",
+              type: "uint8",
+              internalType: "enum ProjectFacet.ProjectStatus",
+            },
+            {
+              name: "createdAt",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "updatedAt",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getProjectCount",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUserProjects",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isProjectOwner",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "updateProject",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "title",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "description",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "tags",
+              type: "string[]",
+              internalType: "string[]",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "updateProjectMetadata",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "metadata",
+              type: "tuple",
+              internalType: "struct ProjectFacet.ProjectMetadata",
+              components: [
+                {
+                  name: "aiEvaluation",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "marketScore",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "techFeasibility",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "minValuation",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "maxValuation",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+              ],
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "updateProjectStatus",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "newStatus",
+              type: "uint8",
+              internalType: "enum ProjectFacet.ProjectStatus",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "ProjectCreated",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "creator",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "title",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "ProjectStatusChanged",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "oldStatus",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum ProjectFacet.ProjectStatus",
+            },
+            {
+              name: "newStatus",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum ProjectFacet.ProjectStatus",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "ProjectUpdated",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "title",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "status",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum ProjectFacet.ProjectStatus",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1741160622.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    CrowdfundingFacet: {
+      address: "0x71c7932ce8367d4a20ca9702e68bb7c0a72e934b",
+      abi: [
+        {
+          type: "function",
+          name: "claimRefund",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "contribute",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getContribution",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "contributor",
               type: "address",
               internalType: "address",
             },
@@ -1855,15 +2734,120 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "approve",
+          name: "getFundingInfo",
           inputs: [
             {
-              name: "spender",
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "fundingGoal",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "raisedAmount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "startTime",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "endTime",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "hasMetFundingGoal",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "paymentToken",
               type: "address",
               internalType: "address",
             },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getRaisedAmount",
+          inputs: [
             {
-              name: "value",
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUserContributions",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "initializeFunding",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "fundingGoal",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "duration",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "paymentToken",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "isFunded",
+          inputs: [
+            {
+              name: "projectId",
               type: "uint256",
               internalType: "uint256",
             },
@@ -1875,12 +2859,154 @@ const deployedContracts = {
               internalType: "bool",
             },
           ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "ContributionMade",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "contributor",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "FundingFailed",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "totalRaised",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "FundingSuccessful",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "totalRaised",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "RefundClaimed",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "contributor",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1741160622.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    ProjectTokenFacet: {
+      address: "0x74f09a500616b01fb9927fa53aec71b57683de2a",
+      abi: [
+        {
+          type: "function",
+          name: "claimTokens",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
           stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "balanceOf",
+          name: "createProjectToken",
           inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "name",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "symbol",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "totalSupply",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getClaimedAmount",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
             {
               name: "account",
               type: "address",
@@ -1898,96 +3024,83 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "decimals",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint8",
-              internalType: "uint8",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "name",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "symbol",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "totalSupply",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "transfer",
+          name: "getProjectToken",
           inputs: [
             {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "value",
+              name: "projectId",
               type: "uint256",
               internalType: "uint256",
             },
           ],
           outputs: [
             {
-              name: "",
-              type: "bool",
-              internalType: "bool",
+              name: "tokenAddress",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "totalSupply",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "crowdfundingPool",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "teamPool",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "ecosystemPool",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "vestingStart",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "vestingDuration",
+              type: "uint256",
+              internalType: "uint256",
             },
           ],
-          stateMutability: "nonpayable",
+          stateMutability: "view",
         },
         {
           type: "function",
-          name: "transferFrom",
+          name: "getTokenContribution",
           inputs: [
             {
-              name: "from",
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "contributor",
               type: "address",
               internalType: "address",
             },
+          ],
+          outputs: [
             {
-              name: "to",
-              type: "address",
-              internalType: "address",
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
             },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getTokenRaisedAmount",
+          inputs: [
             {
-              name: "value",
+              name: "projectId",
               type: "uint256",
               internalType: "uint256",
             },
@@ -1995,157 +3108,540 @@ const deployedContracts = {
           outputs: [
             {
               name: "",
-              type: "bool",
-              internalType: "bool",
+              type: "uint256",
+              internalType: "uint256",
             },
           ],
-          stateMutability: "nonpayable",
+          stateMutability: "view",
         },
         {
           type: "event",
-          name: "Approval",
+          name: "ProjectTokenCreated",
           inputs: [
             {
-              name: "owner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "spender",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "value",
+              name: "projectId",
               type: "uint256",
-              indexed: false,
+              indexed: true,
               internalType: "uint256",
+            },
+            {
+              name: "tokenAddress",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "name",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "symbol",
+              type: "string",
+              indexed: false,
+              internalType: "string",
             },
           ],
           anonymous: false,
         },
         {
           type: "event",
-          name: "Transfer",
+          name: "TokensClaimed",
           inputs: [
             {
-              name: "from",
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "beneficiary",
               type: "address",
               indexed: true,
               internalType: "address",
             },
             {
-              name: "to",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "value",
+              name: "amount",
               type: "uint256",
               indexed: false,
               internalType: "uint256",
             },
           ],
           anonymous: false,
-        },
-        {
-          type: "error",
-          name: "ERC20InsufficientAllowance",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "allowance",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "needed",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InsufficientBalance",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "balance",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "needed",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidApprover",
-          inputs: [
-            {
-              name: "approver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidReceiver",
-          inputs: [
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidSender",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidSpender",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741150234.json",
+      deploymentFile: "run-1741160622.json",
+      deploymentScript: "Deploy.s.sol",
+    },
+    TaskMarketFacet: {
+      address: "0xfb1bbfe788f960455d646683f3e333a06f84a4cd",
+      abi: [
+        {
+          type: "function",
+          name: "applyForTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "assignTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "assignee",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "completeTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "createTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "title",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "description",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "reward",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "deadline",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "requiredSkills",
+              type: "string[]",
+              internalType: "string[]",
+            },
+            {
+              name: "estimatedHours",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getProjectTaskCount",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "title",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "description",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "reward",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "deadline",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "status",
+              type: "uint8",
+              internalType: "enum TaskMarketFacet.TaskStatus",
+            },
+            {
+              name: "requiredSkills",
+              type: "string[]",
+              internalType: "string[]",
+            },
+            {
+              name: "estimatedHours",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "assignee",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "createdAt",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "completedAt",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUserTasks",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "hasApplied",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "initialize",
+          inputs: [
+            {
+              name: "_paymentToken",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "startTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "verifyTask",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "TaskApplicationSubmitted",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "applicant",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TaskAssigned",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "assignee",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TaskCompleted",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "assignee",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TaskCreated",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "title",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "reward",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "requiredSkills",
+              type: "string[]",
+              indexed: false,
+              internalType: "string[]",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TaskUpdated",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "status",
+              type: "uint8",
+              indexed: false,
+              internalType: "enum TaskMarketFacet.TaskStatus",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TaskVerified",
+          inputs: [
+            {
+              name: "projectId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "taskId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "reward",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deploymentFile: "run-1741160622.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
   31337: {
     DiamondCutFacet: {
-      address: "0x0013e6a541bc3404a2ac011b3fa04745db59b152",
+      address: "0xfcf5d7038cc2af1f746f8453d793a4846761425d",
       abi: [
         {
           type: "function",
@@ -2231,11 +3727,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
     Diamond: {
-      address: "0x0c6dfc4caea99676d684e5b654ea39120271ab0b",
+      address: "0x289a5ed5f9046cb68d447591c9d50cf44d692ed9",
       abi: [
         {
           type: "constructor",
@@ -2324,11 +3820,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
     AccessControlFacet: {
-      address: "0x29226a0b6233d639392cfa97950fe8fb1e9cec50",
+      address: "0x98c628e05602707ee7055106c8664248c33da258",
       abi: [
         {
           type: "function",
@@ -2603,11 +4099,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
     ProjectFacet: {
-      address: "0x99e9de2a09005b54736c46a3a082fe957ebca8d4",
+      address: "0xe423a3ea92626aabb87d09cc6305a2d743420c8c",
       abi: [
         {
           type: "function",
@@ -2992,11 +4488,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
     CrowdfundingFacet: {
-      address: "0x0a59d3cc37f0da7a62bf49e0e64350373ebca8a0",
+      address: "0x5fb55823e665d7a33f8a7f587bf04f8b93e9ec8b",
       abi: [
         {
           type: "function",
@@ -3272,11 +4768,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
     ProjectTokenFacet: {
-      address: "0x7513a880b617be0ec7003b8c9f3bdc4e36368671",
+      address: "0x76bbf7c16824714fef94b7cab2adec66c910a388",
       abi: [
         {
           type: "function",
@@ -3493,11 +4989,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
     TaskMarketFacet: {
-      address: "0x83fea8a34df63e96433dc4fb19fb89aa8c2542b7",
+      address: "0x0213913b69492b4a90f3625cd5286ec64eee9d12",
       abi: [
         {
           type: "function",
@@ -3956,547 +5452,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
-      deploymentScript: "Deploy.s.sol",
-    },
-    MockUSDC: {
-      address: "0xc0ba65f33e6125a0970678ca3f0419eee1f7c9db",
-      abi: [
-        {
-          type: "constructor",
-          inputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "allowance",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "approve",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "balanceOf",
-          inputs: [
-            {
-              name: "account",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "decimals",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint8",
-              internalType: "uint8",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "name",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "symbol",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "totalSupply",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "transfer",
-          inputs: [
-            {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "transferFrom",
-          inputs: [
-            {
-              name: "from",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "event",
-          name: "Approval",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "spender",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "Transfer",
-          inputs: [
-            {
-              name: "from",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "to",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "value",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "error",
-          name: "ERC20InsufficientAllowance",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "allowance",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "needed",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InsufficientBalance",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "balance",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "needed",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidApprover",
-          inputs: [
-            {
-              name: "approver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidReceiver",
-          inputs: [
-            {
-              name: "receiver",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidSender",
-          inputs: [
-            {
-              name: "sender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-        {
-          type: "error",
-          name: "ERC20InvalidSpender",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-        },
-      ],
-      inheritedFunctions: {},
-      deploymentFile: "run-1741163181.json",
-      deploymentScript: "Deploy.s.sol",
-    },
-    MockUSDCFacet: {
-      address: "0xa3bc2edb1aa9192247ee24f4cee872dee819ee5a",
-      abi: [
-        {
-          type: "function",
-          name: "allowance",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "approve",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "balanceOf",
-          inputs: [
-            {
-              name: "account",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "decimals",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint8",
-              internalType: "uint8",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getMockUSDCAddress",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "name",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "setMockUSDCAddress",
-          inputs: [
-            {
-              name: "_mockUSDCAddress",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "symbol",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "totalSupply",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "transfer",
-          inputs: [
-            {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "transferFrom",
-          inputs: [
-            {
-              name: "from",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "to",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "event",
-          name: "MockUSDCAddressSet",
-          inputs: [
-            {
-              name: "mockUSDCAddress",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-          ],
-          anonymous: false,
-        },
-      ],
-      inheritedFunctions: {},
-      deploymentFile: "run-1741151122.json",
+      deploymentFile: "run-1741179985.json",
       deploymentScript: "Deploy.s.sol",
     },
   },

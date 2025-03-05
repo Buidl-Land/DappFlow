@@ -1,4 +1,5 @@
 import { DebugContracts } from "./_components/DebugContracts";
+import Link from "next/link";
 import type { NextPage } from "next";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
@@ -9,9 +10,9 @@ export const metadata = getMetadata({
 
 const Debug: NextPage = () => {
   return (
-    <div className="pt-16 sm:pt-20">
+    <>
       <DebugContracts />
-      <div className="text-center mt-8 bg-secondary p-10">
+      <div className="text-center mt-12 lg:mt-16 bg-secondary p-10">
         <h1 className="text-4xl my-0">Debug Contracts</h1>
         <p className="text-neutral">
           You can debug & interact with your deployed contracts here.
@@ -20,8 +21,16 @@ const Debug: NextPage = () => {
             packages / nextjs / app / debug / page.tsx
           </code>{" "}
         </p>
+        <div className="mt-8">
+          <Link href="/debug/diamond" className="btn btn-primary">
+            Debug Diamond Contract
+          </Link>
+          <p className="mt-2 text-sm">
+            Use the Diamond Contract Debug page to interact directly with the Diamond contract and all its facets
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
