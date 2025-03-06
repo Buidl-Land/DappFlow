@@ -7,7 +7,7 @@ import { Contract } from "~~/utils/scaffold-eth/contract";
 import { getAllWriteMethods, getFunctionAbiByName, useFacetsAbi } from "./utilsDiamond";
 
 // 定义每个分类包含的方法
-const categoryMethods: Record<Exclude<FacetCategory, "all">, string[]> = {
+const categoryMethods: Record<Exclude<FacetCategory, "all" | "mockusdc">, string[]> = {
   accessControl: [
     "grantRole", 
     "revokeRole", 
@@ -99,6 +99,9 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
       // 根据活动分类过滤方法
       if (activeCategory === "all") {
         setWriteMethods(allMethods);
+      } else if (activeCategory === "mockusdc") {
+        // MockUSDC在DiamondContractUI中直接处理
+        setWriteMethods([]);
       } else {
         // 首先尝试使用预定义的分类
         const predefinedMethods = categoryMethods[activeCategory];
@@ -122,15 +125,15 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
   }, [diamondContractData, combinedAbi, activeCategory, isLoading]);
 
   if (isLoading) {
-    return <p className="text-gray-500">Loading contract methods...</p>;
+    return <p className="text-gray-500">加载合约方法中...</p>;
   }
 
   if (error) {
     return (
       <div className="text-red-500">
-        <p>Error: {error}</p>
+        <p>错误: {error}</p>
         <p className="text-sm mt-2">
-          Please make sure all contracts are properly deployed and configured in deployedContracts.ts
+          请确保所有合约都已正确部署并在deployedContracts.ts中配置
         </p>
       </div>
     );
@@ -140,12 +143,12 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
     if (availableMethods.length > 0) {
       return (
         <div className="text-gray-500 italic">
-          <p>No write methods available for this category.</p>
-          <p className="mt-2">Available write methods: {availableMethods.join(", ")}</p>
+          <p>此分类没有可用的写入方法。</p>
+          <p className="mt-2">可用的写入方法: {availableMethods.join(", ")}</p>
         </div>
       );
     }
-    return <p className="text-gray-500 italic">No write methods available</p>;
+    return <p className="text-gray-500 italic">没有可用的写入方法</p>;
   }
 
   return (

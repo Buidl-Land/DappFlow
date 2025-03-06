@@ -7,13 +7,16 @@ import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { DiamondReadMethods } from "./DiamondReadMethods";
 import { DiamondWriteMethods } from "./DiamondWriteMethods";
+import { ReadOnlyFunctionForm } from "./ReadOnlyFunctionForm";
+import { WriteOnlyFunctionForm } from "./WriteOnlyFunctionForm";
 import { useFacetsAbi } from "./utilsDiamond";
+import externalContracts from "~~/contracts/externalContracts";
 
 type DiamondContractUIProps = {
   className?: string;
 };
 
-export type FacetCategory = "all" | "accessControl" | "project" | "crowdfunding" | "taskMarket" | "projectToken";
+export type FacetCategory = "all" | "accessControl" | "project" | "crowdfunding" | "taskMarket" | "projectToken" | "mockusdc";
 
 /**
  * UI component to interface with the Diamond contract and its facets.
@@ -29,6 +32,10 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
   const networkColor = useNetworkColor();
   const [showAbiError, setShowAbiError] = useState(false);
   const [forceReload, setForceReload] = useState(false);
+
+  // 获取外部合约数据
+  const chainId = targetNetwork.id;
+  const mockUsdcData = externalContracts[chainId as keyof typeof externalContracts]?.["MockUSDC"];
 
   // 检查ABI是否有效
   const hasValidAbi = combinedAbi && combinedAbi.length > 0;
@@ -87,6 +94,9 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
     { id: "taskMarket", name: "Task Market", description: "Task creation, assignment and completion" },
     { id: "projectToken", name: "Project Token", description: "Project token creation and distribution" }
   ];
+
+  // 检查是否有MockUSDC合约
+  const hasMockUsdc = !!mockUsdcData;
 
   return (
     <div className={`grid grid-cols-1 lg:grid-cols-6 px-6 lg:px-10 lg:gap-12 w-full max-w-7xl my-0 ${className}`}>
@@ -163,40 +173,245 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
                 If you're seeing ABI errors, try reloading the page
               </p>
             </div>
+            
+            {/* 添加一个明确的MockUSDC部分 */}
+            {hasMockUsdc && (
+              <div className="mt-6 border-t border-base-200 pt-4">
+                <h3 className="font-bold text-md mb-2">External Contracts</h3>
+                <div className="flex flex-col gap-2">
+                  <button
+                    className={`btn btn-sm ${activeCategory === 'mockusdc' ? 'btn-accent' : 'btn-outline btn-accent'}`}
+                    onClick={() => setActiveCategory('mockusdc')}
+                  >
+                    MockUSDC Token
+                  </button>
+                </div>
+                {activeCategory === 'mockusdc' && (
+                  <div className="mt-2 text-xs">
+                    <p>Address: <span className="font-mono">{mockUsdcData.address}</span></p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Read</p>
+          {activeCategory !== "mockusdc" ? (
+            <>
+              <div className="z-10">
+                <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                  <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                    <div className="flex items-center justify-center space-x-2">
+                      <p className="my-0 text-sm">Read</p>
+                    </div>
+                  </div>
+                  <div className="p-5 divide-y divide-base-300">
+                    <DiamondReadMethods 
+                      diamondContractData={diamondContractData} 
+                      activeCategory={activeCategory}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="p-5 divide-y divide-base-300">
-                <DiamondReadMethods 
-                  diamondContractData={diamondContractData} 
-                  activeCategory={activeCategory}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Write</p>
+              <div className="z-10">
+                <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                  <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                    <div className="flex items-center justify-center space-x-2">
+                      <p className="my-0 text-sm">Write</p>
+                    </div>
+                  </div>
+                  <div className="p-5 divide-y divide-base-300">
+                    <DiamondWriteMethods
+                      diamondContractData={diamondContractData}
+                      onChange={triggerRefreshDisplayVariables}
+                      activeCategory={activeCategory}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="p-5 divide-y divide-base-300">
-                <DiamondWriteMethods
-                  diamondContractData={diamondContractData}
-                  onChange={triggerRefreshDisplayVariables}
-                  activeCategory={activeCategory}
-                />
+            </>
+          ) : mockUsdcData ? (
+            <>
+              <div className="z-10">
+                <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                  <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                    <div className="flex items-center justify-center space-x-2">
+                      <p className="my-0 text-sm">Read</p>
+                    </div>
+                  </div>
+                  <div className="p-5 divide-y divide-base-300">
+                    <div className="py-3">
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold">MockUSDC Contract:</span>
+                          <Address address={mockUsdcData.address} onlyEnsOrAddress />
+                        </div>
+                        {/* 直接列出所有MockUSDC的读取方法 */}
+                        <div className="py-2">
+                          <ReadOnlyFunctionForm
+                            abiFunction={{
+                              name: "balanceOf",
+                              type: "function",
+                              stateMutability: "view",
+                              inputs: [{ name: "account", type: "address", internalType: "address" }],
+                              outputs: [{ name: "", type: "uint256", internalType: "uint256" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <ReadOnlyFunctionForm
+                            abiFunction={{
+                              name: "allowance",
+                              type: "function",
+                              stateMutability: "view",
+                              inputs: [
+                                { name: "owner", type: "address", internalType: "address" },
+                                { name: "spender", type: "address", internalType: "address" }
+                              ],
+                              outputs: [{ name: "", type: "uint256", internalType: "uint256" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <ReadOnlyFunctionForm
+                            abiFunction={{
+                              name: "totalSupply",
+                              type: "function",
+                              stateMutability: "view",
+                              inputs: [],
+                              outputs: [{ name: "", type: "uint256", internalType: "uint256" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <ReadOnlyFunctionForm
+                            abiFunction={{
+                              name: "decimals",
+                              type: "function",
+                              stateMutability: "view",
+                              inputs: [],
+                              outputs: [{ name: "", type: "uint8", internalType: "uint8" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <ReadOnlyFunctionForm
+                            abiFunction={{
+                              name: "name",
+                              type: "function",
+                              stateMutability: "view",
+                              inputs: [],
+                              outputs: [{ name: "", type: "string", internalType: "string" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <ReadOnlyFunctionForm
+                            abiFunction={{
+                              name: "symbol",
+                              type: "function",
+                              stateMutability: "view",
+                              inputs: [],
+                              outputs: [{ name: "", type: "string", internalType: "string" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+              <div className="z-10">
+                <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                  <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                    <div className="flex items-center justify-center space-x-2">
+                      <p className="my-0 text-sm">Write</p>
+                    </div>
+                  </div>
+                  <div className="p-5 divide-y divide-base-300">
+                    <div className="py-3">
+                      <div className="flex flex-col gap-3">
+                        {/* 直接列出所有MockUSDC的写入方法 */}
+                        <div className="py-2">
+                          <WriteOnlyFunctionForm
+                            abiFunction={{
+                              name: "approve",
+                              type: "function",
+                              stateMutability: "nonpayable",
+                              inputs: [
+                                { name: "spender", type: "address", internalType: "address" },
+                                { name: "value", type: "uint256", internalType: "uint256" }
+                              ],
+                              outputs: [{ name: "", type: "bool", internalType: "bool" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                            onChange={triggerRefreshDisplayVariables}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <WriteOnlyFunctionForm
+                            abiFunction={{
+                              name: "transfer",
+                              type: "function",
+                              stateMutability: "nonpayable",
+                              inputs: [
+                                { name: "to", type: "address", internalType: "address" },
+                                { name: "value", type: "uint256", internalType: "uint256" }
+                              ],
+                              outputs: [{ name: "", type: "bool", internalType: "bool" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                            onChange={triggerRefreshDisplayVariables}
+                          />
+                        </div>
+                        <div className="py-2">
+                          <WriteOnlyFunctionForm
+                            abiFunction={{
+                              name: "transferFrom",
+                              type: "function",
+                              stateMutability: "nonpayable",
+                              inputs: [
+                                { name: "from", type: "address", internalType: "address" },
+                                { name: "to", type: "address", internalType: "address" },
+                                { name: "value", type: "uint256", internalType: "uint256" }
+                              ],
+                              outputs: [{ name: "", type: "bool", internalType: "bool" }]
+                            }}
+                            contractAddress={mockUsdcData.address}
+                            abi={mockUsdcData.abi}
+                            onChange={triggerRefreshDisplayVariables}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="mt-14 text-center">
+              <p className="text-xl mb-4">
+                MockUSDC contract not found on this network!
+              </p>
+              <p className="text-lg">
+                Please make sure the MockUSDC contract is properly configured in externalContracts.ts
+              </p>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

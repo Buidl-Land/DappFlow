@@ -1,14 +1,21 @@
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { Abi } from "abitype";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import externalContracts from "~~/contracts/externalContracts";
 
 /**
  * 获取所有Facet的ABI
  */
 export const useFacetsAbi = () => {
+  const { targetNetwork } = useTargetNetwork();
   const { data: diamondData, isLoading: diamondLoading } = useDeployedContractInfo({ 
     contractName: "Diamond" as ContractName 
   });
+  
+  // 获取外部合约数据
+  const chainId = targetNetwork.id;
+  const mockUsdcData = externalContracts[chainId as keyof typeof externalContracts]?.["MockUSDC"];
   
   // 确保Diamond合约的ABI始终可用
   if (!diamondData?.abi && !diamondLoading) {
@@ -17,6 +24,11 @@ export const useFacetsAbi = () => {
   
   // 使用Diamond合约的ABI作为基础，即使其他Facet的ABI加载失败，也能保证基本功能
   const combinedAbi = [...(diamondData?.abi || [])] as Abi;
+  
+  // 如果存在MockUSDC合约，添加其ABI
+  if (mockUsdcData?.abi) {
+    combinedAbi.push(...mockUsdcData.abi);
+  }
   
   // 如果Diamond合约的ABI为空，提供一个基本的ABI以避免"ABI is required"错误
   if (combinedAbi.length === 0 && !diamondLoading) {
@@ -115,7 +127,8 @@ export const useFacetsAbi = () => {
   return {
     combinedAbi: uniqueAbi,
     facets: {
-      diamond: diamondData
+      diamond: diamondData,
+      mockUsdc: mockUsdcData
     },
     isLoading: diamondLoading
   };
