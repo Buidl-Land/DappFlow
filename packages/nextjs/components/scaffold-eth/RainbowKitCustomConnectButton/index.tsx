@@ -1,7 +1,7 @@
 "use client";
 
 // @refresh reset
-import { ContractBalance } from "../ContractBalance";
+import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
@@ -49,7 +49,7 @@ export const RainbowKitCustomConnectButton = () => {
               return (
                 <>
                   <div className="flex flex-col items-center mr-1">
-                    <ContractBalance className="min-h-0 h-auto" />
+                    <Balance address={account.address as Address} className="min-h-0 h-auto" />
                     <span className="text-xs text-primary" style={{ color: networkColor }}>
                       {chain.name}
                     </span>

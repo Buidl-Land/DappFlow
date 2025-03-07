@@ -2,563 +2,1005 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Address } from "viem";
-import { useAccount, useWriteContract } from "wagmi";
-import externalContracts from "~~/contracts/externalContracts";
-import { Project, TaskStatus } from "~~/data/mockData";
-import { useScaffoldContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
-import { useTransactor } from "~~/hooks/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
+import { formatDistanceToNow, differenceInDays } from "date-fns";
+import { useContractRead, useContractWrite } from "~~/hooks/contracts";
 import { notification } from "~~/utils/scaffold-eth";
+import { useAccount } from "wagmi";
 
-// Component for rendering task status badges
-const TaskStatusBadge = ({ status }: { status: TaskStatus }) => {
-  const colors = {
-    open: "bg-primary/10 text-primary",
-    in_progress: "bg-secondary/10 text-secondary",
-    completed: "bg-success/10 text-success",
+// Define project data type
+type ProjectData = {
+  id: number;
+  creator: string;
+  title: string;
+  description: string;
+  tags: string[];
+  metadata: {
+    aiEvaluation: string;
+    marketScore: number;
+    techFeasibility: string;
+    minValuation: number;
+    maxValuation: number;
   };
+  status: number;
+  createdAt: number;
+  updatedAt: number;
+};
 
-  const labels = {
-    open: "Open",
-    in_progress: "In Progress",
-    completed: "Completed",
+// Define funding info type
+type FundingInfo = {
+  fundingGoal: bigint;
+  raisedAmount: bigint;
+  startTime: number;
+  endTime: number;
+  hasMetFundingGoal: boolean;
+  paymentToken: string;
+};
+
+// Define task type
+type TaskInfo = {
+  id: number;
+  title: string;
+  description: string;
+  reward: bigint;
+  deadline: number;
+  status: number;
+  skills: string[];
+};
+
+// Create simple cache objects
+const projectCache: Record<string, ProjectData> = {};
+const fundingCache: Record<string, FundingInfo> = {};
+const taskCountCache: Record<string, number> = {};
+
+// Parse project data from contract response
+const parseProjectData = (data: any[]): ProjectData => {
+  return {
+    id: Number(data[0]),
+    creator: data[1],
+    title: data[2],
+    description: data[3],
+    tags: data[4],
+    metadata: {
+      aiEvaluation: data[5].aiEvaluation,
+      marketScore: Number(data[5].marketScore),
+      techFeasibility: data[5].techFeasibility,
+      minValuation: Number(data[5].minValuation),
+      maxValuation: Number(data[5].maxValuation),
+    },
+    status: Number(data[6]),
+    createdAt: Number(data[7]),
+    updatedAt: Number(data[8]),
   };
+};
 
-  return <span className={`px-2 py-1 text-xs rounded-full ${colors[status]}`}>{labels[status]}</span>;
+// Parse funding info from contract response
+const parseFundingInfo = (data: any[]): FundingInfo => {
+  return {
+    fundingGoal: data[0],
+    raisedAmount: data[1],
+    startTime: Number(data[2]),
+    endTime: Number(data[3]),
+    hasMetFundingGoal: data[4],
+    paymentToken: data[5],
+  };
+};
+
+// Format amount, convert wei to ETH
+const formatAmount = (amount: bigint): string => {
+  const ethAmount = Number(amount) / 1e18;
+  return ethAmount.toLocaleString(undefined, { maximumFractionDigits: 2 });
+};
+
+// Convert ETH to wei
+const parseAmount = (amount: string): bigint => {
+  try {
+    // Convert ETH amount to wei (1 ETH = 10^18 wei)
+    const ethAmount = parseFloat(amount);
+    if (isNaN(ethAmount) || ethAmount <= 0) {
+      throw new Error("Please enter a valid amount");
+    }
+    return BigInt(Math.floor(ethAmount * 1e18));
+  } catch (error) {
+    throw new Error("Invalid amount format");
+  }
+};
+
+// Project status mapping
+const statusMap: Record<number, { label: string; color: string }> = {
+  0: { label: "Active", color: "bg-green-100 text-green-800" },
+  1: { label: "Completed", color: "bg-blue-100 text-blue-800" },
+  2: { label: "Cancelled", color: "bg-red-100 text-red-800" },
+};
+
+// Task status mapping
+const taskStatusMap: Record<number, { label: string; color: string }> = {
+  0: { label: "Open", color: "bg-secondary text-white" },
+  1: { label: "Assigned", color: "bg-primary text-white" },
+  2: { label: "In Progress", color: "bg-info text-white" },
+  3: { label: "Completed", color: "bg-warning text-white" },
+  4: { label: "Verified", color: "bg-success text-white" },
+  5: { label: "Cancelled", color: "bg-red-100 text-red-800" },
 };
 
 type TabType = "details" | "roadmap" | "tasks";
 
-export function ProjectDetailsClient({ project }: { project: Project }) {
-  const [selectedToken, setSelectedToken] = useState("USDT");
-  const [activeTab, setActiveTab] = useState<TabType>("details");
-  const [isTransacting, setIsTransacting] = useState(false);
-  const [currentRaisedAmount, setCurrentRaisedAmount] = useState(project.raisedAmount);
-  const [contributionAmount, setContributionAmount] = useState<number>(100);
+export function ProjectDetailsClient({ projectId }: { projectId: string }) {
+  const numericProjectId = parseInt(projectId);
+  const { readMethod, isLoading } = useContractRead();
+  const { writeMethod } = useContractWrite();
   const { address } = useAccount();
+  const [project, setProject] = useState<ProjectData | null>(() => projectCache[projectId] || null);
+  const [fundingInfo, setFundingInfo] = useState<FundingInfo | null>(() => fundingCache[projectId] || null);
+  const [taskCount, setTaskCount] = useState<number | null>(() => taskCountCache[projectId] || null);
+  const [activeTab, setActiveTab] = useState<TabType>("details");
+  const [isLoadingData, setIsLoadingData] = useState(true);
   
-  // Commented out unused variable
-  // const targetNetwork = useTargetNetwork();
+  // Contribution related state
+  const [contributionAmount, setContributionAmount] = useState("");
+  const [isContributing, setIsContributing] = useState(false);
   
-  const [investmentAmount, setInvestmentAmount] = useState("");
+  // Task related state
+  const [projectTasks, setProjectTasks] = useState<TaskInfo[]>([]);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
 
-  // 获取合约交互所需的hooks
-  const writeTxn = useTransactor();
-  const { writeContractAsync } = useWriteContract();
+  // Token claim related state
+  const [claimedAmount, setClaimedAmount] = useState<bigint>(0n);
+  const [isClaiming, setIsClaiming] = useState(false);
+  const [isLoadingClaimData, setIsLoadingClaimData] = useState(false);
+  const [canClaim, setCanClaim] = useState(false);
+  const [tokenContribution, setTokenContribution] = useState<bigint>(0n);
+  const [tokenInfo, setTokenInfo] = useState<{
+    tokenAddress: string;
+    totalSupply: bigint;
+    crowdfundingPool: bigint;
+    teamPool: bigint;
+    ecosystemPool: bigint;
+    vestingStart: number;
+    vestingDuration: number;
+  } | null>(null);
+  const [unlockedAmount, setUnlockedAmount] = useState<bigint>(0n);
+  const [unlockPercentage, setUnlockPercentage] = useState<number>(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentRaisedAmount(prevAmount => {
-        const newAmount = prevAmount + 2000;
-        return newAmount <= project.fundingGoal ? newAmount : project.fundingGoal;
-      });
-    }, 150000); //
-
-    return () => clearInterval(interval);
-  }, [project.fundingGoal]);
-
-  // 获取Aurora测试网上的SimpleTransaction合约
-  const contractConfig = externalContracts[1313161555]?.SimpleTransaction;
-
-  const progress = (currentRaisedAmount / project.fundingGoal) * 100;
-  const daysLeft = Math.max(
-    0,
-    Math.ceil((new Date(project.endDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24)),
-  );
-
-  // 处理"Back This Project"按钮点击事件
-  const handleBackProject = async () => {
-    if (!address) {
-      notification.error("Please connect your wallet first");
-      return;
+  // Refresh funding info
+  const refreshFundingInfo = async () => {
+    try {
+      const fundingResult = await readMethod("getFundingInfo", [numericProjectId]);
+      
+      if (fundingResult) {
+        const parsedFunding = parseFundingInfo(fundingResult as any[]);
+        
+        // Update cache
+        fundingCache[projectId] = parsedFunding;
+        
+        setFundingInfo(parsedFunding);
+      }
+    } catch (err) {
+      console.error("Failed to fetch funding info:", err);
     }
+  };
 
-    if (!writeContractAsync || !contractConfig) {
-      notification.error("Contract configuration error");
-      return;
-    }
-
-    if (!contributionAmount || contributionAmount <= 0) {
-      notification.error("Please enter a valid contribution amount");
+  // Handle contribution submission
+  const handleContribute = async () => {
+    if (!contributionAmount || parseFloat(contributionAmount) <= 0) {
+      notification.error("Please enter a valid amount");
       return;
     }
 
     try {
-      setIsTransacting(true);
-
-      const makeWriteWithParams = () =>
-        writeContractAsync({
-          address: contractConfig.address as Address,
-          abi: contractConfig.abi,
-          functionName: "executeTransaction",
-          args: [],
-        });
-
-      await writeTxn(makeWriteWithParams);
-
-      // 更新已筹集金额
-      setCurrentRaisedAmount(prevAmount => Math.min(prevAmount + contributionAmount, project.fundingGoal));
-
-      notification.success("Transaction completed successfully!");
-    } catch (error) {
-      console.error("Transaction failed:", error);
-      notification.error("Transaction failed");
+      setIsContributing(true);
+      
+      // Convert ETH to wei
+      const amountInWei = parseAmount(contributionAmount);
+      
+      // Show loading notification
+      const notificationId = notification.loading("Processing your contribution transaction...");
+      
+      // Call contract method
+      const result = await writeMethod("contribute", [numericProjectId, amountInWei], {
+        onSuccess: (txHash) => {
+          // Remove loading notification
+          notification.remove(notificationId);
+          
+          // Show success notification
+          notification.success(
+            <div>
+              <p>Contribution successful!</p>
+              <p className="text-xs mt-1">Transaction hash: {txHash.slice(0, 10)}...{txHash.slice(-8)}</p>
+            </div>,
+            { duration: 5000 }
+          );
+          
+          // Clear input
+          setContributionAmount("");
+          
+          // Refresh funding info
+          setTimeout(() => {
+            refreshFundingInfo();
+          }, 2000);
+        },
+        onError: (error) => {
+          // Remove loading notification
+          notification.remove(notificationId);
+          
+          // Show error notification
+          notification.error(`Contribution failed: ${error.message}`);
+        }
+      });
+      
+      if (result.error) {
+        throw result.error;
+      }
+    } catch (error: any) {
+      console.error("Contribution failed:", error);
+      notification.error(`Contribution failed: ${error.message}`);
     } finally {
-      setIsTransacting(false);
+      setIsContributing(false);
     }
   };
 
-  const tabContent = {
-    details: (
-      <div className="space-y-6">
-        <p className="text-lg">{project.description}</p>
-
-        {project.id === "1" && (
-          <div>
-            <h3 className="mb-4 text-xl font-semibold">
-              <span className="material-icons text-primary text-sm align-text-bottom mr-1">token</span>
-              Token Issuance
-            </h3>
-            <div className="p-4 rounded-lg bg-base-200">
-              <p className="mb-2 text-base font-semibold">Total Supply: 100 million WCT tokens</p>
-              <p className="mb-3 text-base font-semibold">Allocation:</p>
-              <div className="space-y-2">
-                <div className="flex items-center w-full h-4 rounded-full overflow-hidden">
-                  <div className="w-[60%] h-full bg-primary"></div>
-                  <div className="w-[20%] h-full bg-secondary"></div>
-                  <div className="w-[10%] h-full bg-accent"></div>
-                  <div className="w-[10%] h-full bg-info"></div>
-                </div>
-                <div className="grid grid-cols-4 gap-2 text-xs text-center sm:text-sm">
-                  <div>
-                    <span className="font-semibold text-primary">60%</span>
-                    <p>Public sale, crowdfunding, and partnerships</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-secondary">20%</span>
-                    <p>Reserved for wildlife organizations</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-accent">10%</span>
-                    <p>Operational costs and development</p>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-info">10%</span>
-                    <p>Community rewards and incentives</p>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 text-sm italic">
-                This token model is designed to create a decentralized, community-driven ecosystem where AI agents and
-                token holders collaboratively incubate and develop the project. Through transparent governance and
-                dynamic staking mechanisms, we aim to break the monopoly of traditional VCs while ensuring sustainable
-                value creation and equitable reward distribution for all participants.
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div>
-          <h3 className="mb-4 text-xl font-semibold">
-            <span className="material-icons text-primary text-sm align-text-bottom mr-1">description</span>
-            Project Overview
-          </h3>
-          <ul className="space-y-3 list-disc list-inside">
-            <li>Category: {project.category}</li>
-            <li>Technology Stack: {project.tags.join(", ")}</li>
-            <li>Timeline: {new Date(project.endDate).toLocaleDateString()}</li>
-          </ul>
-        </div>
-
-        {project.id === "1" && (
-          <>
-            <div>
-              <h3 className="mb-4 text-xl font-semibold">
-                <span className="material-icons text-primary text-sm align-text-bottom mr-1">flag</span>
-                Mission
-              </h3>
-              <p className="text-base">
-                The goal is to support African wildlife conservation efforts through a blockchain-based fundraising
-                mechanism. By issuing a token (WCT), we aim to create a transparent and automated way for donors to
-                contribute to wildlife protection.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="mb-4 text-xl font-semibold">
-                <span className="material-icons text-primary text-sm align-text-bottom mr-1">settings</span>
-                How It Works
-              </h3>
-              <ol className="space-y-3 list-decimal list-inside">
-                <li className="text-base">
-                  <span className="font-semibold">Issuance of Tokens:</span> A fixed total supply of WCT tokens (100
-                  million tokens) will be minted. The tokens will be available for purchase through various channels,
-                  including crypto exchanges, directly from the project website, or via smart contracts.
-                </li>
-                <li className="text-base">
-                  <span className="font-semibold">Smart Contract Setup:</span> Each WCT token will be linked to a smart
-                  contract that automates donations. A percentage of every transaction (buy/sell) will be directed
-                  toward verified conservation organizations. This can be set to auto-distribute funds to different
-                  projects within the ecosystem, depending on real-time data and conservation needs.
-                </li>
-                <li className="text-base">
-                  <span className="font-semibold">Token Utility:</span>
-                  <ul className="pl-6 mt-2 space-y-2 list-disc">
-                    <li>
-                      Donor Engagement: Holders of WCT will receive updates about their contributions, along with
-                      detailed reports on the conservation projects funded by their donations.
-                    </li>
-                    <li>
-                      Incentives for Donors: Token holders can receive badges, rewards, or access to exclusive content
-                      (like behind-the-scenes footage of conservation projects or virtual wildlife experiences).
-                    </li>
-                    <li>
-                      Partnerships: Conservation organizations can partner with the project to receive automatic
-                      donations based on token transactions.
-                    </li>
-                  </ul>
-                </li>
-                <li className="text-base">
-                  <span className="font-semibold">Token Distribution:</span>
-                  <ul className="pl-6 mt-2 space-y-2 list-disc">
-                    <li>
-                      Initial Token Distribution: Tokens will be distributed to early backers, wildlife experts, and
-                      conservation NGOs. A portion will be reserved for a public sale and community rewards.
-                    </li>
-                    <li>
-                      Charitable Donation Allocation: 80% of proceeds will go directly to animal conservation efforts.
-                      10% will fund project development, and 10% will cover operational costs.
-                    </li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-          </>
-        )}
-      </div>
-    ),
-    roadmap: (
-      <div className="space-y-6">
-        {project.roadmap.map((milestone, index) => (
-          <div key={index} className="flex gap-4">
-            <div className="flex flex-col items-center">
-              <div
-                className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                  milestone.status === "completed" ? "bg-success" : "bg-base-300"
-                }`}
-              >
-                {milestone.status === "completed" && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-3 h-3 text-white"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </div>
-              {index < project.roadmap.length - 1 && (
-                <div className={`w-0.5 h-full ${milestone.status === "completed" ? "bg-success" : "bg-base-300"}`} />
-              )}
-            </div>
-            <div className="flex-1 pb-8">
-              <div className="flex items-center mb-1">
-                <h3 className="font-semibold text-lg">{milestone.title}</h3>
-                <span
-                  className={`ml-3 px-2 py-0.5 text-xs rounded-full ${
-                    milestone.status === "completed" ? "bg-success/20 text-success" : "bg-base-300 text-base-content/70"
-                  }`}
-                >
-                  {milestone.status === "completed" ? "Completed" : "Pending"}
-                </span>
-              </div>
-              <p className="mb-3 text-sm opacity-80">{milestone.description}</p>
-              <div className="p-4 mt-2 rounded-lg bg-base-200/50 border border-base-300/50">
-                <h4 className="mb-2 font-medium text-sm">Key Deliverables:</h4>
-                <ul className="space-y-1 text-sm opacity-80 list-disc list-inside">
-                  {milestone.deliverables.split(", ").map((deliverable, i) => (
-                    <li key={i}>{deliverable}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex items-center mt-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 mr-1 opacity-60"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-xs opacity-70">
-                  Target Completion: {new Date(milestone.deadline).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    ),
-    tasks: (
-      <div className="space-y-4">
-        {project.tasks.map(task => (
-          <div key={task.id} className="p-4 rounded-lg border shadow-lg bg-base-100 border-base-300">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold">{task.title}</h3>
-              <TaskStatusBadge status={task.status} />
-            </div>
-            <p className="mb-3 text-sm opacity-70">{task.description}</p>
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-primary">{task.reward} USDT</span>
-              {task.status === "open" && (
-                <Link href={`/tasks/${task.id}`} className="btn btn-sm btn-outline">
-                  Apply
-                </Link>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    ),
+  // Fetch project tasks
+  const fetchProjectTasks = async () => {
+    if (taskCount && taskCount > 0) {
+      setIsLoadingTasks(true);
+      try {
+        const tasks: TaskInfo[] = [];
+        // Fetch each task by ID, starting from 0
+        for (let i = 0; i < taskCount; i++) {
+          try {
+            const taskResult = await readMethod("getTask", [numericProjectId, i]);
+            if (taskResult) {
+              tasks.push({
+                id: i,
+                title: taskResult[0],
+                description: taskResult[1],
+                reward: taskResult[2],
+                deadline: Number(taskResult[3]),
+                status: Number(taskResult[4]),
+                skills: taskResult[5],
+              });
+            }
+          } catch (err) {
+            console.error(`Failed to fetch task ${i}:`, err);
+          }
+        }
+        setProjectTasks(tasks);
+      } catch (err) {
+        console.error("Failed to fetch tasks:", err);
+      } finally {
+        setIsLoadingTasks(false);
+      }
+    }
   };
 
+  // Handle token claim
+  const handleClaimTokens = async () => {
+    if (!address) {
+      notification.error("Please connect your wallet");
+      return;
+    }
+
+    try {
+      setIsClaiming(true);
+      
+      // Show loading notification
+      const notificationId = notification.loading("Processing your token claim transaction...");
+      
+      // Call contract method
+      const result = await writeMethod("claimTokens", [numericProjectId], {
+        onSuccess: (txHash) => {
+          // Remove loading notification
+          notification.remove(notificationId);
+          
+          // Show success notification
+          notification.success(
+            <div>
+              <p>Tokens claimed successfully!</p>
+              <p className="text-xs mt-1">Transaction hash: {txHash.slice(0, 10)}...{txHash.slice(-8)}</p>
+            </div>,
+            { duration: 5000 }
+          );
+          
+          // Refresh claim data
+          setTimeout(() => {
+            fetchClaimData();
+          }, 2000);
+        },
+        onError: (error) => {
+          // Remove loading notification
+          notification.remove(notificationId);
+          
+          // Show error notification
+          notification.error(`Token claim failed: ${error.message}`);
+        }
+      });
+      
+      if (result.error) {
+        throw result.error;
+      }
+    } catch (error: any) {
+      console.error("Token claim failed:", error);
+      notification.error(`Token claim failed: ${error.message}`);
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+  // Fetch claim data
+  const fetchClaimData = async () => {
+    if (!address || !fundingInfo) return;
+    
+    setIsLoadingClaimData(true);
+    try {
+      // Get claimed amount
+      const claimedResult = await readMethod("getClaimedAmount", [numericProjectId, address]);
+      if (claimedResult !== null) {
+        setClaimedAmount(BigInt(claimedResult.toString()));
+      }
+      
+      // Get token contribution
+      const contributionResult = await readMethod("getTokenContribution", [numericProjectId, address]);
+      if (contributionResult !== null) {
+        setTokenContribution(BigInt(contributionResult.toString()));
+      }
+      
+      // Get project token info
+      const tokenInfoResult = await readMethod("getProjectToken", [numericProjectId]);
+      if (tokenInfoResult) {
+        const parsedTokenInfo = {
+          tokenAddress: tokenInfoResult[0],
+          totalSupply: BigInt(tokenInfoResult[1].toString()),
+          crowdfundingPool: BigInt(tokenInfoResult[2].toString()),
+          teamPool: BigInt(tokenInfoResult[3].toString()),
+          ecosystemPool: BigInt(tokenInfoResult[4].toString()),
+          vestingStart: Number(tokenInfoResult[5]),
+          vestingDuration: Number(tokenInfoResult[6]),
+        };
+        setTokenInfo(parsedTokenInfo);
+        
+        // Calculate unlocked amount based on vesting schedule
+        if (tokenContribution > 0n && parsedTokenInfo.vestingStart > 0) {
+          const now = Math.floor(Date.now() / 1000);
+          const vestingEnd = parsedTokenInfo.vestingStart + parsedTokenInfo.vestingDuration;
+          
+          if (now >= vestingEnd) {
+            // Fully vested
+            setUnlockedAmount(tokenContribution);
+            setUnlockPercentage(100);
+          } else if (now <= parsedTokenInfo.vestingStart) {
+            // Vesting not started
+            setUnlockedAmount(0n);
+            setUnlockPercentage(0);
+          } else {
+            // Partially vested - linear vesting
+            const timeElapsed = now - parsedTokenInfo.vestingStart;
+            const vestingProgress = timeElapsed / parsedTokenInfo.vestingDuration;
+            const percentage = Math.min(100, Math.floor(vestingProgress * 100));
+            
+            setUnlockPercentage(percentage);
+            setUnlockedAmount(tokenContribution * BigInt(percentage) / BigInt(100));
+          }
+        }
+      }
+      
+      // Check if funding is complete and tokens can be claimed
+      const now = new Date();
+      const endDate = new Date(fundingInfo.endTime * 1000);
+      const isFundingComplete = fundingInfo.hasMetFundingGoal || now > endDate;
+      
+      // Can claim if funding is complete, user has tokens, and there are unlocked tokens not yet claimed
+      setCanClaim(isFundingComplete && tokenContribution > 0n && unlockedAmount > claimedAmount);
+    } catch (err) {
+      console.error("Failed to fetch claim data:", err);
+    } finally {
+      setIsLoadingClaimData(false);
+    }
+  };
+
+  // Fetch project data
+  useEffect(() => {
+    // If we already have cached data, use it
+    if (projectCache[projectId]) {
+      setProject(projectCache[projectId]);
+    }
+
+    if (fundingCache[projectId]) {
+      setFundingInfo(fundingCache[projectId]);
+    }
+
+    if (taskCountCache[projectId]) {
+      setTaskCount(taskCountCache[projectId]);
+    }
+
+    const fetchData = async () => {
+      setIsLoadingData(true);
+      try {
+        // Fetch project data
+        if (!project) {
+          const projectResult = await readMethod("getProject", [numericProjectId]);
+          
+          if (projectResult) {
+            const parsedProject = parseProjectData(projectResult as any[]);
+            
+            // Update cache
+            projectCache[projectId] = parsedProject;
+            
+            setProject(parsedProject);
+          }
+        }
+
+        // Fetch funding info
+        if (!fundingInfo) {
+          const fundingResult = await readMethod("getFundingInfo", [numericProjectId]);
+          
+          if (fundingResult) {
+            const parsedFunding = parseFundingInfo(fundingResult as any[]);
+            
+            // Update cache
+            fundingCache[projectId] = parsedFunding;
+            
+            setFundingInfo(parsedFunding);
+          }
+        }
+
+        // Fetch task count
+        if (taskCount === null) {
+          const taskCountResult = await readMethod("getProjectTaskCount", [numericProjectId]);
+          
+          if (taskCountResult !== null && taskCountResult !== undefined) {
+            const count = Number(taskCountResult);
+            
+            // Update cache
+            taskCountCache[projectId] = count;
+            
+            setTaskCount(count);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    if (!isLoading) {
+      fetchData();
+    }
+  }, [readMethod, projectId, numericProjectId, isLoading, project, fundingInfo, taskCount]);
+
+  // Fetch tasks when active tab is "tasks"
+  useEffect(() => {
+    if (activeTab === "tasks" && taskCount && projectTasks.length === 0 && !isLoadingTasks) {
+      fetchProjectTasks();
+    }
+  }, [activeTab, taskCount, projectTasks.length, isLoadingTasks]);
+
+  // Fetch claim data when funding info is available
+  useEffect(() => {
+    if (fundingInfo && address && !isLoadingData) {
+      fetchClaimData();
+    }
+  }, [fundingInfo, address, isLoadingData]);
+
+  if (isLoading || isLoadingData || !project) {
+    return (
+      <div className="container mx-auto px-4 pt-20 pb-8 animate-pulse">
+        <div className="h-10 bg-gray-200 rounded w-1/3 mb-8"></div>
+        <div className="h-6 bg-gray-200 rounded w-1/4 mb-8"></div>
+        <div className="h-40 bg-gray-200 rounded mb-8"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="h-60 bg-gray-200 rounded lg:col-span-2"></div>
+          <div className="h-60 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate funding progress and days left
+  let fundingProgress = 0;
+  let daysLeft = 0;
+  let isFundingClosed = false;
+
+  if (fundingInfo) {
+    // Calculate funding progress percentage
+    fundingProgress = fundingInfo.fundingGoal > 0n 
+      ? Number((fundingInfo.raisedAmount * 100n) / fundingInfo.fundingGoal) 
+      : 0;
+    
+    // Calculate days left
+    const now = new Date();
+    const endDate = new Date(fundingInfo.endTime * 1000);
+    daysLeft = Math.max(0, differenceInDays(endDate, now));
+    
+    // Determine if funding is closed
+    isFundingClosed = fundingInfo.hasMetFundingGoal || now > endDate;
+  }
+
+  const status = statusMap[project.status] || { label: "Unknown", color: "bg-gray-100 text-gray-800" };
+  const createdTime = formatDistanceToNow(new Date(project.createdAt * 1000), { addSuffix: true });
+
   return (
-    <div className="flex flex-col pt-20 min-h-screen animate-fade-in sm:pt-24">
-      {/* SVG Background */}
-      <div className="fixed inset-0 z-[-1] opacity-5">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="circuit" width="100" height="100" patternUnits="userSpaceOnUse">
-              <circle cx="50" cy="50" r="1" fill="currentColor" />
-              <circle cx="0" cy="0" r="1" fill="currentColor" />
-              <circle cx="0" cy="100" r="1" fill="currentColor" />
-              <circle cx="100" cy="0" r="1" fill="currentColor" />
-              <circle cx="100" cy="100" r="1" fill="currentColor" />
-              <path
-                d="M50,0 L50,50 M0,50 L50,50 M50,50 L100,50 M50,50 L50,100"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                fill="none"
-              />
-              <path
-                d="M25,25 Q50,0 75,25 T75,75 Q100,50 75,75 T25,75 Q0,50 25,25"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                strokeDasharray="2,4"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#circuit)" />
-        </svg>
+    <div className="container mx-auto px-4 pt-24 pb-8 mt-4 sm:pt-28 sm:mt-6">
+      {/* Project title and status */}
+      <div className="p-6 mb-8 rounded-2xl shadow-lg bg-base-100 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/40 before:via-secondary/40 before:to-accent/40 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+        {/* 添加极光效果 */}
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDelay: "2s" }}></div>
+        
+        <div className="relative z-10">
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1 mb-3 sm:gap-2 sm:mb-4">
+            {project.tags.map((tag, index) => (
+              <span key={index} className="badge badge-primary badge-sm sm:badge-md bg-primary/10 border-0 text-primary">
+                {tag}
+              </span>
+            ))}
+          </div>
+          
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">{project.title}</h1>
+              <p className="flex flex-wrap items-center gap-2 text-sm opacity-70">
+                <span>Created {createdTime}</span>
+                <span className="hidden md:inline">•</span>
+                <span className="flex items-center">
+                  Created by <span className="ml-1 px-2 py-0.5 text-xs font-medium text-primary border border-primary rounded-md hover:bg-primary/10">agent@IdeaPlusesAI</span>
+                </span>
+              </p>
+            </div>
+            <div className="flex items-center gap-3 mt-4 md:mt-0">
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${status.color}`}>
+                {status.label}
+              </span>
+              {taskCount !== null && (
+                <span className="badge badge-outline badge-secondary">
+                  {taskCount} Tasks
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="py-8 w-full bg-base-200/30 sm:py-12">
-        <div className="px-4 mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 sm:gap-8">
-            {/* Left Column - Project Info & Tabs */}
-            <div className="space-y-6 lg:col-span-2 sm:space-y-8">
-              {/* Project Header */}
-              <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/40 before:via-secondary/40 before:to-accent/40 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
-                {/* 添加极光效果 */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse"></div>
-                <div
-                  className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse"
-                  style={{ animationDelay: "2s" }}
-                ></div>
+      {/* Tab navigation */}
+      <div className="tabs tabs-boxed mb-8">
+        <button 
+          className={`tab ${activeTab === "details" ? "tab-active" : ""}`}
+          onClick={() => setActiveTab("details")}
+        >
+          Project Details
+        </button>
+        <button 
+          className={`tab ${activeTab === "roadmap" ? "tab-active" : ""}`}
+          onClick={() => setActiveTab("roadmap")}
+        >
+          Roadmap
+        </button>
+        <button 
+          className={`tab ${activeTab === "tasks" ? "tab-active" : ""}`}
+          onClick={() => setActiveTab("tasks")}
+        >
+          Tasks ({taskCount || 0})
+        </button>
+      </div>
 
+      {/* Content area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main content area */}
+        <div className="lg:col-span-2">
+          {activeTab === "details" && (
+            <>
+              <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
                 <div className="relative z-10">
-                  <div className="flex flex-wrap gap-1 mb-3 sm:gap-2 sm:mb-4">
-                    {project.tags.map(tag => (
-                      <span key={tag} className="badge badge-primary text-[10px] sm:text-xs">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <h1 className="mb-3 text-2xl font-bold sm:text-4xl sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
-                    {project.title}
-                  </h1>
-                  <div className="flex flex-wrap gap-2 items-center sm:gap-4">
-                    <span className="text-xs opacity-70 sm:text-sm flex items-center">Created by</span>
-                    <button className="inline-flex items-center justify-center px-2 text-xs font-medium text-primary border border-primary rounded hover:bg-primary/10 h-5 leading-none">
-                      Agent
-                    </button>
-                    <span className="text-xs opacity-70 sm:text-sm flex items-center">
-                      ({project.creator.slice(0, 6)}...{project.creator.slice(-4)})
-                    </span>
-                    <span className="hidden text-xs opacity-70 sm:text-sm sm:inline-flex sm:items-center">•</span>
-                    <span
-                      className={`badge badge-sm sm:badge-md ${project.status === "active" ? "badge-primary" : "badge-ghost"} flex items-center`}
-                    >
-                      {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                    </span>
+                  <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                    <span className="material-icons text-primary text-sm align-text-bottom mr-1">description</span>
+                    Project Description
+                  </h2>
+                  <div className="whitespace-pre-line text-sm sm:text-base opacity-80">{project.description}</div>
+                  
+                  <h3 className="mt-8 mb-3 text-base font-bold sm:text-lg sm:mb-4">
+                    <span className="material-icons text-primary text-sm align-text-bottom mr-1">psychology</span>
+                    AI Evaluation
+                  </h3>
+                  <div className="p-4 rounded-lg bg-base-200/50 border border-base-300/50">
+                    <p className="text-sm sm:text-base italic">{project.metadata.aiEvaluation}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Tab Navigation */}
-              <div className="shadow-lg card bg-base-100">
-                <div className="p-1 rounded-t-2xl tabs tabs-boxed bg-base-200/50 sm:p-2">
-                  <button
-                    className={`tab text-xs sm:text-sm flex-1 ${activeTab === "details" ? "tab-active" : ""}`}
-                    onClick={() => setActiveTab("details")}
-                  >
-                    <span className="material-icons text-xs align-text-bottom mr-1">info</span>
-                    Details
-                  </button>
-                  <button
-                    className={`tab text-xs sm:text-sm flex-1 ${activeTab === "roadmap" ? "tab-active" : ""}`}
-                    onClick={() => setActiveTab("roadmap")}
-                  >
-                    <span className="material-icons text-xs align-text-bottom mr-1">map</span>
-                    Roadmap
-                  </button>
-                  <button
-                    className={`tab text-xs sm:text-sm flex-1 ${activeTab === "tasks" ? "tab-active" : ""}`}
-                    onClick={() => setActiveTab("tasks")}
-                  >
-                    <span className="material-icons text-xs align-text-bottom mr-1">assignment</span>
-                    Tasks
-                  </button>
+              {/* Move Project Tokens card here */}
+              {fundingInfo && address && (
+                <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+                  {/* 添加极光效果 */}
+                  <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
+                  
+                  <div className="relative z-10">
+                    <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                      <span className="material-icons text-primary text-sm align-text-bottom mr-1">token</span>
+                      Project Tokens
+                    </h2>
+                    
+                    {isLoadingClaimData ? (
+                      <div className="flex justify-center py-4">
+                        <span className="loading loading-spinner loading-md"></span>
+                      </div>
+                    ) : (
+                      <>
+                        {tokenInfo && (
+                          <div className="mb-4">
+                            <p className="text-xs opacity-70 sm:text-sm mb-2">Token Allocation</p>
+                            <div className="w-full bg-base-200 rounded-full h-4 mb-2">
+                              <div className="flex h-4 rounded-full overflow-hidden">
+                                <div 
+                                  className="bg-primary h-4" 
+                                  style={{ width: "60%" }}
+                                  title="Crowdfunding Pool (60%)"
+                                ></div>
+                                <div 
+                                  className="bg-secondary h-4" 
+                                  style={{ width: "25%" }}
+                                  title="Task & DAO Pool (25%)"
+                                ></div>
+                                <div 
+                                  className="bg-accent h-4" 
+                                  style={{ width: "15%" }}
+                                  title="Ecosystem Pool (15%)"
+                                ></div>
+                              </div>
+                            </div>
+                            <div className="flex justify-between text-xs opacity-70">
+                              <span>Crowdfunding: 60%</span>
+                              <span>Task & DAO: 25%</span>
+                              <span>Ecosystem: 15%</span>
+                            </div>
+                            <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50 mt-4">
+                              <p className="text-xs opacity-70 sm:text-sm">
+                                <span className="material-icons text-primary text-xs align-text-bottom mr-1">inventory_2</span>
+                                Total Supply
+                              </p>
+                              <p className="mt-1 text-base font-semibold sm:text-lg">{formatAmount(tokenInfo.totalSupply)} Tokens</p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="space-y-4 mt-4">
+                          {tokenContribution > 0n ? (
+                            <>
+                              <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
+                                <p className="text-xs opacity-70 sm:text-sm">
+                                  <span className="material-icons text-primary text-xs align-text-bottom mr-1">account_balance_wallet</span>
+                                  Your Token Allocation
+                                </p>
+                                <p className="mt-1 text-base font-semibold sm:text-lg bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                                  {formatAmount(tokenContribution)} Tokens
+                                </p>
+                              </div>
+                              
+                              {tokenInfo && tokenInfo.vestingDuration > 0 && (
+                                <div className="mt-4">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <p className="text-xs opacity-70 sm:text-sm">
+                                      <span className="material-icons text-primary text-xs align-text-bottom mr-1">lock_open</span>
+                                      Unlock Progress
+                                    </p>
+                                    <span className="text-xs font-medium">{unlockPercentage}%</span>
+                                  </div>
+                                  <div className="w-full bg-base-200 rounded-full h-2.5">
+                                    <div 
+                                      className="bg-primary h-2.5 rounded-full transition-all duration-500" 
+                                      style={{ width: `${unlockPercentage}%` }}
+                                    ></div>
+                                  </div>
+                                  <div className="flex justify-between text-xs opacity-70 mt-1">
+                                    <span>Unlocked: {formatAmount(unlockedAmount)}</span>
+                                    <span>Total: {formatAmount(tokenContribution)}</span>
+                                  </div>
+                                  <p className="text-xs opacity-60 mt-2 italic">
+                                    Tokens unlock linearly over 180 days
+                                  </p>
+                                </div>
+                              )}
+                              
+                              {claimedAmount > 0n && (
+                                <div className="p-3 rounded-lg bg-success/10 border border-success/20">
+                                  <p className="text-xs opacity-70 sm:text-sm">
+                                    <span className="material-icons text-success text-xs align-text-bottom mr-1">check_circle</span>
+                                    Already Claimed
+                                  </p>
+                                  <p className="mt-1 text-base font-semibold sm:text-lg text-success">{formatAmount(claimedAmount)} Tokens</p>
+                                </div>
+                              )}
+                              
+                              <div className="mt-4">
+                                <button 
+                                  className={`btn btn-primary w-full btn-sm sm:btn-md ${isClaiming ? 'loading' : ''} ${!canClaim ? 'btn-disabled' : ''}`}
+                                  onClick={handleClaimTokens}
+                                  disabled={isClaiming || !canClaim}
+                                >
+                                  {isClaiming ? (
+                                    <>
+                                      <span className="loading loading-spinner loading-xs"></span>
+                                      Processing...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="material-icons text-sm align-text-bottom mr-1">redeem</span>
+                                      Claim Tokens
+                                    </>
+                                  )}
+                                </button>
+                                
+                                {!canClaim && tokenContribution > 0n && (
+                                  <p className="text-xs text-center mt-2 opacity-60 italic">
+                                    {claimedAmount >= tokenContribution 
+                                      ? 'You have already claimed all your tokens' 
+                                      : unlockedAmount <= claimedAmount
+                                        ? 'No tokens available for claiming yet'
+                                        : 'Tokens not yet available for claiming'}
+                                  </p>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <p className="text-sm opacity-70 italic">You have not contributed to this project yet</p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div className="p-4 sm:p-6">{tabContent[activeTab]}</div>
+              )}
+            </>
+          )}
+
+          {activeTab === "roadmap" && (
+            <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+              <div className="relative z-10">
+                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                  <span className="material-icons text-primary text-sm align-text-bottom mr-1">map</span>
+                  Project Roadmap
+                </h2>
+                
+                <div className="p-6 text-center opacity-70 italic">
+                  <span className="material-icons text-4xl mb-2">timeline</span>
+                  <p>Roadmap data is not yet available from the contract. This section will display the project's development plan and milestones.</p>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Right Column - Funding & Support */}
-            <div className="space-y-6 sm:space-y-8">
-              {/* Funding Progress */}
-              <div className="p-4 shadow-lg card bg-base-100 sm:p-6">
+          {activeTab === "tasks" && (
+            <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+              <div className="relative z-10">
                 <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
-                  <span className="material-icons text-primary text-sm align-text-bottom mr-1">trending_up</span>
-                  Funding Progress
+                  <span className="material-icons text-primary text-sm align-text-bottom mr-1">assignment</span>
+                  Project Tasks
                 </h2>
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-bold sm:text-2xl">
-                      {currentRaisedAmount.toLocaleString()} / {project.fundingGoal.toLocaleString()} {selectedToken}
-                    </span>
-                    <span className="text-base opacity-70 sm:text-lg">{Math.round(progress)}%</span>
+                
+                {isLoadingTasks ? (
+                  <div className="flex justify-center py-8">
+                    <span className="loading loading-spinner loading-lg"></span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-base-300 sm:h-3">
-                    <div
-                      className="h-2 rounded-full transition-all duration-500 bg-primary sm:h-3"
-                      style={{ width: `${Math.min(100, progress)}%` }}
-                    />
+                ) : taskCount && taskCount > 0 ? (
+                  <div className="mt-4 space-y-4">
+                    {projectTasks.map(task => {
+                      const statusStyle = taskStatusMap[task.status]?.color || "bg-base-200 text-base-content";
+                      const statusLabel = taskStatusMap[task.status]?.label || "Unknown";
+                      
+                      return (
+                        <div key={task.id} className="p-4 rounded-lg bg-base-200/50 border border-base-300/50 hover:bg-base-200/70 transition-all">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-base font-semibold sm:text-lg">{task.title}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyle} border-0`}>
+                              {statusLabel}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-sm opacity-70 line-clamp-2">{task.description}</p>
+                          <div className="flex flex-wrap gap-1 mt-3">
+                            {task.skills.slice(0, 3).map((skill: string, index: number) => (
+                              <span key={index} className="badge badge-sm bg-primary/10 border-0 text-primary">
+                                {skill}
+                              </span>
+                            ))}
+                            {task.skills.length > 3 && (
+                              <span className="badge badge-sm bg-base-300/80 border-0">+{task.skills.length - 3} more</span>
+                            )}
+                          </div>
+                          <div className="flex justify-between items-center mt-4">
+                            <div className="flex items-center">
+                              <span className="material-icons text-primary text-sm mr-1">payments</span>
+                              <span className="text-sm font-medium">{formatAmount(task.reward)} USDC</span>
+                            </div>
+                            <a 
+                              href={`/projects/${projectId}/tasks/${task.id}`}
+                              className="btn btn-primary btn-sm sm:btn-md h-10 min-h-10"
+                            >
+                              <span className="material-icons text-xs mr-1">visibility</span>
+                              View Details
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-                <div className="grid grid-cols-3 gap-2 mb-4 text-center sm:gap-4 sm:mb-6">
-                  <div>
-                    <div className="text-lg font-bold sm:text-2xl">{daysLeft}</div>
-                    <div className="text-xs opacity-70 sm:text-sm">
-                      <span className="material-icons text-primary text-xs align-text-bottom mr-1">schedule</span>
-                      Days Left
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold sm:text-2xl">{project.participants.length}</div>
-                    <div className="text-xs opacity-70 sm:text-sm">
-                      <span className="material-icons text-primary text-xs align-text-bottom mr-1">people</span>
-                      Backers
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold sm:text-2xl">
-                      {project.tasks.filter(task => task.status === "open").length}
-                    </div>
-                    <div className="text-xs opacity-70 sm:text-sm">
-                      <span className="material-icons text-primary text-xs align-text-bottom mr-1">task</span>
-                      Open Tasks
-                    </div>
-                  </div>
-                </div>
-
-                {project.status === "active" && (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <label htmlFor="token-select" className="text-sm font-semibold sm:text-base">
-                        Select Token:
-                      </label>
-                      <select
-                        id="token-select"
-                        className="select select-bordered select-xs sm:select-sm"
-                        value={selectedToken}
-                        onChange={e => setSelectedToken(e.target.value)}
-                        aria-label="Select payment token"
-                      >
-                        <option value="USDT">USDT</option>
-                        <option value="USDC">USDC</option>
-                      </select>
-                    </div>
-
-                    <div className="form-control">
-                      <label htmlFor="contribution-amount" className="mb-2 text-sm font-semibold sm:text-base">
-                        <span className="material-icons text-primary text-sm align-text-bottom mr-1">payments</span>
-                        Contribution Amount:
-                      </label>
-                      <div className="flex items-center">
-                        <input
-                          id="contribution-amount"
-                          type="number"
-                          className="w-full input input-bordered input-sm sm:input-md"
-                          value={contributionAmount}
-                          onChange={e => setContributionAmount(Number(e.target.value))}
-                          min="1"
-                          placeholder="Enter amount"
-                        />
-                        <span className="ml-2 text-sm font-medium">{selectedToken}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      className="w-full btn btn-primary btn-sm sm:btn-md"
-                      onClick={handleBackProject}
-                      disabled={isTransacting || !address || !contributionAmount || contributionAmount <= 0}
-                    >
-                      {isTransacting ? (
-                        <>
-                          <span className="loading loading-spinner loading-xs"></span>
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <span className="material-icons text-sm align-text-bottom mr-1">favorite</span>
-                          Back This Project with {contributionAmount} {selectedToken}
-                        </>
-                      )}
-                    </button>
+                ) : (
+                  <div className="p-6 text-center opacity-70 italic">
+                    <span className="material-icons text-4xl mb-2">assignment_late</span>
+                    <p>This project has no tasks yet.</p>
                   </div>
                 )}
               </div>
+            </div>
+          )}
+        </div>
 
-              {/* Project Updates */}
-              <div className="p-4 shadow-lg card bg-base-100 sm:p-6">
+        {/* Sidebar */}
+        <div className="space-y-8">
+          {/* Funding info card */}
+          {fundingInfo && (
+            <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+              {/* 添加极光效果 */}
+              <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
+              
+              <div className="relative z-10">
                 <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
-                  <span className="material-icons text-primary text-sm align-text-bottom mr-1">update</span>
-                  Latest Updates from Agent
+                  <span className="material-icons text-primary text-sm align-text-bottom mr-1">payments</span>
+                  Funding Information
                 </h2>
-                <div className="space-y-4">
-                  {project.updates?.map((update, index) => (
-                    <div key={index} className="pb-3 border-b border-base-300 last:border-0 sm:pb-4 last:pb-0">
-                      <h3 className="mb-1 text-sm font-semibold sm:mb-2 sm:text-base">{update.title}</h3>
-                      <p className="mb-2 text-xs opacity-70 sm:text-sm">{update.content}</p>
-                      <span className="text-[10px] sm:text-xs opacity-60">{update.date}</span>
+                
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs opacity-70 sm:text-sm">Funding Progress</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-medium">{daysLeft} days{daysLeft > 0 ? " remaining" : " ended"}</span>
+                    {isFundingClosed && (
+                      <span className="badge badge-sm badge-success text-xs border-0">Funding Completed</span>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="w-full bg-base-200 rounded-full h-2.5 mb-2 sm:h-3">
+                  <div 
+                    className="bg-primary h-2.5 rounded-full transition-all duration-500 sm:h-3" 
+                    style={{ width: `${Math.min(100, fundingProgress)}%` }}
+                  ></div>
+                </div>
+                
+                <div className="flex justify-between text-xs sm:text-sm mb-4">
+                  <span className="font-medium">{formatAmount(fundingInfo.raisedAmount)} USDC</span>
+                  <span className="opacity-70">Goal: {formatAmount(fundingInfo.fundingGoal)} USDC</span>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50 mb-4">
+                  <p className="text-xs opacity-70 sm:text-sm">
+                    <span className="material-icons text-primary text-xs align-text-bottom mr-1">trending_up</span>
+                    Funding Status
+                  </p>
+                  <p className="mt-1 text-base font-semibold sm:text-lg">
+                    {fundingProgress >= 100 ? (
+                      <span className="text-success">Funding Goal Achieved!</span>
+                    ) : (
+                      <span>Completed {fundingProgress.toFixed(1)}%</span>
+                    )}
+                  </p>
+                </div>
+                
+                <div className="mt-4">
+                  <div className="form-control">
+                    <label className="flex justify-between mb-2">
+                      <span className="text-xs opacity-70 sm:text-sm">Contribution Amount (USDC)</span>
+                      {isFundingClosed && (
+                        <span className="text-xs text-error">Funding Completed</span>
+                      )}
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="0.1"
+                        className="input input-bordered input-sm sm:input-md w-full"
+                        value={contributionAmount}
+                        onChange={(e) => setContributionAmount(e.target.value)}
+                        disabled={isContributing || isFundingClosed}
+                        min="0"
+                        step="0.01"
+                      />
+                      <button 
+                        className={`btn btn-sm sm:btn-md ${isFundingClosed ? 'btn-disabled' : 'btn-primary'} ${isContributing ? 'loading' : ''}`}
+                        onClick={handleContribute}
+                        disabled={isContributing || isFundingClosed || !contributionAmount || parseFloat(contributionAmount) <= 0}
+                      >
+                        {isContributing ? (
+                          <>
+                            <span className="loading loading-spinner loading-xs"></span>
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <span className="material-icons text-sm align-text-bottom mr-1">send</span>
+                            Contribute
+                          </>
+                        )}
+                      </button>
                     </div>
-                  ))}
+                    <label className="label">
+                      <span className="text-xs opacity-60">Minimum Amount: 0.01 USDC</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Project evaluation card */}
+          <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+            {/* 添加极光效果 */}
+            <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
+            
+            <div className="relative z-10">
+              <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                <span className="material-icons text-primary text-sm align-text-bottom mr-1">analytics</span>
+                Project Evaluation
+              </h2>
+              
+              <div className="space-y-4 sm:space-y-5">
+                <div>
+                  <p className="text-xs opacity-70 sm:text-sm">Market Score</p>
+                  <div className="flex items-center mt-1">
+                    <div className="rating rating-sm">
+                      {[...Array(10)].map((_, i) => (
+                        <input 
+                          key={i}
+                          type="radio" 
+                          name="rating-2" 
+                          className={`mask mask-star-2 ${i < project.metadata.marketScore ? 'bg-primary' : 'bg-base-300'}`}
+                          disabled
+                        />
+                      ))}
+                    </div>
+                    <span className="ml-2 text-base font-semibold sm:text-lg">{project.metadata.marketScore}/10</span>
+                  </div>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
+                  <p className="text-xs opacity-70 sm:text-sm">
+                    <span className="material-icons text-primary text-xs align-text-bottom mr-1">build</span>
+                    Technical Feasibility
+                  </p>
+                  <p className="mt-1 text-base font-semibold sm:text-lg">{project.metadata.techFeasibility}</p>
+                </div>
+                
+                <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
+                  <p className="text-xs opacity-70 sm:text-sm">
+                    <span className="material-icons text-primary text-xs align-text-bottom mr-1">attach_money</span>
+                    Valuation Range
+                  </p>
+                  <p className="mt-1 text-base font-semibold sm:text-lg bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                    ${(project.metadata.minValuation / 1000).toFixed(1)}K - ${(project.metadata.maxValuation / 1000).toFixed(1)}K
+                  </p>
+                </div>
+                
+                <div className="text-xs italic opacity-60 sm:text-sm">
+                  AI-powered evaluation based on market trends, technical complexity, and potential ROI.
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Task info card */}
+          {taskCount !== null && taskCount > 0 && (
+            <div className="card bg-base-100 shadow-md hover:shadow-lg transition-all">
+              <div className="card-body">
+                <h2 className="card-title">Task Information</h2>
+                <p className="text-sm">This project has <strong>{taskCount}</strong> available tasks</p>
+                <div className="card-actions justify-end mt-4">
+                  <button 
+                    className="btn btn-outline btn-secondary"
+                    onClick={() => setActiveTab("tasks")}
+                  >
+                    View Tasks
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,8 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ProjectCard } from "~~/components/shared/ProjectCard";
-import { mockProjects } from "~~/data/mockData";
+import { ContractProjectCard } from "~~/components/shared/ContractProjectCard";
 
 type ProjectFilter = "all" | "funding" | "tasks";
 type ProjectStatus = "all" | "active" | "completed";
@@ -14,28 +13,8 @@ const ProjectsContent = () => {
   const [status, setStatus] = useState<ProjectStatus>((searchParams.get("status") as ProjectStatus) || "all");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 
-  const filteredProjects = mockProjects.filter(project => {
-    // Filter by type (funding/tasks)
-    if (filter === "funding" && project.raisedAmount >= project.fundingGoal) return false;
-    if (filter === "tasks" && project.tasks.every(task => task.status === "completed")) return false;
-
-    // Filter by status
-    if (status === "completed") {
-      if (project.status !== "completed") return false;
-    } else if (status === "active") {
-      if (project.status !== "active") return false;
-    }
-
-    // Filter by search term
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        project.title.toLowerCase().includes(searchLower) || project.description.toLowerCase().includes(searchLower)
-      );
-    }
-
-    return true;
-  });
+  // 创建一个项目ID数组，用于渲染ContractProjectCard
+  const projectIds = [3, 4, 5];
 
   return (
     <div className="flex flex-col pt-16 min-h-screen animate-fade-in">
@@ -158,15 +137,13 @@ const ProjectsContent = () => {
 
       {/* Projects Grid */}
       <div className="px-4 pt-0 pb-8 mx-auto max-w-7xl sm:pb-12">
-        <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project, index) => (
-            <div key={project.id} className={`animate-scale-up delay-${(index % 3) * 100}`}>
-              <ProjectCard project={project} />
-            </div>
+        <div className="flex flex-wrap gap-6 md:gap-4 lg:gap-6">
+          {projectIds.map((projectId) => (
+            <ContractProjectCard key={projectId} projectId={projectId} />
           ))}
         </div>
 
-        {filteredProjects.length === 0 && (
+        {projectIds.length === 0 && (
           <div className="py-12 text-center shadow-lg sm:py-16 card bg-base-100">
             <p className="text-lg opacity-60">No projects found matching your criteria.</p>
             <button

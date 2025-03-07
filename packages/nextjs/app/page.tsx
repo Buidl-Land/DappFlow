@@ -9,6 +9,7 @@ import { useAccount } from "wagmi";
 import { IdeaPulseLogo } from "~~/components/assets/IdeaPulseLogo";
 import { ParticlesBackground } from "~~/components/particles/ParticlesBackground";
 import { ProjectCard } from "~~/components/shared/ProjectCard";
+import { ContractProjectCard } from "~~/components/shared/ContractProjectCard";
 import { mockProjects } from "~~/data/mockData";
 
 const Home: NextPage = () => {
@@ -288,20 +289,25 @@ const Home: NextPage = () => {
             <div className="mx-auto mt-4 w-24 h-1 rounded-full bg-primary"></div>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-12 mb-16 md:grid-cols-2">
-            {featuredProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
-                whileHover={{ scale: 1.02 }}
-                className="overflow-hidden border border-base-300/30 rounded-box"
-              >
-                <ProjectCard project={project} />
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 gap-8 mb-16 md:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="[&>a]:!w-full [&>a>div]:!w-full [&>a]:h-full [&>a>div]:h-full"
+            >
+              <ContractProjectCard projectId={4} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="[&>a]:!w-full [&>a>div]:!w-full [&>a]:h-full [&>a>div]:h-full"
+            >
+              <ContractProjectCard projectId={5} />
+            </motion.div>
           </div>
+
           <motion.div {...fadeInUp} className="text-center">
             <Link
               href="/projects"
