@@ -9,15 +9,15 @@ export function useAllContracts() {
   const contractsData = contracts?.[targetNetwork.id];
   const externalContractsData = externalContracts?.[targetNetwork.id as keyof typeof externalContracts];
   
-  // 合并内部合约和外部合约
-  const allContracts = { ...contractsData } || DEFAULT_ALL_CONTRACTS;
+  // Merge internal contracts and external contracts
+  const allContracts = contractsData ? { ...contractsData } : DEFAULT_ALL_CONTRACTS;
   
-  // 添加外部合约（如果存在）
+  // Add external contracts (if they exist)
   if (externalContractsData) {
     Object.entries(externalContractsData).forEach(([contractName, contractData]) => {
       allContracts[contractName] = {
         ...contractData,
-        external: true // 标记为外部合约
+        external: true // Mark as external contract
       };
     });
   }

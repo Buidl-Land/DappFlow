@@ -121,11 +121,9 @@ export const Header = () => {
                 >
                   <HeaderMenuLinks />
                   <li className="mt-2 p-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">切换主题</span>
-                      <div className="ml-2">
-                        <SwitchTheme />
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <SwitchTheme className="pointer-events-auto" />
+                      <span className="text-sm font-medium">Switch Theme</span>
                     </div>
                   </li>
                 </ul>

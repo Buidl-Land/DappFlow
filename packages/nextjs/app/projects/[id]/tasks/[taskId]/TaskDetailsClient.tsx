@@ -243,7 +243,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
     }
   };
 
-  // 添加获取任务状态消息的辅助函数
+  // Helper function to get task status message
   const getTaskStatusMessage = (task: TaskData, connectedWallet?: string): string => {
     switch (task.status) {
       case 0:
@@ -265,7 +265,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
     }
   };
 
-  // 辅助函数：缩短地址显示
+  // Helper function: Shorten address display
   const shortenAddress = (address: string): string => {
     if (!address || address === "0x0000000000000000000000000000000000000000") return "No one";
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
@@ -356,7 +356,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
   const createdTime = formatDistanceToNow(new Date(task.createdAt * 1000), { addSuffix: true });
   const deadlineTime = formatDistanceToNow(deadlineDate, { addSuffix: true });
   
-  // 获取任务状态标签
+  // Get task status label
   const getTaskStatusLabel = (status: number): string => {
     switch (status) {
       case 0: return "Open";
@@ -368,7 +368,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
     }
   };
 
-  // 获取任务状态颜色
+  // Get task status color
   const getTaskStatusColor = (status: number): string => {
     switch (status) {
       case 0: return "bg-secondary text-white";
@@ -380,7 +380,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
     }
   };
 
-  // 获取当前任务状态
+  // Get current task status
   const status = {
     label: getTaskStatusLabel(task.status),
     color: getTaskStatusColor(task.status)
@@ -407,7 +407,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
 
       {/* Task header */}
       <div className="p-6 mb-8 rounded-2xl shadow-lg bg-base-100 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/40 before:via-secondary/40 before:to-accent/40 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
-        {/* 添加极光效果 */}
+        {/* Add aurora effect */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse"></div>
         <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDelay: "2s" }}></div>
         
@@ -497,7 +497,7 @@ export function TaskDetailsClient({ projectId, taskId }: { projectId: string; ta
                     <p className="font-medium">Current Status: {getTaskStatusLabel(task.status)}</p>
                     <p className="text-sm mt-1 opacity-80">{getTaskStatusMessage(task, connectedAddress)}</p>
                     
-                    {/* 显示已验证和奖励发放的信息 */}
+                    {/* Display verified and reward release information */}
                     {task.status === 4 && (
                       <div className="mt-2">
                         <p className="text-sm font-medium text-success">

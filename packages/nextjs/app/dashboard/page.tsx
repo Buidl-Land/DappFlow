@@ -5,10 +5,9 @@ import Link from "next/link";
 import { useAccount } from "wagmi";
 import { formatDistanceToNow, differenceInDays, addDays } from "date-fns";
 import { useContractRead } from "~~/hooks/contracts/useContractRead";
-import { mockProjects, mockTasks, mockUserParticipations, mockUserTasks } from "~~/data/mockData";
 import { UserTasksTable } from "~~/components/dashboard/UserTasksTable";
 
-// 项目数据类型
+// Project data type
 type ProjectData = {
   id: number;
   creator: string;
@@ -27,7 +26,7 @@ type ProjectData = {
   updatedAt: number;
 };
 
-// 资金信息类型
+// Funding information type
 type FundingInfo = {
   fundingGoal: bigint;
   raisedAmount: bigint;
@@ -37,7 +36,7 @@ type FundingInfo = {
   paymentToken: string;
 };
 
-// 代币信息类型
+// Token information type
 type TokenInfo = {
   tokenAddress: string;
   name: string;
@@ -49,7 +48,7 @@ type TokenInfo = {
   createdAt: number;
 };
 
-// 用户投资信息类型
+// User investment information type
 type UserInvestment = {
   projectId: number;
   projectTitle: string;
@@ -60,7 +59,7 @@ type UserInvestment = {
   fundingProgress: number;
 };
 
-// 代币解锁信息类型
+// Token release information type
 type TokenReleaseInfo = {
   projectId: number;
   projectTitle: string;
@@ -73,15 +72,15 @@ type TokenReleaseInfo = {
   releaseSchedule: ReleaseScheduleItem[];
 };
 
-// 代币释放时间表项
+// Token release schedule item
 type ReleaseScheduleItem = {
-  date: number; // 时间戳（秒）
-  percentage: number; // 解锁百分比
-  tokenAmount: bigint; // 解锁代币数量
-  isUnlocked: boolean; // 是否已解锁
+  date: number; // Timestamp (seconds)
+  percentage: number; // Unlock percentage
+  tokenAmount: bigint; // Unlocked token amount
+  isUnlocked: boolean; // Whether it's unlocked
 };
 
-// 缓存对象
+// Cache object
 interface Cache {
   projects: Record<number, ProjectData>;
   fundingInfo: Record<number, FundingInfo>;
@@ -91,7 +90,7 @@ interface Cache {
   timestamp: number;
 }
 
-// 全局缓存
+// Global cache
 const globalCache: Cache = {
   projects: {},
   fundingInfo: {},
@@ -101,10 +100,10 @@ const globalCache: Cache = {
   timestamp: 0
 };
 
-// 缓存过期时间（毫秒）
-const CACHE_EXPIRY = 5 * 60 * 1000; // 5分钟
+// Cache expiry time (milliseconds)
+const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes
 
-// 解析项目数据
+// Parse project data
 const parseProjectData = (data: any[]): ProjectData => {
   return {
     id: Number(data[0]),
@@ -125,7 +124,7 @@ const parseProjectData = (data: any[]): ProjectData => {
   };
 };
 
-// 解析资金信息
+// Parse funding information
 const parseFundingInfo = (data: any[]): FundingInfo => {
   return {
     fundingGoal: data[0],
@@ -137,7 +136,7 @@ const parseFundingInfo = (data: any[]): FundingInfo => {
   };
 };
 
-// 解析代币信息
+// Parse token information
 const parseTokenInfo = (data: any[]): TokenInfo => {
   return {
     tokenAddress: data[0],
@@ -151,44 +150,44 @@ const parseTokenInfo = (data: any[]): TokenInfo => {
   };
 };
 
-// 格式化金额，将 wei 转换为 ETH 并格式化
+// Format amount, convert wei to ETH and format
 const formatAmount = (amount: bigint): string => {
   const ethAmount = Number(amount) / 1e18;
   return ethAmount.toLocaleString(undefined, { maximumFractionDigits: 2 });
 };
 
-// 格式化代币数量
+// Format token amount
 const formatTokenAmount = (amount: bigint): string => {
   return (Number(amount) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 2 });
 };
 
-// 检查缓存是否过期
+// Check if cache is expired
 const isCacheExpired = (): boolean => {
   return Date.now() - globalCache.timestamp > CACHE_EXPIRY;
 };
 
-// 用户投资表格组件
+// User investments table component
 const UserInvestmentsTable = () => {
   const { address } = useAccount();
   const { readMethod, isLoading } = useContractRead();
   const [userInvestments, setUserInvestments] = useState<UserInvestment[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // 获取用户贡献的项目ID列表
+  // Get user contributions (project IDs)
   const getUserContributions = useCallback(async (userAddress: string): Promise<number[]> => {
-    // 检查缓存
+    // Check cache
     const cacheKey = userAddress;
     if (!isCacheExpired() && globalCache.userContributions[cacheKey]) {
       console.log("Using cached user contributions");
       return globalCache.userContributions[cacheKey];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const projectIds = await readMethod("getUserContributions", [userAddress]);
     
     if (projectIds && Array.isArray(projectIds)) {
       const numericIds = projectIds.map(id => Number(id));
-      // 更新缓存
+      // Update cache
       globalCache.userContributions[cacheKey] = numericIds;
       globalCache.timestamp = Date.now();
       return numericIds;
@@ -197,20 +196,20 @@ const UserInvestmentsTable = () => {
     return [];
   }, [readMethod]);
 
-  // 获取项目信息
+  // Get project information
   const getProject = useCallback(async (projectId: number): Promise<ProjectData | null> => {
-    // 检查缓存
+    // Check cache
     if (!isCacheExpired() && globalCache.projects[projectId]) {
       console.log(`Using cached project data for ID ${projectId}`);
       return globalCache.projects[projectId];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const projectResult = await readMethod("getProject", [projectId]);
     
     if (projectResult) {
       const project = parseProjectData(projectResult as any[]);
-      // 更新缓存
+      // Update cache
       globalCache.projects[projectId] = project;
       globalCache.timestamp = Date.now();
       return project;
@@ -219,21 +218,21 @@ const UserInvestmentsTable = () => {
     return null;
   }, [readMethod]);
 
-  // 获取用户对项目的贡献金额
+  // Get user's contribution for a project
   const getContribution = useCallback(async (projectId: number, userAddress: string): Promise<bigint> => {
-    // 检查缓存
+    // Check cache
     const cacheKey = `${projectId}-${userAddress}`;
     if (!isCacheExpired() && globalCache.contributions[cacheKey]) {
       console.log(`Using cached contribution for project ${projectId}`);
       return globalCache.contributions[cacheKey];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const contributionResult = await readMethod("getContribution", [projectId, userAddress]);
     
     if (contributionResult) {
       const amount = BigInt(contributionResult.toString());
-      // 更新缓存
+      // Update cache
       globalCache.contributions[cacheKey] = amount;
       globalCache.timestamp = Date.now();
       return amount;
@@ -242,20 +241,20 @@ const UserInvestmentsTable = () => {
     return 0n;
   }, [readMethod]);
 
-  // 获取项目资金信息
+  // Get project funding information
   const getFundingInfo = useCallback(async (projectId: number): Promise<FundingInfo | null> => {
-    // 检查缓存
+    // Check cache
     if (!isCacheExpired() && globalCache.fundingInfo[projectId]) {
       console.log(`Using cached funding info for project ${projectId}`);
       return globalCache.fundingInfo[projectId];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const fundingResult = await readMethod("getFundingInfo", [projectId]);
     
     if (fundingResult) {
       const fundingInfo = parseFundingInfo(fundingResult as any[]);
-      // 更新缓存
+      // Update cache
       globalCache.fundingInfo[projectId] = fundingInfo;
       globalCache.timestamp = Date.now();
       return fundingInfo;
@@ -271,7 +270,7 @@ const UserInvestmentsTable = () => {
       setIsLoadingData(true);
       
       try {
-        // 获取用户贡献的项目ID列表
+        // Get user contributions (project IDs)
         const projectIds = await getUserContributions(address);
         
         if (projectIds.length === 0) {
@@ -280,16 +279,16 @@ const UserInvestmentsTable = () => {
           return;
         }
         
-        // 获取每个项目的详细信息
+        // Get detailed information for each project
         const investmentsPromises = projectIds.map(async (projectId) => {
-          // 并行获取项目数据、贡献金额和资金信息
+          // Fetch project data, contribution amount, and funding info in parallel
           const [project, contributionAmount, fundingInfo] = await Promise.all([
             getProject(projectId),
             getContribution(projectId, address),
             getFundingInfo(projectId)
           ]);
           
-          // 确定项目状态
+          // Determine project status
           let status = "Unknown";
           let fundingGoal = 0n;
           let raisedAmount = 0n;
@@ -299,7 +298,7 @@ const UserInvestmentsTable = () => {
             fundingGoal = fundingInfo.fundingGoal;
             raisedAmount = fundingInfo.raisedAmount;
             
-            // 计算众筹进度百分比
+            // Calculate crowdfunding progress percentage
             fundingProgress = fundingGoal > 0n 
               ? Number((raisedAmount * 100n) / fundingGoal)
               : 0;
@@ -427,28 +426,28 @@ const UserInvestmentsTable = () => {
   );
 };
 
-// 代币解锁进度组件
+// Token unlock progress component
 const TokenReleaseSchedule = () => {
   const { address } = useAccount();
   const { readMethod, isLoading } = useContractRead();
   const [tokenReleaseInfo, setTokenReleaseInfo] = useState<TokenReleaseInfo[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // 获取用户贡献的项目ID列表
+  // Get user contributions (project IDs)
   const getUserContributions = useCallback(async (userAddress: string): Promise<number[]> => {
-    // 检查缓存
+    // Check cache
     const cacheKey = userAddress;
     if (!isCacheExpired() && globalCache.userContributions[cacheKey]) {
       console.log("Using cached user contributions");
       return globalCache.userContributions[cacheKey];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const projectIds = await readMethod("getUserContributions", [userAddress]);
     
     if (projectIds && Array.isArray(projectIds)) {
       const numericIds = projectIds.map(id => Number(id));
-      // 更新缓存
+      // Update cache
       globalCache.userContributions[cacheKey] = numericIds;
       globalCache.timestamp = Date.now();
       return numericIds;
@@ -457,20 +456,20 @@ const TokenReleaseSchedule = () => {
     return [];
   }, [readMethod]);
 
-  // 获取项目信息
+  // Get project information
   const getProject = useCallback(async (projectId: number): Promise<ProjectData | null> => {
-    // 检查缓存
+    // Check cache
     if (!isCacheExpired() && globalCache.projects[projectId]) {
       console.log(`Using cached project data for ID ${projectId}`);
       return globalCache.projects[projectId];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const projectResult = await readMethod("getProject", [projectId]);
     
     if (projectResult) {
       const project = parseProjectData(projectResult as any[]);
-      // 更新缓存
+      // Update cache
       globalCache.projects[projectId] = project;
       globalCache.timestamp = Date.now();
       return project;
@@ -479,21 +478,21 @@ const TokenReleaseSchedule = () => {
     return null;
   }, [readMethod]);
 
-  // 获取用户对项目的贡献金额
+  // Get user's contribution for a project
   const getContribution = useCallback(async (projectId: number, userAddress: string): Promise<bigint> => {
-    // 检查缓存
+    // Check cache
     const cacheKey = `${projectId}-${userAddress}`;
     if (!isCacheExpired() && globalCache.contributions[cacheKey]) {
       console.log(`Using cached contribution for project ${projectId}`);
       return globalCache.contributions[cacheKey];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const contributionResult = await readMethod("getContribution", [projectId, userAddress]);
     
     if (contributionResult) {
       const amount = BigInt(contributionResult.toString());
-      // 更新缓存
+      // Update cache
       globalCache.contributions[cacheKey] = amount;
       globalCache.timestamp = Date.now();
       return amount;
@@ -502,20 +501,20 @@ const TokenReleaseSchedule = () => {
     return 0n;
   }, [readMethod]);
 
-  // 获取项目资金信息
+  // Get project funding information
   const getFundingInfo = useCallback(async (projectId: number): Promise<FundingInfo | null> => {
-    // 检查缓存
+    // Check cache
     if (!isCacheExpired() && globalCache.fundingInfo[projectId]) {
       console.log(`Using cached funding info for project ${projectId}`);
       return globalCache.fundingInfo[projectId];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const fundingResult = await readMethod("getFundingInfo", [projectId]);
     
     if (fundingResult) {
       const fundingInfo = parseFundingInfo(fundingResult as any[]);
-      // 更新缓存
+      // Update cache
       globalCache.fundingInfo[projectId] = fundingInfo;
       globalCache.timestamp = Date.now();
       return fundingInfo;
@@ -524,20 +523,20 @@ const TokenReleaseSchedule = () => {
     return null;
   }, [readMethod]);
 
-  // 获取项目代币信息
+  // Get project token information
   const getTokenInfo = useCallback(async (projectId: number): Promise<TokenInfo | null> => {
-    // 检查缓存
+    // Check cache
     if (!isCacheExpired() && globalCache.tokenInfo[projectId]) {
       console.log(`Using cached token info for project ${projectId}`);
       return globalCache.tokenInfo[projectId];
     }
 
-    // 从区块链获取数据
+    // Fetch data from blockchain
     const tokenResult = await readMethod("getProjectToken", [projectId]);
     
     if (tokenResult) {
       const tokenInfo = parseTokenInfo(tokenResult as any[]);
-      // 更新缓存
+      // Update cache
       globalCache.tokenInfo[projectId] = tokenInfo;
       globalCache.timestamp = Date.now();
       return tokenInfo;
@@ -546,7 +545,7 @@ const TokenReleaseSchedule = () => {
     return null;
   }, [readMethod]);
 
-  // 计算代币解锁信息
+  // Calculate token release information
   const calculateTokenRelease = useCallback((
     projectId: number,
     projectTitle: string,
@@ -558,19 +557,19 @@ const TokenReleaseSchedule = () => {
       return null;
     }
 
-    // 计算用户应得的代币总量 = (投资者贡献金额 / 众筹总金额) × 众筹池代币数量
+    // Calculate total tokens user should receive = (user contribution / total raised) * crowdfunding pool tokens
     const totalTokens = (contribution * tokenInfo.crowdfundingPool) / fundingInfo.raisedAmount;
     
-    // 代币解锁开始时间（项目众筹结束时间）
+    // Token unlock start time (project crowdfunding end time)
     const vestingStartDate = fundingInfo.endTime;
     
-    // 代币解锁结束时间（开始时间 + 180天）
-    const vestingEndDate = vestingStartDate + (180 * 24 * 60 * 60); // 180天，单位为秒
+    // Token unlock end time (start time + 180 days)
+    const vestingEndDate = vestingStartDate + (180 * 24 * 60 * 60); // 180 days, in seconds
     
-    // 当前时间
-    const now = Math.floor(Date.now() / 1000); // 转换为秒
+    // Current time
+    const now = Math.floor(Date.now() / 1000); // Convert to seconds
     
-    // 计算已解锁百分比
+    // Calculate unlocked percentage
     let percentUnlocked = 0;
     if (now <= vestingStartDate) {
       percentUnlocked = 0;
@@ -580,13 +579,13 @@ const TokenReleaseSchedule = () => {
       percentUnlocked = Math.floor(((now - vestingStartDate) * 100) / (vestingEndDate - vestingStartDate));
     }
     
-    // 计算已解锁代币数量
+    // Calculate unlocked tokens
     const unlockedTokens = (totalTokens * BigInt(percentUnlocked)) / 100n;
     
-    // 创建解锁时间表（6个节点，每30天一个节点）
+    // Create unlock schedule (6 nodes, one every 30 days)
     const releaseSchedule: ReleaseScheduleItem[] = [];
     
-    // 添加中间节点（每30天一个节点，共6个节点）
+    // Add intermediate nodes (one every 30 days, total 6 nodes)
     for (let i = 1; i <= 6; i++) {
       const daysPassed = i * 30;
       const date = vestingStartDate + (daysPassed * 24 * 60 * 60);
@@ -621,7 +620,7 @@ const TokenReleaseSchedule = () => {
       setIsLoadingData(true);
       
       try {
-        // 获取用户贡献的项目ID列表
+        // Get user contributions (project IDs)
         const projectIds = await getUserContributions(address);
         
         if (projectIds.length === 0) {
@@ -630,9 +629,9 @@ const TokenReleaseSchedule = () => {
           return;
         }
         
-        // 获取每个项目的代币解锁信息
+        // Get token release information for each project
         const releaseInfoPromises = projectIds.map(async (projectId) => {
-          // 并行获取项目数据、贡献金额、资金信息和代币信息
+          // Fetch project data, contribution amount, funding info, and token info in parallel
           const [project, contribution, fundingInfo, tokenInfo] = await Promise.all([
             getProject(projectId),
             getContribution(projectId, address),
@@ -640,7 +639,7 @@ const TokenReleaseSchedule = () => {
             getTokenInfo(projectId)
           ]);
           
-          // 如果项目已经创建了代币，计算解锁信息
+          // If project has been created and has tokens, calculate unlock information
           if (project && contribution > 0n && fundingInfo && tokenInfo) {
             return calculateTokenRelease(
               projectId,
@@ -656,7 +655,7 @@ const TokenReleaseSchedule = () => {
         
         const releaseInfoResults = await Promise.all(releaseInfoPromises);
         
-        // 过滤掉空值并按解锁日期排序
+        // Filter out null values and sort by unlock date
         const validReleaseInfo = releaseInfoResults
           .filter((info): info is TokenReleaseInfo => info !== null)
           .sort((a, b) => a.vestingEndDate - b.vestingEndDate);
@@ -701,7 +700,7 @@ const TokenReleaseSchedule = () => {
   
   return (
     <div className="space-y-4">
-      {/* 代币解锁进度表格 */}
+      {/* Token unlock progress table */}
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <table className="table w-full table-sm sm:table-md">
           <thead>
@@ -723,7 +722,7 @@ const TokenReleaseSchedule = () => {
                 const isNextRelease = scheduleItem.isUnlocked === false && 
                   info.releaseSchedule.findIndex(item => !item.isUnlocked) === index;
                 
-                // 只显示下一个未解锁的节点和最近一个已解锁的节点
+                // Only display next unlocked node and most recent unlocked node
                 const isRecentUnlocked = scheduleItem.isUnlocked && 
                   (index === info.releaseSchedule.findIndex(item => item.isUnlocked) || 
                    index === info.releaseSchedule.length - 1 || 
@@ -784,7 +783,7 @@ const TokenReleaseSchedule = () => {
                           className="btn btn-xs sm:btn-sm btn-primary"
                           disabled={!scheduleItem.isUnlocked}
                           onClick={() => {
-                            // 这里可以添加领取代币的逻辑
+                            // Here you can add logic to claim tokens
                             console.log(`Claim tokens for project ${info.projectId}`);
                           }}
                         >
@@ -800,7 +799,7 @@ const TokenReleaseSchedule = () => {
         </table>
       </div>
       
-      {/* 代币分配信息卡片 */}
+      {/* Token distribution information cards */}
       <div className="grid grid-cols-1 gap-4 mt-6 sm:grid-cols-3">
         {tokenReleaseInfo.map((info) => (
           <div key={`card-${info.projectId}`} className="card bg-base-200 shadow-sm">
@@ -839,12 +838,12 @@ const TokenReleaseSchedule = () => {
                   max="100"
                 ></progress>
                 
-                {/* 显示解锁时间表 */}
+                {/* Display unlock schedule */}
                 <div className="mt-4">
                   <div className="text-xs font-medium mb-2">Release Schedule:</div>
                   <div className="space-y-1">
                     {info.releaseSchedule
-                      .filter(item => item.percentage > 0) // 过滤掉0%的节点
+                      .filter(item => item.percentage > 0) // Filter out 0% nodes
                       .map((item, index) => (
                         <div key={index} className="flex justify-between items-center text-xs">
                           <span>{new Date(item.date * 1000).toLocaleDateString()} ({item.percentage}%)</span>
@@ -975,35 +974,35 @@ const DashboardPage = () => {
     }
   }, [address, readMethod]);
 
-  // 获取投资分布数据
+  // Get investment distribution data
   const fetchInvestmentDistribution = useCallback(async () => {
     if (!address) return;
 
     try {
-      // 在实际应用中，这里应该从合约中获取数据
-      // 这里使用模拟数据进行展示
+      // In a real application, this data should be fetched from the contract
+      // Here we use mock data for demonstration
       const projectIds = await readMethod("getUserContributions", [address]);
       
       if (projectIds && Array.isArray(projectIds)) {
-        // 初始化分类计数
+        // Initialize category counters
         let defiCount = 0;
         let nftCount = 0;
         let gamingCount = 0;
         let infrastructureCount = 0;
         let socialCount = 0;
         
-        // 遍历用户投资的项目
+        // Iterate through user's projects
         for (const projectId of projectIds) {
           try {
-            // 获取项目详情
+            // Get project details
             const projectData = await readMethod("getProject", [projectId]);
             
             if (projectData) {
-              // 根据项目标签分类
-              const tags = projectData[4]; // 假设标签在索引4
+              // Categorize project based on tags
+              const tags = projectData[4]; // Assume tags are in index 4
               
               if (tags && Array.isArray(tags)) {
-                // 根据标签对项目进行分类
+                // Categorize project based on tags
                 if (tags.some(tag => tag.toLowerCase().includes('defi'))) {
                   defiCount++;
                 } else if (tags.some(tag => tag.toLowerCase().includes('nft'))) {
@@ -1015,7 +1014,7 @@ const DashboardPage = () => {
                 } else if (tags.some(tag => tag.toLowerCase().includes('social'))) {
                   socialCount++;
                 } else {
-                  // 如果没有匹配的标签，随机分配到一个类别
+                  // If no tags match, randomly assign to a category
                   const randomCategory = Math.floor(Math.random() * 5);
                   switch (randomCategory) {
                     case 0: defiCount++; break;
@@ -1032,7 +1031,7 @@ const DashboardPage = () => {
           }
         }
         
-        // 如果没有真实数据，生成一些模拟数据
+        // If there's no real data, generate some mock data
         if (defiCount + nftCount + gamingCount + infrastructureCount + socialCount === 0) {
           const total = projectIds.length || 5;
           defiCount = Math.floor(total * 0.3);
@@ -1052,7 +1051,7 @@ const DashboardPage = () => {
       }
     } catch (err) {
       console.error("Failed to fetch investment distribution:", err);
-      // 设置一些默认数据
+      // Set some default data
       setInvestmentDistribution({
         defi: 3,
         nft: 2,
@@ -1063,12 +1062,12 @@ const DashboardPage = () => {
     }
   }, [address, readMethod]);
 
-  // 获取投资状态分布
+  // Get investment status distribution
   const fetchInvestmentStatusDistribution = useCallback(async () => {
     if (!address) return;
 
     try {
-      // 在实际应用中，这里应该从合约中获取数据
+      // In a real application, this data should be fetched from the contract
       const projectIds = await readMethod("getUserContributions", [address]);
       
       if (projectIds && Array.isArray(projectIds)) {
@@ -1079,12 +1078,12 @@ const DashboardPage = () => {
         
         for (const projectId of projectIds) {
           try {
-            // 获取项目资金信息
+            // Get project funding information
             const fundingInfo = await readMethod("getFundingInfo", [projectId]);
             
             if (fundingInfo) {
-              const hasMetFundingGoal = fundingInfo[4]; // 假设在索引4
-              const endTime = Number(fundingInfo[3]); // 假设在索引3
+              const hasMetFundingGoal = fundingInfo[4]; // Assuming at index 4
+              const endTime = Number(fundingInfo[3]); // Assuming at index 3
               const now = Math.floor(Date.now() / 1000);
               
               if (hasMetFundingGoal) {
@@ -1102,7 +1101,7 @@ const DashboardPage = () => {
           }
         }
         
-        // 如果没有真实数据，生成一些模拟数据
+        // If there's no real data, generate some mock data
         if (activeCount + fundedCount + failedCount + pendingCount === 0) {
           const total = projectIds.length || 10;
           activeCount = Math.floor(total * 0.4);
@@ -1120,7 +1119,7 @@ const DashboardPage = () => {
       }
     } catch (err) {
       console.error("Failed to fetch investment status distribution:", err);
-      // 设置一些默认数据
+      // Set some default data
       setInvestmentStatusDistribution({
         active: 4,
         funded: 3,
@@ -1590,7 +1589,7 @@ const DashboardPage = () => {
                     </svg>
                     My Tasks
                   </h2>
-                  <Link href="/tasks" className="btn btn-primary btn-sm gap-2">
+                  <Link href="/projects" className="btn btn-primary btn-sm gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>

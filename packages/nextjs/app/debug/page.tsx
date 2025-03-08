@@ -25,11 +25,11 @@ const Debug: NextPage = () => {
           <Link href="/debug/diamond" className="btn btn-primary">
             Debug Diamond Contract
           </Link>
-          <p className="mt-2 text-sm">
-            Use the Diamond Contract Debug page to interact directly with the Diamond contract and all its facets.
-            <br />
-            <span className="font-bold">注意：</span> MockUSDC 合约的功能已集成到 Diamond 调试页面中，可以在 "MockUSDC" 分类下找到。
-          </p>
+          <div className="mt-8 bg-base-300 p-4 rounded-lg">
+            <p className="text-sm">
+              <span className="font-bold">Note:</span> MockUSDC contract functionality has been integrated into the Diamond debug page, available under the "MockUSDC" category.
+            </p>
+          </div>
         </div>
       </div>
     </>

@@ -448,7 +448,7 @@ contract IdeaPulseTest is Test {
         ProjectTokenFacet(address(diamond)).claimTokens(1);
         vm.stopPrank();
 
-        // 在claim操作后获取claimed金额
+        // Get claimed amount after claim operation
         uint256 claimed = ProjectTokenFacet(address(diamond)).getClaimedAmount(1, funder1);
 
         // Verify claimed amount is approximately 50% (allow small variance due to block timestamps)
@@ -691,13 +691,13 @@ contract IdeaPulseTest is Test {
         // Use a properly defined empty array to avoid nested calldata issue
         string[] memory emptySkills = new string[](0);
 
-        // 确保项目已创建并资金就绪
+        // Ensure project is created and funding is ready
         testCreateProject();
 
-        // 获取最后创建的项目ID，应该是1
+        // Get the last created project ID, should be 1
         uint256 projectId = ProjectFacet(address(diamond)).getProjectCount();
 
-        // 初始化资金
+        // Initialize funding
         vm.startPrank(admin);
         CrowdfundingFacet(address(diamond)).initializeFunding(
             projectId,
@@ -707,13 +707,13 @@ contract IdeaPulseTest is Test {
         );
         vm.stopPrank();
 
-        // 添加资金
+        // Add funding
         vm.startPrank(funder1);
         mockToken.approve(address(diamond), 5000 * 10**18);
         CrowdfundingFacet(address(diamond)).contribute(projectId, 5000 * 10**18);
         vm.stopPrank();
 
-        // 使用任务创建者身份创建任务
+        // Use task creator identity to create task
         vm.startPrank(taskCreator);
         // Create a second task without storing the unused variable
         TaskMarketFacet(address(diamond)).createTask(

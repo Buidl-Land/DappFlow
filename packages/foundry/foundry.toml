@@ -24,14 +24,12 @@ solc_version = "0.8.27"
 optimizer = true
 optimizer_runs = 1000
 verifier = "blockscout"
-verifier_url = "https://evm-testnet.flowscan.io/api"
+verifier_url = "https://testnet.monadexplorer.com/api"
 
 [rpc_endpoints]
 default_network = "http://127.0.0.1:8545"
 localhost = "http://127.0.0.1:8545"
-flowTestnet = "https://testnet.evm.nodes.onflow.org"
 monadTestnet = "https://testnet-rpc.monad.xyz/"
-auroraTestnet = "https://testnet.aurora.dev"
 
 mainnet = "https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}"
 sepolia = "https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
@@ -55,9 +53,7 @@ pgnTestnet = "https://sepolia.publicgoods.network"
 [etherscan]
 polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
-flowTestnet = { key = "", url = "https://evm-testnet.flowscan.io/api", chain = 545 }
 monadTestnet = { key = "", url = "https://testnet.monadexplorer.com/api", chain = 10143 }
-auroraTestnet = { key = "", url = "https://explorer.testnet.aurora.dev/api", chain = 1313161555 }
 
 [fmt]
 line_length = 120

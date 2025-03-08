@@ -5,7 +5,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import externalContracts from "~~/contracts/externalContracts";
 
 /**
- * 获取所有Facet的ABI
+ * Get ABI for all Facets
  */
 export const useFacetsAbi = () => {
   const { targetNetwork } = useTargetNetwork();
@@ -13,27 +13,27 @@ export const useFacetsAbi = () => {
     contractName: "Diamond" as ContractName 
   });
   
-  // 获取外部合约数据
+  // Get external contract data
   const chainId = targetNetwork.id;
   const mockUsdcData = externalContracts[chainId as keyof typeof externalContracts]?.["MockUSDC"];
   
-  // 确保Diamond合约的ABI始终可用
+  // Ensure Diamond contract ABI is always available
   if (!diamondData?.abi && !diamondLoading) {
     console.error("Diamond contract ABI not found");
   }
   
-  // 使用Diamond合约的ABI作为基础，即使其他Facet的ABI加载失败，也能保证基本功能
+  // Use Diamond contract ABI as base, to ensure basic functionality even if other Facet ABIs fail to load
   const combinedAbi = [...(diamondData?.abi || [])] as Abi;
   
-  // 如果存在MockUSDC合约，添加其ABI
+  // If MockUSDC contract exists, add its ABI
   if (mockUsdcData?.abi) {
     combinedAbi.push(...mockUsdcData.abi);
   }
   
-  // 如果Diamond合约的ABI为空，提供一个基本的ABI以避免"ABI is required"错误
+  // If Diamond contract ABI is empty, provide a basic ABI to avoid "ABI is required" errors
   if (combinedAbi.length === 0 && !diamondLoading) {
     console.warn("Using fallback ABI as Diamond ABI is empty");
-    // 添加一个基本的回退ABI，包含一些常见的Diamond方法
+    // Add a basic fallback ABI with common Diamond methods
     combinedAbi.push(
       {
         type: "function",
@@ -51,11 +51,11 @@ export const useFacetsAbi = () => {
       }
     );
     
-    // 添加Diamond标准的基本方法
+    // Add basic methods from Diamond standard
     addDiamondStandardAbi(combinedAbi);
   }
   
-  // 尝试加载其他Facet的ABI，但不阻止页面渲染
+  // Try to load other Facet ABIs, but don't block page rendering
   try {
     const { data: accessControlFacetData } = useDeployedContractInfo({ 
       contractName: "AccessControlFacet" as ContractName 
@@ -111,7 +111,7 @@ export const useFacetsAbi = () => {
     console.warn("Failed to load ProjectTokenFacet ABI:", error);
   }
 
-  // 去重，避免重复的函数定义
+  // Deduplicate to avoid duplicate function definitions
   const uniqueAbi = combinedAbi.filter((item, index, self) => {
     if (!item || !item.type) return false;
     
@@ -135,12 +135,12 @@ export const useFacetsAbi = () => {
 };
 
 /**
- * 添加Diamond标准的基本ABI
+ * Add basic ABI for Diamond standard
  */
 function addDiamondStandardAbi(abiArray: any[]) {
-  // 添加Diamond标准的基本方法
+  // Add basic methods from Diamond standard
   abiArray.push(
-    // Diamond Loupe 方法
+    // Diamond Loupe methods
     {
       type: "function",
       name: "facets",
@@ -179,7 +179,7 @@ function addDiamondStandardAbi(abiArray: any[]) {
       stateMutability: "view"
     },
     
-    // 所有权方法
+    // Ownership methods
     {
       type: "function",
       name: "owner",
@@ -196,7 +196,7 @@ function addDiamondStandardAbi(abiArray: any[]) {
     }
   );
   
-  // 添加AccessControl基本方法
+  // Add basic AccessControl methods
   abiArray.push(
     {
       type: "function",
@@ -219,7 +219,7 @@ function addDiamondStandardAbi(abiArray: any[]) {
 }
 
 /**
- * 根据方法名获取对应的ABI
+ * Get ABI for a method by name
  */
 export const getFunctionAbiByName = (methodName: string, combinedAbi: Abi) => {
   if (!combinedAbi || combinedAbi.length === 0) {
@@ -239,7 +239,7 @@ export const getFunctionAbiByName = (methodName: string, combinedAbi: Abi) => {
 };
 
 /**
- * 获取所有读取方法
+ * Get all read methods
  */
 export const getAllReadMethods = (combinedAbi: Abi) => {
   if (!combinedAbi || combinedAbi.length === 0) {
@@ -256,7 +256,7 @@ export const getAllReadMethods = (combinedAbi: Abi) => {
 };
 
 /**
- * 获取所有写入方法
+ * Get all write methods
  */
 export const getAllWriteMethods = (combinedAbi: Abi) => {
   if (!combinedAbi || combinedAbi.length === 0) {

@@ -13,7 +13,7 @@ const ProjectsContent = () => {
   const [status, setStatus] = useState<ProjectStatus>((searchParams.get("status") as ProjectStatus) || "all");
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 
-  // 创建一个项目ID数组，用于渲染ContractProjectCard
+  // Create an array of project IDs for rendering ContractProjectCard
   const projectIds = [3, 4, 5];
 
   return (

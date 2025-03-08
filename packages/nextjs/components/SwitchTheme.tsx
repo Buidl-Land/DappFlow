@@ -27,9 +27,12 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <button
+        type="button"
+        className={`flex items-center justify-center transition-colors ${
+          isDarkMode ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-800"
+        }`}
+        aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         onClick={handleToggle}
-        className="p-1.5 rounded-full transition-transform hover:scale-110 focus:outline-none"
-        aria-label={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
       >
         {isDarkMode ? (
           <MoonIcon className="h-7 w-7 text-blue-300" />

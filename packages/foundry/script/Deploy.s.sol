@@ -83,7 +83,7 @@ contract DeployScript is ScaffoldETHDeploy {
         } catch Error(string memory reason) {
             console.log("Failed to initialize AccessControl with deployerAddress:", reason);
             
-            // 尝试使用tx.origin初始化
+            // Try to initialize with tx.origin
             try AccessControlFacet(address(diamond)).initializeAccessControl(tx.origin) {
                 console.log("AccessControl initialized with tx.origin");
             } catch Error(string memory reason) {
@@ -91,7 +91,7 @@ contract DeployScript is ScaffoldETHDeploy {
             }
         }
 
-        // 确保tx.origin也是管理员
+        // Ensure tx.origin is also an admin
         if (tx.origin != deployerAddress) {
             console.log("tx.origin and deployerAddress are different, adding tx.origin as admin");
             try AccessControlFacet(address(diamond)).addAdmin(tx.origin) {
@@ -125,7 +125,7 @@ contract DeployScript is ScaffoldETHDeploy {
             console.log("Failed to grant FUNDING_MANAGER_ROLE to deployerAddress:", reason);
         }
 
-        // 如果tx.origin和deployerAddress不同，也授予tx.origin角色
+        // If tx.origin and deployerAddress are different, also grant roles to tx.origin
         if (tx.origin != deployerAddress) {
             console.log("Granting roles to tx.origin...");
             try AccessControlFacet(address(diamond)).grantRole(PROJECT_CREATOR_ROLE, tx.origin) {

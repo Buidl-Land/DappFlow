@@ -8,20 +8,14 @@ import { FaChartLine, FaCode, FaCoins, FaLightbulb, FaRobot, FaUsers } from "rea
 import { useAccount } from "wagmi";
 import { IdeaPulseLogo } from "~~/components/assets/IdeaPulseLogo";
 import { ParticlesBackground } from "~~/components/particles/ParticlesBackground";
-import { ProjectCard } from "~~/components/shared/ProjectCard";
 import { ContractProjectCard } from "~~/components/shared/ContractProjectCard";
-import { mockProjects } from "~~/data/mockData";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
-  const [featuredProjects] = useState(mockProjects.slice(0, 2));
 
-  const totalProjects = mockProjects.length;
-  const totalRaised = mockProjects.reduce((acc, project) => acc + project.raisedAmount, 0);
-  const totalOpenTasks = mockProjects.reduce(
-    (acc, project) => acc + project.tasks.filter(task => task.status === "open").length,
-    0,
-  );
+  const totalProjects = 5; // Using fixed values or fetch from contract
+  const totalRaised = 100000; // Using fixed values or fetch from contract
+  const totalOpenTasks = 15; // Using fixed values or fetch from contract
 
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },

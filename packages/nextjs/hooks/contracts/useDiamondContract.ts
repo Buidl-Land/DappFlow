@@ -5,7 +5,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import externalContracts from "~~/contracts/externalContracts";
 
 /**
- * 获取所有Facet的ABI
+ * Get ABI for all Facets
  */
 export const useFacetsAbi = () => {
   const { targetNetwork } = useTargetNetwork();
@@ -13,39 +13,39 @@ export const useFacetsAbi = () => {
     contractName: "Diamond" as ContractName 
   });
   
-  // 获取外部合约数据
+  // Get external contract data
   const chainId = targetNetwork.id;
   const mockUsdcData = externalContracts[chainId as keyof typeof externalContracts]?.["MockUSDC"];
   
-  // 确保Diamond合约的ABI始终可用
+  // Ensure Diamond contract ABI is always available
   if (!diamondData?.abi && !diamondLoading) {
     console.error("Diamond contract ABI not found");
   }
   
-  // 使用Diamond合约的ABI作为基础，即使其他Facet的ABI加载失败，也能保证基本功能
+  // Use Diamond contract ABI as base, ensure basic functionality even if other Facet ABIs fail to load
   let combinedAbi: any[] = [...(diamondData?.abi || [])];
   
-  // 如果存在MockUSDC合约，添加其ABI
+  // Add MockUSDC ABI if exists
   if (mockUsdcData?.abi) {
     combinedAbi = [...combinedAbi, ...mockUsdcData.abi];
   }
   
-  // 添加任务市场相关ABI
+  // Add Task Market related ABI
   combinedAbi = addTaskMarketAbi(combinedAbi);
   
-  // 添加Diamond标准ABI
+  // Add Diamond Standard ABI
   combinedAbi = addDiamondStandardAbi(combinedAbi);
   
-  // 添加项目相关ABI
+  // Add Project related ABI
   combinedAbi = addProjectAbi(combinedAbi);
   
-  // 添加众筹相关ABI
+  // Add Funding related ABI
   combinedAbi = addFundingAbi(combinedAbi);
   
-  // 添加项目代币相关ABI
+  // Add Project Token related ABI
   combinedAbi = addProjectTokenAbi(combinedAbi);
   
-  // 添加访问控制相关ABI
+  // Add Access Control related ABI
   combinedAbi = addAccessControlAbi(combinedAbi);
   
   return {
@@ -56,10 +56,10 @@ export const useFacetsAbi = () => {
 };
 
 /**
- * 添加访问控制相关的ABI
+ * Add Access Control related ABI
  */
 function addAccessControlAbi(abiArray: any[]): any[] {
-  // 访问控制相关的ABI
+  // Access Control related ABI
   const accessControlAbi = [
     {
       "inputs": [],
@@ -250,10 +250,10 @@ function addAccessControlAbi(abiArray: any[]): any[] {
 }
 
 /**
- * 添加项目代币相关的ABI
+ * Add Project Token related ABI
  */
 function addProjectTokenAbi(abiArray: any[]): any[] {
-  // 项目代币相关的ABI
+  // Project Token related ABI
   const projectTokenAbi = [
     {
       "inputs": [
@@ -418,10 +418,10 @@ function addProjectTokenAbi(abiArray: any[]): any[] {
 }
 
 /**
- * 添加众筹相关的ABI
+ * Add Funding related ABI
  */
 function addFundingAbi(abiArray: any[]): any[] {
-  // 众筹相关的ABI
+  // Funding related ABI
   const fundingAbi = [
     {
       "inputs": [
@@ -613,10 +613,10 @@ function addFundingAbi(abiArray: any[]): any[] {
 }
 
 /**
- * 添加任务市场相关的ABI
+ * Add Task Market related ABI
  */
 function addTaskMarketAbi(abiArray: any[]): any[] {
-  // 任务市场相关的ABI
+  // Task Market related ABI
   const taskMarketAbi = [
     {
       "inputs": [
@@ -917,10 +917,10 @@ function addTaskMarketAbi(abiArray: any[]): any[] {
 }
 
 /**
- * 添加项目相关的ABI
+ * Add Project related ABI
  */
 function addProjectAbi(abiArray: any[]): any[] {
-  // 项目相关的ABI
+  // Project related ABI
   const projectAbi = [
     {
       "inputs": [
@@ -1222,10 +1222,10 @@ function addProjectAbi(abiArray: any[]): any[] {
 }
 
 /**
- * 添加Diamond标准相关的ABI
+ * Add Diamond Standard related ABI
  */
 function addDiamondStandardAbi(abiArray: any[]): any[] {
-  // Diamond标准相关的ABI
+  // Diamond Standard related ABI
   const diamondStandardAbi = [
     {
       "inputs": [
@@ -1328,12 +1328,12 @@ function addDiamondStandardAbi(abiArray: any[]): any[] {
 }
 
 /**
- * 根据方法名获取ABI函数定义
+ * Get ABI function definition by method name
  */
 export const getFunctionAbiByName = (methodName: string, combinedAbi: Abi) => {
   if (!combinedAbi) return null;
   
-  // 查找匹配的函数ABI
+  // Find matching function ABI
   const abiFunction = (combinedAbi as any[]).find(
     (func) => func.type === "function" && func.name === methodName
   ) as AbiFunction;
@@ -1342,24 +1342,24 @@ export const getFunctionAbiByName = (methodName: string, combinedAbi: Abi) => {
 };
 
 /**
- * 获取所有只读方法
+ * Get all read-only methods
  */
 export const getAllReadMethods = (combinedAbi: Abi) => {
   if (!combinedAbi) return [];
   
-  // 过滤出所有只读方法
+  // Filter all read-only methods
   return (combinedAbi as any[])
     .filter((func) => func.type === "function" && (func.stateMutability === "view" || func.stateMutability === "pure"))
     .map((func) => func.name);
 };
 
 /**
- * 获取所有写入方法
+ * Get all write methods
  */
 export const getAllWriteMethods = (combinedAbi: Abi) => {
   if (!combinedAbi) return [];
   
-  // 过滤出所有写入方法
+  // Filter all write methods
   return (combinedAbi as any[])
     .filter((func) => func.type === "function" && func.stateMutability !== "view" && func.stateMutability !== "pure")
     .map((func) => func.name);

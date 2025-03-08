@@ -6,7 +6,7 @@ import { FacetCategory } from "./DiamondContractUI";
 import { Contract } from "~~/utils/scaffold-eth/contract";
 import { getAllWriteMethods, getFunctionAbiByName, useFacetsAbi } from "./utilsDiamond";
 
-// 定义每个分类包含的方法
+// Define methods included in each category
 const categoryMethods: Record<Exclude<FacetCategory, "all" | "mockusdc">, string[]> = {
   accessControl: [
     "grantRole", 
@@ -92,26 +92,26 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
     }
     
     try {
-      // 获取所有写入方法
+      // Get all write methods
       const allMethods = getAllWriteMethods(combinedAbi);
       setAvailableMethods(allMethods);
       
-      // 根据活动分类过滤方法
+      // Filter methods based on active category
       if (activeCategory === "all") {
         setWriteMethods(allMethods);
       } else if (activeCategory === "mockusdc") {
-        // MockUSDC在DiamondContractUI中直接处理
+        // MockUSDC is handled directly in DiamondContractUI
         setWriteMethods([]);
       } else {
-        // 首先尝试使用预定义的分类
+        // First try to use predefined categories
         const predefinedMethods = categoryMethods[activeCategory];
         
-        // 过滤出实际存在于ABI中的方法
+        // Filter out methods that actually exist in the ABI
         const filteredMethods = predefinedMethods.filter(method => 
           allMethods.includes(method)
         );
         
-        // 如果过滤后没有方法，则显示所有写入方法
+        // If no methods after filtering, show all write methods
         if (filteredMethods.length === 0) {
           setWriteMethods(allMethods);
         } else {
@@ -125,15 +125,15 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
   }, [diamondContractData, combinedAbi, activeCategory, isLoading]);
 
   if (isLoading) {
-    return <p className="text-gray-500">加载合约方法中...</p>;
+    return <p className="text-gray-500">Loading contract methods...</p>;
   }
 
   if (error) {
     return (
       <div className="text-red-500">
-        <p>错误: {error}</p>
+        <p>Error: {error}</p>
         <p className="text-sm mt-2">
-          请确保所有合约都已正确部署并在deployedContracts.ts中配置
+          Please ensure all contracts are properly deployed and configured in deployedContracts.ts
         </p>
       </div>
     );
@@ -143,12 +143,12 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
     if (availableMethods.length > 0) {
       return (
         <div className="text-gray-500 italic">
-          <p>此分类没有可用的写入方法。</p>
-          <p className="mt-2">可用的写入方法: {availableMethods.join(", ")}</p>
+          <p>No write methods available for this category.</p>
+          <p className="mt-2">Available write methods: {availableMethods.join(", ")}</p>
         </div>
       );
     }
-    return <p className="text-gray-500 italic">没有可用的写入方法</p>;
+    return <p className="text-gray-500 italic">No write methods available</p>;
   }
 
   return (

@@ -5,7 +5,7 @@ import { usePublicClient } from "wagmi";
 import { useFacetsAbi, getFunctionAbiByName } from "./useDiamondContract";
 
 /**
- * 用于写入Diamond合约数据的钩子
+ * Hook for writing to Diamond contract
  */
 export const useContractWrite = () => {
   const { data: walletClient } = useWalletClient();
@@ -13,10 +13,10 @@ export const useContractWrite = () => {
   const { combinedAbi, diamondAddress, isLoading } = useFacetsAbi();
 
   /**
-   * 写入合约方法
-   * @param methodName 方法名称
-   * @param args 方法参数
-   * @param options 可选配置
+   * Write contract method
+   * @param methodName Method name
+   * @param args Method arguments
+   * @param options Optional configuration
    */
   const writeMethod = useCallback(
     async (
@@ -42,7 +42,7 @@ export const useContractWrite = () => {
       }
 
       try {
-        // 估算gas费用
+        // Estimate gas cost
         let gasLimit = options?.gasLimit;
         if (!gasLimit) {
           try {
@@ -53,15 +53,15 @@ export const useContractWrite = () => {
               args,
               account: walletClient.account,
             });
-            // 添加20%的缓冲
+            // Add 20% buffer
             gasLimit = (estimatedGas * BigInt(120)) / BigInt(100);
           } catch (error) {
             console.warn(`Gas estimation failed for ${methodName}:`, error);
-            // 如果估算失败，不设置gasLimit，让钱包自行处理
+            // If estimation fails, don't set gasLimit, let the wallet handle it
           }
         }
 
-        // 执行合约写入
+        // Execute contract write
         const hash = await walletClient.writeContract({
           address: diamondAddress,
           abi: combinedAbi,

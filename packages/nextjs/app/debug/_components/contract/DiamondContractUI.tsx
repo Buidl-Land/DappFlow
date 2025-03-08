@@ -33,14 +33,14 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
   const [showAbiError, setShowAbiError] = useState(false);
   const [forceReload, setForceReload] = useState(false);
 
-  // 获取外部合约数据
+  // Get external contract data
   const chainId = targetNetwork.id;
   const mockUsdcData = externalContracts[chainId as keyof typeof externalContracts]?.["MockUSDC"];
 
-  // 检查ABI是否有效
+  // Check if ABI is valid
   const hasValidAbi = combinedAbi && combinedAbi.length > 0;
 
-  // 在组件加载后5秒检查ABI状态
+  // Check ABI status 5 seconds after component loads
   useState(() => {
     const timer = setTimeout(() => {
       if (!hasValidAbi && !abiLoading) {
@@ -51,15 +51,15 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
     return () => clearTimeout(timer);
   });
 
-  // 强制重新加载页面
+  // Force reload the page
   const handleForceReload = () => {
     window.location.reload();
   };
 
-  // 使用本地存储的ABI
+  // Use locally stored ABI
   const handleUseLocalAbi = () => {
     setForceReload(true);
-    // 重新加载会触发useFacetsAbi中的回退ABI逻辑
+    // Reload will trigger fallback ABI logic in useFacetsAbi
     setTimeout(() => {
       window.location.reload();
     }, 500);
@@ -95,7 +95,7 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
     { id: "projectToken", name: "Project Token", description: "Project token creation and distribution" }
   ];
 
-  // 检查是否有MockUSDC合约
+  // Check if MockUSDC contract exists
   const hasMockUsdc = !!mockUsdcData;
 
   return (
@@ -174,7 +174,7 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
               </p>
             </div>
             
-            {/* 添加一个明确的MockUSDC部分 */}
+            {/* Add a dedicated MockUSDC section */}
             {hasMockUsdc && (
               <div className="mt-6 border-t border-base-200 pt-4">
                 <h3 className="font-bold text-md mb-2">External Contracts</h3>
@@ -246,7 +246,7 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
                           <span className="font-bold">MockUSDC Contract:</span>
                           <Address address={mockUsdcData.address} onlyEnsOrAddress />
                         </div>
-                        {/* 直接列出所有MockUSDC的读取方法 */}
+                        {/* List all MockUSDC read methods directly */}
                         <div className="py-2">
                           <ReadOnlyFunctionForm
                             abiFunction={{
@@ -343,7 +343,7 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
                   <div className="p-5 divide-y divide-base-300">
                     <div className="py-3">
                       <div className="flex flex-col gap-3">
-                        {/* 直接列出所有MockUSDC的写入方法 */}
+                        {/* List all MockUSDC write methods directly */}
                         <div className="py-2">
                           <WriteOnlyFunctionForm
                             abiFunction={{
