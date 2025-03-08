@@ -1,3 +1,0 @@
-[33m37fee41[m[33m ([m[1;36mHEAD -> [m[1;32mmonad-evm[m[33m, [m[1;31morigin/monad-evm[m[33m)[m feat: implement task management and project details pages
-[33m698f600[m feat(debug): add MockUSDC contract interaction to debug frontend interface
-[33mcc27b1a[m Add Diamond contract UI components and update debug page
