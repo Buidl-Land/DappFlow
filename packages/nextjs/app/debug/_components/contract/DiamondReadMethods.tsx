@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Abi, AbiFunction } from "abitype";
 import { ReadOnlyFunctionForm } from "./ReadOnlyFunctionForm";
 import { FacetCategory } from "./DiamondContractUI";
 import { Contract } from "~~/utils/scaffold-eth/contract";
@@ -9,53 +10,53 @@ import { getAllReadMethods, getFunctionAbiByName, useFacetsAbi } from "./utilsDi
 // Define methods included in each category
 const categoryMethods: Record<Exclude<FacetCategory, "all" | "mockusdc">, string[]> = {
   accessControl: [
-    "hasRole", 
-    "getRoleAdmin", 
-    "isAdmin", 
-    "ADMIN_ROLE", 
-    "PROJECT_CREATOR_ROLE", 
-    "FUNDING_MANAGER_ROLE", 
-    "TASK_CREATOR_ROLE", 
+    "hasRole",
+    "getRoleAdmin",
+    "isAdmin",
+    "ADMIN_ROLE",
+    "PROJECT_CREATOR_ROLE",
+    "FUNDING_MANAGER_ROLE",
+    "TASK_CREATOR_ROLE",
     "AI_AGENT_ROLE"
   ],
   project: [
-    "getProject", 
-    "getProjects", 
-    "getProjectCount", 
-    "getProjectsByOwner", 
-    "getProjectStatus", 
-    "getProjectDetails", 
+    "getProject",
+    "getProjects",
+    "getProjectCount",
+    "getProjectsByOwner",
+    "getProjectStatus",
+    "getProjectDetails",
     "getProjectMembers"
   ],
   crowdfunding: [
-    "getContribution", 
-    "getTotalContributions", 
-    "getContributorCount", 
-    "getContributors", 
-    "getContributionsByUser", 
-    "getFundingGoal", 
-    "getFundingDeadline", 
+    "getContribution",
+    "getTotalContributions",
+    "getContributorCount",
+    "getContributors",
+    "getContributionsByUser",
+    "getFundingGoal",
+    "getFundingDeadline",
     "isFundingSuccessful"
   ],
   taskMarket: [
-    "getTask", 
-    "getTasks", 
-    "getTaskCount", 
-    "getTasksByProject", 
-    "getTasksByAssignee", 
-    "getTaskStatus", 
-    "getTaskReward", 
-    "getTaskDeadline", 
+    "getTask",
+    "getTasks",
+    "getTaskCount",
+    "getTasksByProject",
+    "getTasksByAssignee",
+    "getTaskStatus",
+    "getTaskReward",
+    "getTaskDeadline",
     "getTaskApplicants"
   ],
   projectToken: [
-    "getProjectToken", 
-    "getClaimedAmount", 
-    "getTokenBalance", 
-    "getTotalSupply", 
-    "getTokenAllocation", 
-    "getVestingSchedule", 
-    "getTokenSymbol", 
+    "getProjectToken",
+    "getClaimedAmount",
+    "getTokenBalance",
+    "getTotalSupply",
+    "getTokenAllocation",
+    "getVestingSchedule",
+    "getTokenSymbol",
     "getTokenName"
   ]
 };
@@ -76,7 +77,7 @@ export const DiamondReadMethods = ({ diamondContractData, activeCategory }: Diam
       setError("Diamond contract data is missing");
       return;
     }
-    
+
     if (!combinedAbi || combinedAbi.length === 0) {
       if (!isLoading) {
         setError("ABI is required but not available");
@@ -85,12 +86,12 @@ export const DiamondReadMethods = ({ diamondContractData, activeCategory }: Diam
     } else {
       setError(null);
     }
-    
+
     try {
       // Get all read methods
       const allMethods = getAllReadMethods(combinedAbi);
       setAvailableMethods(allMethods);
-      
+
       // Filter methods based on active category
       if (activeCategory === "all") {
         setReadMethods(allMethods);
@@ -100,12 +101,12 @@ export const DiamondReadMethods = ({ diamondContractData, activeCategory }: Diam
       } else {
         // First try to use predefined categories
         const predefinedMethods = categoryMethods[activeCategory];
-        
+
         // Filter out methods that actually exist in the ABI
-        const filteredMethods = predefinedMethods.filter(method => 
+        const filteredMethods = predefinedMethods.filter(method =>
           allMethods.includes(method)
         );
-        
+
         // If no methods after filtering, show all read methods
         if (filteredMethods.length === 0) {
           setReadMethods(allMethods);
@@ -151,11 +152,11 @@ export const DiamondReadMethods = ({ diamondContractData, activeCategory }: Diam
       {readMethods.map(methodName => {
         const abiFunction = getFunctionAbiByName(methodName, combinedAbi);
         if (!abiFunction) return null;
-        
+
         return (
           <div key={methodName} className="py-3 first:pt-0 last:pb-0">
             <ReadOnlyFunctionForm
-              abiFunction={abiFunction}
+              abiFunction={abiFunction as AbiFunction}
               contractAddress={diamondContractData.address}
               abi={combinedAbi}
             />
@@ -164,4 +165,4 @@ export const DiamondReadMethods = ({ diamondContractData, activeCategory }: Diam
       })}
     </>
   );
-}; 
+};

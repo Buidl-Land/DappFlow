@@ -134,11 +134,11 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
   const [taskCount, setTaskCount] = useState<number | null>(() => taskCountCache[projectId] || null);
   const [activeTab, setActiveTab] = useState<TabType>("details");
   const [isLoadingData, setIsLoadingData] = useState(true);
-  
+
   // Contribution related state
   const [contributionAmount, setContributionAmount] = useState("");
   const [isContributing, setIsContributing] = useState(false);
-  
+
   // Task related state
   const [projectTasks, setProjectTasks] = useState<TaskInfo[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
@@ -165,13 +165,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
   const refreshFundingInfo = async () => {
     try {
       const fundingResult = await readMethod("getFundingInfo", [numericProjectId]);
-      
+
       if (fundingResult) {
         const parsedFunding = parseFundingInfo(fundingResult as any[]);
-        
+
         // Update cache
         fundingCache[projectId] = parsedFunding;
-        
+
         setFundingInfo(parsedFunding);
       }
     } catch (err) {
@@ -188,19 +188,19 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
 
     try {
       setIsContributing(true);
-      
+
       // Convert ETH to wei
       const amountInWei = parseAmount(contributionAmount);
-      
+
       // Show loading notification
       const notificationId = notification.loading("Processing your contribution transaction...");
-      
+
       // Call contract method
       const result = await writeMethod("contribute", [numericProjectId, amountInWei], {
         onSuccess: (txHash) => {
           // Remove loading notification
           notification.remove(notificationId);
-          
+
           // Show success notification
           notification.success(
             <div>
@@ -209,10 +209,10 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
             </div>,
             { duration: 5000 }
           );
-          
+
           // Clear input
           setContributionAmount("");
-          
+
           // Refresh funding info
           setTimeout(() => {
             refreshFundingInfo();
@@ -221,12 +221,12 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         onError: (error) => {
           // Remove loading notification
           notification.remove(notificationId);
-          
+
           // Show error notification
           notification.error(`Contribution failed: ${error.message}`);
         }
       });
-      
+
       if (result.error) {
         throw result.error;
       }
@@ -281,16 +281,16 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
 
     try {
       setIsClaiming(true);
-      
+
       // Show loading notification
       const notificationId = notification.loading("Processing your token claim transaction...");
-      
+
       // Call contract method
       const result = await writeMethod("claimTokens", [numericProjectId], {
         onSuccess: (txHash) => {
           // Remove loading notification
           notification.remove(notificationId);
-          
+
           // Show success notification
           notification.success(
             <div>
@@ -299,7 +299,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
             </div>,
             { duration: 5000 }
           );
-          
+
           // Refresh claim data
           setTimeout(() => {
             fetchClaimData();
@@ -308,12 +308,12 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         onError: (error) => {
           // Remove loading notification
           notification.remove(notificationId);
-          
+
           // Show error notification
           notification.error(`Token claim failed: ${error.message}`);
         }
       });
-      
+
       if (result.error) {
         throw result.error;
       }
@@ -328,7 +328,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
   // Fetch claim data
   const fetchClaimData = async () => {
     if (!address || !fundingInfo) return;
-    
+
     setIsLoadingClaimData(true);
     try {
       // Get claimed amount
@@ -336,13 +336,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
       if (claimedResult !== null) {
         setClaimedAmount(BigInt(claimedResult.toString()));
       }
-      
+
       // Get token contribution
       const contributionResult = await readMethod("getTokenContribution", [numericProjectId, address]);
       if (contributionResult !== null) {
         setTokenContribution(BigInt(contributionResult.toString()));
       }
-      
+
       // Get project token info
       const tokenInfoResult = await readMethod("getProjectToken", [numericProjectId]);
       if (tokenInfoResult) {
@@ -356,12 +356,12 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
           vestingDuration: Number(tokenInfoResult[6]),
         };
         setTokenInfo(parsedTokenInfo);
-        
+
         // Calculate unlocked amount based on vesting schedule
         if (tokenContribution > 0n && parsedTokenInfo.vestingStart > 0) {
           const now = Math.floor(Date.now() / 1000);
           const vestingEnd = parsedTokenInfo.vestingStart + parsedTokenInfo.vestingDuration;
-          
+
           if (now >= vestingEnd) {
             // Fully vested
             setUnlockedAmount(tokenContribution);
@@ -375,18 +375,18 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
             const timeElapsed = now - parsedTokenInfo.vestingStart;
             const vestingProgress = timeElapsed / parsedTokenInfo.vestingDuration;
             const percentage = Math.min(100, Math.floor(vestingProgress * 100));
-            
+
             setUnlockPercentage(percentage);
             setUnlockedAmount(tokenContribution * BigInt(percentage) / BigInt(100));
           }
         }
       }
-      
+
       // Check if funding is complete and tokens can be claimed
       const now = new Date();
       const endDate = new Date(fundingInfo.endTime * 1000);
       const isFundingComplete = fundingInfo.hasMetFundingGoal || now > endDate;
-      
+
       // Can claim if funding is complete, user has tokens, and there are unlocked tokens not yet claimed
       setCanClaim(isFundingComplete && tokenContribution > 0n && unlockedAmount > claimedAmount);
     } catch (err) {
@@ -417,13 +417,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         // Fetch project data
         if (!project) {
           const projectResult = await readMethod("getProject", [numericProjectId]);
-          
+
           if (projectResult) {
             const parsedProject = parseProjectData(projectResult as any[]);
-            
+
             // Update cache
             projectCache[projectId] = parsedProject;
-            
+
             setProject(parsedProject);
           }
         }
@@ -431,13 +431,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         // Fetch funding info
         if (!fundingInfo) {
           const fundingResult = await readMethod("getFundingInfo", [numericProjectId]);
-          
+
           if (fundingResult) {
             const parsedFunding = parseFundingInfo(fundingResult as any[]);
-            
+
             // Update cache
             fundingCache[projectId] = parsedFunding;
-            
+
             setFundingInfo(parsedFunding);
           }
         }
@@ -445,13 +445,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         // Fetch task count
         if (taskCount === null) {
           const taskCountResult = await readMethod("getProjectTaskCount", [numericProjectId]);
-          
+
           if (taskCountResult !== null && taskCountResult !== undefined) {
             const count = Number(taskCountResult);
-            
+
             // Update cache
             taskCountCache[projectId] = count;
-            
+
             setTaskCount(count);
           }
         }
@@ -472,14 +472,14 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
     if (activeTab === "tasks" && taskCount && projectTasks.length === 0 && !isLoadingTasks) {
       fetchProjectTasks();
     }
-  }, [activeTab, taskCount, projectTasks.length, isLoadingTasks]);
+  }, [activeTab, taskCount, projectTasks.length, isLoadingTasks, fetchProjectTasks]);
 
   // Fetch claim data when funding info is available
   useEffect(() => {
     if (fundingInfo && address && !isLoadingData) {
       fetchClaimData();
     }
-  }, [fundingInfo, address, isLoadingData]);
+  }, [fundingInfo, address, isLoadingData, fetchClaimData]);
 
   if (isLoading || isLoadingData || !project) {
     return (
@@ -502,15 +502,15 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
 
   if (fundingInfo) {
     // Calculate funding progress percentage
-    fundingProgress = fundingInfo.fundingGoal > 0n 
-      ? Number((fundingInfo.raisedAmount * 100n) / fundingInfo.fundingGoal) 
+    fundingProgress = fundingInfo.fundingGoal > 0n
+      ? Number((fundingInfo.raisedAmount * 100n) / fundingInfo.fundingGoal)
       : 0;
-    
+
     // Calculate days left
     const now = new Date();
     const endDate = new Date(fundingInfo.endTime * 1000);
     daysLeft = Math.max(0, differenceInDays(endDate, now));
-    
+
     // Determine if funding is closed
     isFundingClosed = fundingInfo.hasMetFundingGoal || now > endDate;
   }
@@ -525,7 +525,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         {/* Add aurora effect */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse"></div>
         <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDelay: "2s" }}></div>
-        
+
         <div className="relative z-10">
           {/* Tags */}
           <div className="flex flex-wrap gap-1 mb-3 sm:gap-2 sm:mb-4">
@@ -535,7 +535,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
               </span>
             ))}
           </div>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <h1 className="text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">{project.title}</h1>
@@ -563,19 +563,19 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
 
       {/* Tab navigation */}
       <div className="tabs tabs-boxed mb-8">
-        <button 
+        <button
           className={`tab ${activeTab === "details" ? "tab-active" : ""}`}
           onClick={() => setActiveTab("details")}
         >
           Project Details
         </button>
-        <button 
+        <button
           className={`tab ${activeTab === "roadmap" ? "tab-active" : ""}`}
           onClick={() => setActiveTab("roadmap")}
         >
           Roadmap
         </button>
-        <button 
+        <button
           className={`tab ${activeTab === "tasks" ? "tab-active" : ""}`}
           onClick={() => setActiveTab("tasks")}
         >
@@ -596,7 +596,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     Project Description
                   </h2>
                   <div className="whitespace-pre-line text-sm sm:text-base opacity-80">{project.description}</div>
-                  
+
                   <h3 className="mt-8 mb-3 text-base font-bold sm:text-lg sm:mb-4">
                     <span className="material-icons text-primary text-sm align-text-bottom mr-1">psychology</span>
                     AI Evaluation
@@ -612,13 +612,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                 <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
                   {/* Add aurora effect */}
                   <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
-                  
+
                   <div className="relative z-10">
                     <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
                       <span className="material-icons text-primary text-sm align-text-bottom mr-1">token</span>
                       Project Tokens
                     </h2>
-                    
+
                     {isLoadingClaimData ? (
                       <div className="flex justify-center py-4">
                         <span className="loading loading-spinner loading-md"></span>
@@ -630,18 +630,18 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                             <p className="text-xs opacity-70 sm:text-sm mb-2">Token Allocation</p>
                             <div className="w-full bg-base-200 rounded-full h-4 mb-2">
                               <div className="flex h-4 rounded-full overflow-hidden">
-                                <div 
-                                  className="bg-primary h-4" 
+                                <div
+                                  className="bg-primary h-4"
                                   style={{ width: "60%" }}
                                   title="Crowdfunding Pool (60%)"
                                 ></div>
-                                <div 
-                                  className="bg-secondary h-4" 
+                                <div
+                                  className="bg-secondary h-4"
                                   style={{ width: "25%" }}
                                   title="Task & DAO Pool (25%)"
                                 ></div>
-                                <div 
-                                  className="bg-accent h-4" 
+                                <div
+                                  className="bg-accent h-4"
                                   style={{ width: "15%" }}
                                   title="Ecosystem Pool (15%)"
                                 ></div>
@@ -661,7 +661,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                             </div>
                           </div>
                         )}
-                        
+
                         <div className="space-y-4 mt-4">
                           {tokenContribution > 0n ? (
                             <>
@@ -674,7 +674,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                   {formatAmount(tokenContribution)} Tokens
                                 </p>
                               </div>
-                              
+
                               {tokenInfo && tokenInfo.vestingDuration > 0 && (
                                 <div className="mt-4">
                                   <div className="flex justify-between items-center mb-2">
@@ -685,8 +685,8 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                     <span className="text-xs font-medium">{unlockPercentage}%</span>
                                   </div>
                                   <div className="w-full bg-base-200 rounded-full h-2.5">
-                                    <div 
-                                      className="bg-primary h-2.5 rounded-full transition-all duration-500" 
+                                    <div
+                                      className="bg-primary h-2.5 rounded-full transition-all duration-500"
                                       style={{ width: `${unlockPercentage}%` }}
                                     ></div>
                                   </div>
@@ -699,7 +699,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                   </p>
                                 </div>
                               )}
-                              
+
                               {claimedAmount > 0n && (
                                 <div className="p-3 rounded-lg bg-success/10 border border-success/20">
                                   <p className="text-xs opacity-70 sm:text-sm">
@@ -709,9 +709,9 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                   <p className="mt-1 text-base font-semibold sm:text-lg text-success">{formatAmount(claimedAmount)} Tokens</p>
                                 </div>
                               )}
-                              
+
                               <div className="mt-4">
-                                <button 
+                                <button
                                   className={`btn btn-primary w-full btn-sm sm:btn-md ${isClaiming ? 'loading' : ''} ${!canClaim ? 'btn-disabled' : ''}`}
                                   onClick={handleClaimTokens}
                                   disabled={isClaiming || !canClaim}
@@ -728,11 +728,11 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                     </>
                                   )}
                                 </button>
-                                
+
                                 {!canClaim && tokenContribution > 0n && (
                                   <p className="text-xs text-center mt-2 opacity-60 italic">
-                                    {claimedAmount >= tokenContribution 
-                                      ? 'You have already claimed all your tokens' 
+                                    {claimedAmount >= tokenContribution
+                                      ? 'You have already claimed all your tokens'
                                       : unlockedAmount <= claimedAmount
                                         ? 'No tokens available for claiming yet'
                                         : 'Tokens not yet available for claiming'}
@@ -759,10 +759,10 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                   <span className="material-icons text-primary text-sm align-text-bottom mr-1">map</span>
                   Project Roadmap
                 </h2>
-                
+
                 <div className="p-6 text-center opacity-70 italic">
                   <span className="material-icons text-4xl mb-2">timeline</span>
-                  <p>Roadmap data is not yet available from the contract. This section will display the project's development plan and milestones.</p>
+                  <p>Roadmap data is not yet available from the contract. This section will display the project&apos;s development plan and milestones.</p>
                 </div>
               </div>
             </div>
@@ -775,7 +775,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                   <span className="material-icons text-primary text-sm align-text-bottom mr-1">assignment</span>
                   Project Tasks
                 </h2>
-                
+
                 {isLoadingTasks ? (
                   <div className="flex justify-center py-8">
                     <span className="loading loading-spinner loading-lg"></span>
@@ -785,7 +785,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     {projectTasks.map(task => {
                       const statusStyle = taskStatusMap[task.status]?.color || "bg-base-200 text-base-content";
                       const statusLabel = taskStatusMap[task.status]?.label || "Unknown";
-                      
+
                       return (
                         <div key={task.id} className="p-4 rounded-lg bg-base-200/50 border border-base-300/50 hover:bg-base-200/70 transition-all">
                           <div className="flex justify-between items-start">
@@ -810,7 +810,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                               <span className="material-icons text-primary text-sm mr-1">payments</span>
                               <span className="text-sm font-medium">{formatAmount(task.reward)} USDC</span>
                             </div>
-                            <a 
+                            <a
                               href={`/projects/${projectId}/tasks/${task.id}`}
                               className="btn btn-primary btn-sm sm:btn-md h-10 min-h-10"
                             >
@@ -840,13 +840,13 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
             <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
               {/* Add aurora effect */}
               <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
-              
+
               <div className="relative z-10">
                 <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
                   <span className="material-icons text-primary text-sm align-text-bottom mr-1">payments</span>
                   Funding Information
                 </h2>
-                
+
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-xs opacity-70 sm:text-sm">Funding Progress</span>
                   <div className="flex items-center gap-2">
@@ -856,19 +856,19 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="w-full bg-base-200 rounded-full h-2.5 mb-2 sm:h-3">
-                  <div 
-                    className="bg-primary h-2.5 rounded-full transition-all duration-500 sm:h-3" 
+                  <div
+                    className="bg-primary h-2.5 rounded-full transition-all duration-500 sm:h-3"
                     style={{ width: `${Math.min(100, fundingProgress)}%` }}
                   ></div>
                 </div>
-                
+
                 <div className="flex justify-between text-xs sm:text-sm mb-4">
                   <span className="font-medium">{formatAmount(fundingInfo.raisedAmount)} USDC</span>
                   <span className="opacity-70">Goal: {formatAmount(fundingInfo.fundingGoal)} USDC</span>
                 </div>
-                
+
                 <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50 mb-4">
                   <p className="text-xs opacity-70 sm:text-sm">
                     <span className="material-icons text-primary text-xs align-text-bottom mr-1">trending_up</span>
@@ -882,7 +882,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     )}
                   </p>
                 </div>
-                
+
                 <div className="mt-4">
                   <div className="form-control">
                     <label className="flex justify-between mb-2">
@@ -902,7 +902,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                         min="0"
                         step="0.01"
                       />
-                      <button 
+                      <button
                         className={`btn btn-sm sm:btn-md ${isFundingClosed ? 'btn-disabled' : 'btn-primary'} ${isContributing ? 'loading' : ''}`}
                         onClick={handleContribute}
                         disabled={isContributing || isFundingClosed || !contributionAmount || parseFloat(contributionAmount) <= 0}
@@ -933,23 +933,24 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
           <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
             {/* Add aurora effect */}
             <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
-            
+
             <div className="relative z-10">
               <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
                 <span className="material-icons text-primary text-sm align-text-bottom mr-1">analytics</span>
                 Project Evaluation
               </h2>
-              
+
               <div className="space-y-4 sm:space-y-5">
                 <div>
                   <p className="text-xs opacity-70 sm:text-sm">Market Score</p>
                   <div className="flex items-center mt-1">
                     <div className="rating rating-sm">
                       {[...Array(10)].map((_, i) => (
-                        <input 
+                        <input
                           key={i}
-                          type="radio" 
-                          name="rating-2" 
+                          type="radio"
+                          name="rating-2"
+                          title={`Rating ${i+1}`}
                           className={`mask mask-star-2 ${i < project.metadata.marketScore ? 'bg-primary' : 'bg-base-300'}`}
                           disabled
                         />
@@ -958,7 +959,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     <span className="ml-2 text-base font-semibold sm:text-lg">{project.metadata.marketScore}/10</span>
                   </div>
                 </div>
-                
+
                 <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
                   <p className="text-xs opacity-70 sm:text-sm">
                     <span className="material-icons text-primary text-xs align-text-bottom mr-1">build</span>
@@ -966,7 +967,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                   </p>
                   <p className="mt-1 text-base font-semibold sm:text-lg">{project.metadata.techFeasibility}</p>
                 </div>
-                
+
                 <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
                   <p className="text-xs opacity-70 sm:text-sm">
                     <span className="material-icons text-primary text-xs align-text-bottom mr-1">attach_money</span>
@@ -976,7 +977,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     ${(project.metadata.minValuation / 1000).toFixed(1)}K - ${(project.metadata.maxValuation / 1000).toFixed(1)}K
                   </p>
                 </div>
-                
+
                 <div className="text-xs italic opacity-60 sm:text-sm">
                   AI-powered evaluation based on market trends, technical complexity, and potential ROI.
                 </div>
@@ -991,7 +992,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                 <h2 className="card-title">Task Information</h2>
                 <p className="text-sm">This project has <strong>{taskCount}</strong> available tasks</p>
                 <div className="card-actions justify-end mt-4">
-                  <button 
+                  <button
                     className="btn btn-outline btn-secondary"
                     onClick={() => setActiveTab("tasks")}
                   >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Abi, AbiFunction } from "abitype";
 import { WriteOnlyFunctionForm } from "./WriteOnlyFunctionForm";
 import { FacetCategory } from "./DiamondContractUI";
 import { Contract } from "~~/utils/scaffold-eth/contract";
@@ -9,57 +10,57 @@ import { getAllWriteMethods, getFunctionAbiByName, useFacetsAbi } from "./utilsD
 // Define methods included in each category
 const categoryMethods: Record<Exclude<FacetCategory, "all" | "mockusdc">, string[]> = {
   accessControl: [
-    "grantRole", 
-    "revokeRole", 
-    "renounceRole", 
-    "addAdmin", 
-    "removeAdmin", 
-    "grantProjectCreatorRole", 
-    "grantFundingManagerRole", 
-    "grantTaskCreatorRole", 
+    "grantRole",
+    "revokeRole",
+    "renounceRole",
+    "addAdmin",
+    "removeAdmin",
+    "grantProjectCreatorRole",
+    "grantFundingManagerRole",
+    "grantTaskCreatorRole",
     "grantAiAgentRole"
   ],
   project: [
-    "createProject", 
-    "updateProject", 
-    "deleteProject", 
-    "addProjectMember", 
-    "removeProjectMember", 
-    "setProjectStatus", 
-    "updateProjectDetails", 
+    "createProject",
+    "updateProject",
+    "deleteProject",
+    "addProjectMember",
+    "removeProjectMember",
+    "setProjectStatus",
+    "updateProjectDetails",
     "archiveProject"
   ],
   crowdfunding: [
-    "contribute", 
-    "withdrawContribution", 
-    "setFundingGoal", 
-    "setFundingDeadline", 
-    "releaseFunds", 
-    "refundContributors", 
-    "createCrowdfunding", 
+    "contribute",
+    "withdrawContribution",
+    "setFundingGoal",
+    "setFundingDeadline",
+    "releaseFunds",
+    "refundContributors",
+    "createCrowdfunding",
     "closeCrowdfunding"
   ],
   taskMarket: [
-    "createTask", 
-    "updateTask", 
-    "deleteTask", 
-    "assignTask", 
-    "completeTask", 
-    "approveTask", 
-    "rejectTask", 
-    "applyForTask", 
-    "setTaskReward", 
+    "createTask",
+    "updateTask",
+    "deleteTask",
+    "assignTask",
+    "completeTask",
+    "approveTask",
+    "rejectTask",
+    "applyForTask",
+    "setTaskReward",
     "setTaskDeadline"
   ],
   projectToken: [
-    "createProjectToken", 
-    "mintTokens", 
-    "burnTokens", 
-    "transferTokens", 
-    "claimTokens", 
-    "setTokenAllocation", 
-    "setVestingSchedule", 
-    "pauseTokenTransfers", 
+    "createProjectToken",
+    "mintTokens",
+    "burnTokens",
+    "transferTokens",
+    "claimTokens",
+    "setTokenAllocation",
+    "setVestingSchedule",
+    "pauseTokenTransfers",
     "unpauseTokenTransfers"
   ]
 };
@@ -81,7 +82,7 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
       setError("Diamond contract data is missing");
       return;
     }
-    
+
     if (!combinedAbi || combinedAbi.length === 0) {
       if (!isLoading) {
         setError("ABI is required but not available");
@@ -90,12 +91,12 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
     } else {
       setError(null);
     }
-    
+
     try {
       // Get all write methods
       const allMethods = getAllWriteMethods(combinedAbi);
       setAvailableMethods(allMethods);
-      
+
       // Filter methods based on active category
       if (activeCategory === "all") {
         setWriteMethods(allMethods);
@@ -105,12 +106,12 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
       } else {
         // First try to use predefined categories
         const predefinedMethods = categoryMethods[activeCategory];
-        
+
         // Filter out methods that actually exist in the ABI
-        const filteredMethods = predefinedMethods.filter(method => 
+        const filteredMethods = predefinedMethods.filter(method =>
           allMethods.includes(method)
         );
-        
+
         // If no methods after filtering, show all write methods
         if (filteredMethods.length === 0) {
           setWriteMethods(allMethods);
@@ -156,18 +157,18 @@ export const DiamondWriteMethods = ({ diamondContractData, activeCategory, onCha
       {writeMethods.map(methodName => {
         const abiFunction = getFunctionAbiByName(methodName, combinedAbi);
         if (!abiFunction) return null;
-        
+
         return (
           <div key={methodName} className="py-3 first:pt-0 last:pb-0">
             <WriteOnlyFunctionForm
-              abiFunction={abiFunction}
+              abiFunction={abiFunction as AbiFunction}
               contractAddress={diamondContractData.address}
               abi={combinedAbi}
-              onChange={onChange}
+              onChange={onChange || (() => {})}
             />
           </div>
         );
       })}
     </>
   );
-}; 
+};

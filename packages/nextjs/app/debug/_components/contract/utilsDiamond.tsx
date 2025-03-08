@@ -1,5 +1,5 @@
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { Abi } from "abitype";
+import { Abi, AbiFunction } from "abitype";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import externalContracts from "~~/contracts/externalContracts";
@@ -9,32 +9,57 @@ import externalContracts from "~~/contracts/externalContracts";
  */
 export const useFacetsAbi = () => {
   const { targetNetwork } = useTargetNetwork();
-  const { data: diamondData, isLoading: diamondLoading } = useDeployedContractInfo({ 
-    contractName: "Diamond" as ContractName 
+  const { data: diamondData, isLoading: diamondLoading } = useDeployedContractInfo({
+    contractName: "Diamond" as ContractName
   });
-  
+
+  // Load all facet ABIs upfront to avoid conditional hook calls
+  const { data: accessControlFacetData } = useDeployedContractInfo({
+    contractName: "AccessControlFacet" as ContractName
+  });
+
+  const { data: projectFacetData } = useDeployedContractInfo({
+    contractName: "ProjectFacet" as ContractName
+  });
+
+  const { data: crowdfundingFacetData } = useDeployedContractInfo({
+    contractName: "CrowdfundingFacet" as ContractName
+  });
+
+  const { data: taskMarketFacetData } = useDeployedContractInfo({
+    contractName: "TaskMarketFacet" as ContractName
+  });
+
+  const { data: projectTokenFacetData } = useDeployedContractInfo({
+    contractName: "ProjectTokenFacet" as ContractName
+  });
+
   // Get external contract data
   const chainId = targetNetwork.id;
   const mockUsdcData = externalContracts[chainId as keyof typeof externalContracts]?.["MockUSDC"];
-  
+
   // Ensure Diamond contract ABI is always available
   if (!diamondData?.abi && !diamondLoading) {
     console.error("Diamond contract ABI not found");
   }
-  
+
   // Use Diamond contract ABI as base, to ensure basic functionality even if other Facet ABIs fail to load
-  const combinedAbi = [...(diamondData?.abi || [])] as Abi;
-  
+  const combinedAbi: Abi = [...(diamondData?.abi || [])] as Abi;
+
   // If MockUSDC contract exists, add its ABI
   if (mockUsdcData?.abi) {
-    combinedAbi.push(...mockUsdcData.abi);
+    // Use spread with array concat instead of push to maintain immutability
+    const mockUsdcAbi = mockUsdcData.abi as Abi;
+    const newAbi = [...combinedAbi, ...mockUsdcAbi];
+    Object.assign(combinedAbi, newAbi);
   }
-  
+
   // If Diamond contract ABI is empty, provide a basic ABI to avoid "ABI is required" errors
   if (combinedAbi.length === 0 && !diamondLoading) {
     console.warn("Using fallback ABI as Diamond ABI is empty");
-    // Add a basic fallback ABI with common Diamond methods
-    combinedAbi.push(
+
+    // Create fallback ABI
+    const fallbackAbi: Abi = [
       {
         type: "function",
         name: "owner",
@@ -49,77 +74,50 @@ export const useFacetsAbi = () => {
         outputs: [{ name: "facetAddresses_", type: "address[]", internalType: "address[]" }],
         stateMutability: "view"
       }
-    );
-    
-    // Add basic methods from Diamond standard
-    addDiamondStandardAbi(combinedAbi);
+    ];
+
+    // Add Diamond standard ABI
+    const diamondStandardAbi = getDiamondStandardAbi();
+
+    // Combine all ABIs
+    Object.assign(combinedAbi, [...fallbackAbi, ...diamondStandardAbi]);
   }
-  
-  // Try to load other Facet ABIs, but don't block page rendering
-  try {
-    const { data: accessControlFacetData } = useDeployedContractInfo({ 
-      contractName: "AccessControlFacet" as ContractName 
-    });
-    if (accessControlFacetData?.abi) {
-      combinedAbi.push(...accessControlFacetData.abi);
-    }
-  } catch (error) {
-    console.warn("Failed to load AccessControlFacet ABI:", error);
+
+  // Add facet ABIs if available
+  if (accessControlFacetData?.abi) {
+    const newAbi = [...combinedAbi, ...(accessControlFacetData.abi as Abi)];
+    Object.assign(combinedAbi, newAbi);
   }
-  
-  try {
-    const { data: projectFacetData } = useDeployedContractInfo({ 
-      contractName: "ProjectFacet" as ContractName 
-    });
-    if (projectFacetData?.abi) {
-      combinedAbi.push(...projectFacetData.abi);
-    }
-  } catch (error) {
-    console.warn("Failed to load ProjectFacet ABI:", error);
+
+  if (projectFacetData?.abi) {
+    const newAbi = [...combinedAbi, ...(projectFacetData.abi as Abi)];
+    Object.assign(combinedAbi, newAbi);
   }
-  
-  try {
-    const { data: crowdfundingFacetData } = useDeployedContractInfo({ 
-      contractName: "CrowdfundingFacet" as ContractName 
-    });
-    if (crowdfundingFacetData?.abi) {
-      combinedAbi.push(...crowdfundingFacetData.abi);
-    }
-  } catch (error) {
-    console.warn("Failed to load CrowdfundingFacet ABI:", error);
+
+  if (crowdfundingFacetData?.abi) {
+    const newAbi = [...combinedAbi, ...(crowdfundingFacetData.abi as Abi)];
+    Object.assign(combinedAbi, newAbi);
   }
-  
-  try {
-    const { data: taskMarketFacetData } = useDeployedContractInfo({ 
-      contractName: "TaskMarketFacet" as ContractName 
-    });
-    if (taskMarketFacetData?.abi) {
-      combinedAbi.push(...taskMarketFacetData.abi);
-    }
-  } catch (error) {
-    console.warn("Failed to load TaskMarketFacet ABI:", error);
+
+  if (taskMarketFacetData?.abi) {
+    const newAbi = [...combinedAbi, ...(taskMarketFacetData.abi as Abi)];
+    Object.assign(combinedAbi, newAbi);
   }
-  
-  try {
-    const { data: projectTokenFacetData } = useDeployedContractInfo({ 
-      contractName: "ProjectTokenFacet" as ContractName 
-    });
-    if (projectTokenFacetData?.abi) {
-      combinedAbi.push(...projectTokenFacetData.abi);
-    }
-  } catch (error) {
-    console.warn("Failed to load ProjectTokenFacet ABI:", error);
+
+  if (projectTokenFacetData?.abi) {
+    const newAbi = [...combinedAbi, ...(projectTokenFacetData.abi as Abi)];
+    Object.assign(combinedAbi, newAbi);
   }
 
   // Deduplicate to avoid duplicate function definitions
   const uniqueAbi = combinedAbi.filter((item, index, self) => {
     if (!item || !item.type) return false;
-    
+
     if (item.type !== 'function') return true;
-    
-    return index === self.findIndex(t => 
-      t && t.type === 'function' && 
-      t.name === item.name && 
+
+    return index === self.findIndex(t =>
+      t && t.type === 'function' &&
+      t.name === item.name &&
       JSON.stringify(t.inputs) === JSON.stringify(item.inputs)
     );
   }) as Abi;
@@ -135,11 +133,11 @@ export const useFacetsAbi = () => {
 };
 
 /**
- * Add basic ABI for Diamond standard
+ * Get Diamond standard ABI
  */
-function addDiamondStandardAbi(abiArray: any[]) {
+function getDiamondStandardAbi(): Abi {
   // Add basic methods from Diamond standard
-  abiArray.push(
+  return [
     // Diamond Loupe methods
     {
       type: "function",
@@ -178,7 +176,7 @@ function addDiamondStandardAbi(abiArray: any[]) {
       outputs: [{ name: "facetAddress_", type: "address" }],
       stateMutability: "view"
     },
-    
+
     // Ownership methods
     {
       type: "function",
@@ -193,11 +191,9 @@ function addDiamondStandardAbi(abiArray: any[]) {
       inputs: [{ name: "_newOwner", type: "address" }],
       outputs: [],
       stateMutability: "nonpayable"
-    }
-  );
-  
-  // Add basic AccessControl methods
-  abiArray.push(
+    },
+
+    // AccessControl methods
     {
       type: "function",
       name: "hasRole",
@@ -215,7 +211,15 @@ function addDiamondStandardAbi(abiArray: any[]) {
       outputs: [{ name: "", type: "bytes32" }],
       stateMutability: "view"
     }
-  );
+  ];
+}
+
+/**
+ * Add basic ABI for Diamond standard - deprecated, use getDiamondStandardAbi instead
+ */
+function addDiamondStandardAbi(abiArray: any[]) {
+  const standardAbi = getDiamondStandardAbi();
+  abiArray.push(...standardAbi);
 }
 
 /**
@@ -226,15 +230,15 @@ export const getFunctionAbiByName = (methodName: string, combinedAbi: Abi) => {
     console.error(`No ABI available when looking for method: ${methodName}`);
     return null;
   }
-  
+
   const abiFunction = combinedAbi.find(
     part => part && part.type === "function" && part.name === methodName
   );
-  
+
   if (!abiFunction) {
     console.warn(`ABI for method ${methodName} not found`);
   }
-  
+
   return abiFunction;
 };
 
@@ -246,13 +250,19 @@ export const getAllReadMethods = (combinedAbi: Abi) => {
     console.error("No ABI available when getting read methods");
     return [];
   }
-  
+
   return combinedAbi
-    .filter(part => 
-      part && part.type === "function" && 
+    .filter(part =>
+      part && part.type === "function" &&
       (part.stateMutability === "view" || part.stateMutability === "pure")
     )
-    .map(part => part.name);
+    .map(part => {
+      if ('name' in part) {
+        return part.name;
+      }
+      return '';
+    })
+    .filter(Boolean);
 };
 
 /**
@@ -263,11 +273,17 @@ export const getAllWriteMethods = (combinedAbi: Abi) => {
     console.error("No ABI available when getting write methods");
     return [];
   }
-  
+
   return combinedAbi
-    .filter(part => 
-      part && part.type === "function" && 
+    .filter(part =>
+      part && part.type === "function" &&
       (part.stateMutability === "nonpayable" || part.stateMutability === "payable")
     )
-    .map(part => part.name);
-}; 
+    .map(part => {
+      if ('name' in part) {
+        return part.name;
+      }
+      return '';
+    })
+    .filter(Boolean);
+};

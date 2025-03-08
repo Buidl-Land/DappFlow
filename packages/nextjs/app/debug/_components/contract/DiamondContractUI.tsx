@@ -25,8 +25,8 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(value => !value, false);
   const [activeCategory, setActiveCategory] = useState<FacetCategory>("all");
   const { targetNetwork } = useTargetNetwork();
-  const { data: diamondContractData, isLoading: diamondContractLoading } = useDeployedContractInfo({ 
-    contractName: "Diamond" as ContractName 
+  const { data: diamondContractData, isLoading: diamondContractLoading } = useDeployedContractInfo({
+    contractName: "Diamond" as ContractName
   });
   const { combinedAbi, facets, isLoading: abiLoading } = useFacetsAbi();
   const networkColor = useNetworkColor();
@@ -47,7 +47,7 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
         setShowAbiError(true);
       }
     }, 5000);
-    
+
     return () => clearTimeout(timer);
   });
 
@@ -130,13 +130,13 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
                 <p>ABI loading error: ABI is required</p>
                 <p>Please check deployedContracts.ts configuration</p>
                 <div className="flex gap-2 mt-2">
-                  <button 
+                  <button
                     className="btn btn-xs btn-error"
                     onClick={handleForceReload}
                   >
                     Reload Page
                   </button>
-                  <button 
+                  <button
                     className="btn btn-xs btn-warning"
                     onClick={handleUseLocalAbi}
                   >
@@ -163,17 +163,17 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
               <p>{facetCategories.find(c => c.id === activeCategory)?.description}</p>
             </div>
             <div className="mt-4">
-              <button 
+              <button
                 className="btn btn-sm btn-secondary w-full"
                 onClick={handleForceReload}
               >
                 Reload ABI
               </button>
               <p className="text-xs mt-2">
-                If you're seeing ABI errors, try reloading the page
+                If you&apos;re seeing ABI errors, try reloading the page
               </p>
             </div>
-            
+
             {/* Add a dedicated MockUSDC section */}
             {hasMockUsdc && (
               <div className="mt-6 border-t border-base-200 pt-4">
@@ -206,8 +206,8 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
                     </div>
                   </div>
                   <div className="p-5 divide-y divide-base-300">
-                    <DiamondReadMethods 
-                      diamondContractData={diamondContractData} 
+                    <DiamondReadMethods
+                      diamondContractData={diamondContractData as any}
                       activeCategory={activeCategory}
                     />
                   </div>
@@ -222,7 +222,7 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
                   </div>
                   <div className="p-5 divide-y divide-base-300">
                     <DiamondWriteMethods
-                      diamondContractData={diamondContractData}
+                      diamondContractData={diamondContractData as any}
                       onChange={triggerRefreshDisplayVariables}
                       activeCategory={activeCategory}
                     />
@@ -416,4 +416,4 @@ export const DiamondContractUI = ({ className = "" }: DiamondContractUIProps) =>
       </div>
     </div>
   );
-}; 
+};

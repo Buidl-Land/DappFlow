@@ -115,7 +115,7 @@ export const UserTasksTable = () => {
     try {
       // Get data from blockchain
       const taskIds = await readMethod("getUserTasks", [userAddress]);
-      
+
       if (taskIds && Array.isArray(taskIds)) {
         const numericIds = taskIds.map(id => Number(id));
         return numericIds;
@@ -124,7 +124,7 @@ export const UserTasksTable = () => {
       console.error("Failed to get user tasks:", err);
       setError("Failed to get user tasks");
     }
-    
+
     return [];
   }, [readMethod]);
 
@@ -166,7 +166,7 @@ export const UserTasksTable = () => {
   // Get task details
   const getTask = useCallback(async (projectId: number, taskId: number): Promise<TaskData | null> => {
     const cacheKey = `${projectId}-${taskId}`;
-    
+
     // Check cache
     if (!isCacheExpired() && taskCache.tasks[cacheKey]) {
       return taskCache.tasks[cacheKey];
@@ -174,7 +174,7 @@ export const UserTasksTable = () => {
 
     try {
       const taskResult = await readMethod("getTask", [projectId, taskId]);
-      
+
       if (taskResult && Array.isArray(taskResult)) {
         const task: TaskData = {
           projectId,
@@ -190,7 +190,7 @@ export const UserTasksTable = () => {
           createdAt: Number(taskResult[8]),
           completedAt: Number(taskResult[9])
         };
-        
+
         // Update cache
         taskCache.tasks[cacheKey] = task;
         taskCache.timestamp = Date.now();
@@ -199,68 +199,68 @@ export const UserTasksTable = () => {
     } catch (err) {
       console.error(`Failed to get task ${projectId}-${taskId}:`, err);
     }
-    
+
     return null;
   }, [readMethod]);
 
   // Get all user tasks
   const fetchUserTasksData = useCallback(async () => {
     if (!address || contractLoading) return;
-    
+
     setIsLoadingData(true);
     setError(null);
-    
+
     try {
       // 1. Get user's associated task IDs
       const userTaskIds = await getUserTasks(address);
-      
+
       // If user has no tasks, return immediately
       if (userTaskIds.length === 0) {
         setUserTasks([]);
         setIsLoadingData(false);
         return;
       }
-      
+
       // 2. Get total project count
       const projectCount = await getProjectCount();
-      
+
       // 3. Iterate through all projects to find user's tasks
       const foundTasks: TaskData[] = [];
-      
+
       // Start from project ID 1 (contract project IDs start from 1)
       for (let projectId = 1; projectId <= projectCount; projectId++) {
         // Get task count for this project
         const taskCount = await getProjectTaskCount(projectId);
-        
+
         // Iterate through all tasks in this project
         for (let taskId = 0; taskId < taskCount; taskId++) {
           // Get task details
           const task = await getTask(projectId, taskId);
-          
+
           // If task exists and is assigned to current user
           if (task && task.assignee.toLowerCase() === address.toLowerCase()) {
             foundTasks.push(task);
           }
         }
       }
-      
+
       // Update state
       if (isMountedRef.current) {
         setUserTasks(foundTasks);
         setIsLoadingData(false);
       }
-      
+
       // Set timer to fetch data again after 30 seconds
       if (fetchTimeoutRef.current) {
         clearTimeout(fetchTimeoutRef.current);
       }
-      
+
       fetchTimeoutRef.current = setTimeout(() => {
         if (isMountedRef.current) {
           fetchUserTasksData();
         }
       }, 30000); // 30 seconds
-      
+
     } catch (err) {
       console.error("Failed to fetch user task data:", err);
       if (isMountedRef.current) {
@@ -273,11 +273,11 @@ export const UserTasksTable = () => {
   // Fetch data when component mounts
   useEffect(() => {
     isMountedRef.current = true;
-    
+
     if (address) {
       fetchUserTasksData();
     }
-    
+
     return () => {
       isMountedRef.current = false;
       if (fetchTimeoutRef.current) {
@@ -311,7 +311,7 @@ export const UserTasksTable = () => {
   if (userTasks.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>You don't have any associated tasks yet</p>
+        <p>You don&apos;t have any associated tasks yet</p>
         <Link href="/projects" className="btn btn-primary mt-4">
           Browse Projects
         </Link>
@@ -353,8 +353,8 @@ export const UserTasksTable = () => {
                   : "No deadline"}
               </td>
               <td>
-                <Link 
-                  href={`/projects/${task.projectId}/tasks/${task.taskId}`} 
+                <Link
+                  href={`/projects/${task.projectId}/tasks/${task.taskId}`}
                   className="btn btn-sm btn-outline"
                 >
                   View Details
@@ -366,4 +366,4 @@ export const UserTasksTable = () => {
       </table>
     </div>
   );
-}; 
+};

@@ -27,7 +27,7 @@ const Debug: NextPage = () => {
           </Link>
           <div className="mt-8 bg-base-300 p-4 rounded-lg">
             <p className="text-sm">
-              <span className="font-bold">Note:</span> MockUSDC contract functionality has been integrated into the Diamond debug page, available under the "MockUSDC" category.
+              <span className="font-bold">Note:</span> MockUSDC contract functionality has been integrated into the Diamond debug page, available under the &quot;MockUSDC&quot; category.
             </p>
           </div>
         </div>
