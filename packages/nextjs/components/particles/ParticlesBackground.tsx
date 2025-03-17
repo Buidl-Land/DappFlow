@@ -49,7 +49,7 @@ export const ParticlesBackground = () => {
             distance: isMobile ? 100 : 150,
             enable: true,
             opacity: 0.3,
-            width: 1,
+            width: 1.5,
           },
           move: {
             direction: "none",
@@ -64,9 +64,10 @@ export const ParticlesBackground = () => {
           number: {
             density: {
               enable: true,
-              area: 800,
+              width: 1000,
+              height: 1000
             },
-            value: isMobile ? 40 : 80,
+            value: isMobile ? 40 : 75,
           },
           opacity: {
             value: 0.2,
@@ -75,7 +76,7 @@ export const ParticlesBackground = () => {
             type: "circle",
           },
           size: {
-            value: { min: 1, max: 3 },
+            value: { min: 2, max: 4 },
           },
         },
         detectRetina: true,
