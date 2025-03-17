@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
 
 export const ParticlesBackground = () => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
   const [isMobile, setIsMobile] = useState(false);
+  const [init, setInit] = useState(false);
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -20,19 +21,22 @@ export const ParticlesBackground = () => {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  // Use a type assertion to bypass the type checking for this specific function
-  const particlesInit = useCallback(async (engine: any) => {
-    // @ts-ignore - Ignoring type checking for this call
-    await loadFull(engine);
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
   }, []);
 
   const primaryColor = isDarkMode ? "#8B5CF6" : "#4F46E5";
   const secondaryColor = isDarkMode ? "#3B82F6" : "#06B6D4";
 
+  if (!init) return null;
+
   return (
     <Particles
       className="absolute inset-0"
-      init={particlesInit}
       options={{
         fullScreen: { enable: false },
         fpsLimit: 60,

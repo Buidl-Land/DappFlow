@@ -2101,6 +2101,9 @@ __metadata:
     "@rainbow-me/rainbowkit": 2.1.6
     "@tanstack/react-query": ~5.59.15
     "@trivago/prettier-plugin-sort-imports": ~4.3.0
+    "@tsparticles/engine": ^3.8.1
+    "@tsparticles/react": ^3.0.0
+    "@tsparticles/slim": ^3.8.1
     "@types/node": ~18.19.50
     "@types/qrcode": ^1
     "@types/react": ~18.3.5
@@ -2450,7 +2453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsparticles/engine@npm:3.8.1":
+"@tsparticles/engine@npm:3.8.1, @tsparticles/engine@npm:^3.8.1":
   version: 3.8.1
   resolution: "@tsparticles/engine@npm:3.8.1"
   checksum: deb024fc3a51136bb74a0dd0bc635f1240aae0710c78bde4d51c2aba41f4ed80ca3a3095c2d5f42b56dd67e7b2c0db696a53f951eabd5e8804e3d03d65b33a22
@@ -2675,6 +2678,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tsparticles/react@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@tsparticles/react@npm:3.0.0"
+  peerDependencies:
+    "@tsparticles/engine": ^3.0.2
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: db2caca97ffb54493a640b130dfb6df7bb63c9826091d72c84b8c41c629459067e613dfb4be46699368003dbcaff9c6f531eea41e252e842a1ba6638d31b1d94
+  languageName: node
+  linkType: hard
+
 "@tsparticles/shape-circle@npm:3.8.1":
   version: 3.8.1
   resolution: "@tsparticles/shape-circle@npm:3.8.1"
@@ -2747,7 +2761,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsparticles/slim@npm:3.8.1":
+"@tsparticles/slim@npm:3.8.1, @tsparticles/slim@npm:^3.8.1":
   version: 3.8.1
   resolution: "@tsparticles/slim@npm:3.8.1"
   dependencies:
