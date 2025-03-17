@@ -3,11 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAccount } from "wagmi";
-import { FaGithub } from "react-icons/fa";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-// Commented out unused import
-// import { BugAntIcon } from "@heroicons/react/24/outline";
 import { IdeaPulseLogo } from "~~/components/assets/IdeaPulseLogo";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
@@ -23,17 +19,22 @@ export const menuLinks: HeaderMenuLink[] = [
   {
     label: "Home",
     href: "/",
-    icon: <span className="material-icons text-sm align-text-bottom">home</span>,
+    icon: <span className="material-icons text-sm flex items-center">home</span>,
   },
   {
     label: "Projects",
     href: "/projects",
-    icon: <span className="material-icons text-sm align-text-bottom">apps</span>,
+    icon: <span className="material-icons text-sm flex items-center">apps</span>,
   },
   {
     label: "Dashboard",
     href: "/dashboard",
-    icon: <span className="material-icons text-sm align-text-bottom">dashboard</span>,
+    icon: <span className="material-icons text-sm flex items-center">dashboard</span>,
+  },
+  {
+    label: "About",
+    href: "/about",
+    icon: <span className="material-icons text-sm flex items-center">help_outline</span>,
   },
 ];
 
@@ -53,7 +54,7 @@ export const HeaderMenuLinks = () => {
                 isActive 
                   ? "font-medium bg-primary/20 text-primary dark:bg-primary/30 dark:text-white" 
                   : "dark:text-gray-200"
-              } hover:bg-primary/10 dark:hover:bg-primary/20 hover:shadow-md focus:!bg-primary/20 active:!text-neutral py-1.5 px-4 text-sm rounded-full gap-2 grid grid-flow-col transition-all duration-200`}
+              } hover:bg-primary/10 dark:hover:bg-primary/20 hover:shadow-md focus:!bg-primary/20 active:!text-neutral py-2 px-5 text-sm rounded-md flex items-center gap-2 transition-all duration-200`}
             >
               {icon}
               <span>{label}</span>

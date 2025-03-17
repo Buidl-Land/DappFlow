@@ -379,7 +379,6 @@ const Home: NextPage = () => {
             </motion.div>
           </div>
 
-          {/* Call to action - Fixed syntax error here */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -387,10 +386,10 @@ const Home: NextPage = () => {
             className="mt-16 text-center"
           >
             <Link
-              href="/projects/new"
-              className="px-12 font-semibold rounded-full shadow-lg transition-transform btn btn-primary btn-lg hover:scale-105 shadow-primary/20"
+              href="/about"
+              className="px-12 rounded-full transition-transform btn btn-outline btn-lg hover:scale-105"
             >
-              Start Your Project
+              More About Us
             </Link>
           </motion.div>
         </div>
