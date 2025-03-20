@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { formatDistanceToNow, differenceInDays, addDays } from "date-fns";
@@ -418,7 +418,7 @@ const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleas
   );
 };
 
-const DashboardPage = () => {
+const DashboardContent = () => {
   const {
     address
   } = useAccount();
@@ -901,13 +901,29 @@ const DashboardPage = () => {
     }
   }, [address, getUserContributions, getFundingInfo, getContribution]);
 
-  // Fetch all data when component mounts
+  // 使用 useEffect 来处理数据加载
   useEffect(() => {
-    fetchUserInvestmentsData();
-    fetchUserTasksSummary();
-    fetchUserTokenBalance();
-    fetchTokenReleaseInfo();
-  }, [fetchUserInvestmentsData, fetchUserTasksSummary, fetchUserTokenBalance, fetchTokenReleaseInfo]);
+    const loadData = async () => {
+      if (!address) {
+        setIsLoadingData(false);
+        setIsLoadingTokenData(false);
+        return;
+      }
+
+      try {
+        await Promise.all([
+          fetchUserInvestmentsData(),
+          fetchUserTasksSummary(),
+          fetchUserTokenBalance(),
+          fetchTokenReleaseInfo()
+        ]);
+      } catch (error) {
+        console.error("Failed to load dashboard data:", error);
+      }
+    };
+
+    loadData();
+  }, [address, fetchUserInvestmentsData, fetchUserTasksSummary, fetchUserTokenBalance, fetchTokenReleaseInfo]);
 
   return (
     <div className="flex flex-col pt-20 min-h-screen sm:pt-24 animate-fade-in">
@@ -1332,6 +1348,18 @@ const DashboardPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const DashboardPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 };
 
