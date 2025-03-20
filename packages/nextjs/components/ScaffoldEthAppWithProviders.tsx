@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -18,7 +18,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <div className={`flex flex-col min-h-screen `}>
+      <div className={`flex flex-col min-h-screen`}>
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
         <Footer />
@@ -33,18 +33,28 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      staleTime: 5000,
+      gcTime: 10000,
     },
   },
 });
 
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const currentTheme = useMemo(() => {
+    if (!mounted) return lightTheme();
+    return resolvedTheme === "dark" ? darkTheme() : lightTheme();
+  }, [mounted, resolvedTheme]);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <WagmiProvider config={wagmiConfig}>
@@ -52,7 +62,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
         <ProgressBar height="3px" color="#2299dd" />
         <RainbowKitProvider
           avatar={BlockieAvatar}
-          theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
+          theme={currentTheme}
         >
           <ScaffoldEthApp>{children}</ScaffoldEthApp>
         </RainbowKitProvider>

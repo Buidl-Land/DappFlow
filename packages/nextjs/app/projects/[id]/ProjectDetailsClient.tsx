@@ -484,12 +484,12 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
   if (isLoading || isLoadingData || !project) {
     return (
       <div className="container mx-auto px-4 pt-20 pb-8 animate-pulse">
-        <div className="h-10 bg-gray-200 rounded w-1/3 mb-8"></div>
-        <div className="h-6 bg-gray-200 rounded w-1/4 mb-8"></div>
-        <div className="h-40 bg-gray-200 rounded mb-8"></div>
+        <div className="h-10 bg-base-200 dark:bg-base-300/50 rounded-lg w-1/3 mb-8"></div>
+        <div className="h-6 bg-base-200 dark:bg-base-300/50 rounded-lg w-1/4 mb-8"></div>
+        <div className="h-40 bg-base-200 dark:bg-base-300/50 rounded-lg mb-8"></div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="h-60 bg-gray-200 rounded lg:col-span-2"></div>
-          <div className="h-60 bg-gray-200 rounded"></div>
+          <div className="h-60 bg-base-200 dark:bg-base-300/50 rounded-lg lg:col-span-2"></div>
+          <div className="h-60 bg-base-200 dark:bg-base-300/50 rounded-lg"></div>
         </div>
       </div>
     );
@@ -521,10 +521,10 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
   return (
     <div className="container mx-auto px-4 pt-24 pb-8 mt-4 sm:pt-28 sm:mt-6">
       {/* Project title and status */}
-      <div className="p-6 mb-8 rounded-2xl shadow-lg bg-base-100 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/40 before:via-secondary/40 before:to-accent/40 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+      <div className="p-6 mb-8 rounded-2xl shadow-lg bg-base-100 dark:bg-base-200 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/40 before:via-secondary/40 before:to-accent/40 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
         {/* Add aurora effect */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse"></div>
-        <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-full blur-xl opacity-70 animate-pulse dark:opacity-40"></div>
+        <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-gradient-to-tr from-accent/10 via-primary/10 to-secondary/10 rounded-full blur-xl opacity-60 animate-pulse dark:opacity-30" style={{ animationDelay: "2s" }}></div>
 
         <div className="relative z-10">
           {/* Tags */}
@@ -539,11 +539,11 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <h1 className="text-3xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">{project.title}</h1>
-              <p className="flex flex-wrap items-center gap-2 text-sm opacity-70">
+              <p className="flex flex-wrap items-center gap-2 text-base-content/70 dark:text-base-content/70 text-sm">
                 <span>Created {createdTime}</span>
                 <span className="hidden md:inline">•</span>
                 <span className="flex items-center">
-                  Created by <span className="ml-1 px-2 py-0.5 text-xs font-medium text-primary border border-primary rounded-md hover:bg-primary/10">agent@IdeaPlusesAI</span>
+                  Created by <span className="ml-1 px-2 py-0.5 text-xs font-medium text-primary border border-primary rounded-md hover:bg-primary/10 dark:hover:bg-primary/20">agent@IdeaPlusesAI</span>
                 </span>
               </p>
             </div>
@@ -564,19 +564,19 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
       {/* Tab navigation */}
       <div className="tabs tabs-boxed mb-8">
         <button
-          className={`tab ${activeTab === "details" ? "tab-active" : ""}`}
+          className={`tab ${activeTab === "details" ? "tab-active text-base-content dark:text-base-content" : "text-base-content/70 dark:text-base-content/70"}`}
           onClick={() => setActiveTab("details")}
         >
           Project Details
         </button>
         <button
-          className={`tab ${activeTab === "roadmap" ? "tab-active" : ""}`}
+          className={`tab ${activeTab === "roadmap" ? "tab-active text-base-content dark:text-base-content" : "text-base-content/70 dark:text-base-content/70"}`}
           onClick={() => setActiveTab("roadmap")}
         >
           Roadmap
         </button>
         <button
-          className={`tab ${activeTab === "tasks" ? "tab-active" : ""}`}
+          className={`tab ${activeTab === "tasks" ? "tab-active text-base-content dark:text-base-content" : "text-base-content/70 dark:text-base-content/70"}`}
           onClick={() => setActiveTab("tasks")}
         >
           Tasks ({taskCount || 0})
@@ -589,29 +589,29 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         <div className="lg:col-span-2">
           {activeTab === "details" && (
             <>
-              <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+              <div className="p-4 shadow-lg card bg-base-100 dark:bg-base-200 sm:p-6 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
                 <div className="relative z-10">
-                  <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                  <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4 text-base-content dark:text-base-content">
                     <span className="material-icons text-primary text-sm align-text-bottom mr-1">description</span>
                     Project Description
                   </h2>
-                  <div className="whitespace-pre-line text-sm sm:text-base opacity-80">{project.description}</div>
+                  <div className="whitespace-pre-line text-sm sm:text-base text-base-content/80 dark:text-base-content/70">{project.description}</div>
 
-                  <h3 className="mt-8 mb-3 text-base font-bold sm:text-lg sm:mb-4">
+                  <h3 className="mt-8 mb-3 text-base font-bold sm:text-lg sm:mb-4 text-base-content dark:text-base-content">
                     <span className="material-icons text-primary text-sm align-text-bottom mr-1">psychology</span>
                     AI Evaluation
                   </h3>
-                  <div className="p-4 rounded-lg bg-base-200/50 border border-base-300/50">
-                    <p className="text-sm sm:text-base italic">{project.metadata.aiEvaluation}</p>
+                  <div className="p-4 rounded-lg bg-base-200/50 dark:bg-base-300/30 border border-base-300/50 dark:border-base-300/20">
+                    <p className="text-sm sm:text-base italic text-base-content/70 dark:text-base-content/60">{project.metadata.aiEvaluation}</p>
                   </div>
                 </div>
               </div>
 
               {/* Move Project Tokens card here */}
               {fundingInfo && address && (
-                <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+                <div className="mt-8 p-4 shadow-lg card bg-base-100 dark:bg-base-200 sm:p-6 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
                   {/* Add aurora effect */}
-                  <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
+                  <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse dark:opacity-30"></div>
 
                   <div className="relative z-10">
                     <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
@@ -627,8 +627,8 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                       <>
                         {tokenInfo && (
                           <div className="mb-4">
-                            <p className="text-xs opacity-70 sm:text-sm mb-2">Token Allocation</p>
-                            <div className="w-full bg-base-200 rounded-full h-4 mb-2">
+                            <p className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm mb-2">Token Allocation</p>
+                            <div className="w-full bg-base-200 dark:bg-base-300/50 rounded-full h-4 mb-2">
                               <div className="flex h-4 rounded-full overflow-hidden">
                                 <div
                                   className="bg-primary h-4"
@@ -647,17 +647,17 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                 ></div>
                               </div>
                             </div>
-                            <div className="flex justify-between text-xs opacity-70">
+                            <div className="flex justify-between text-xs text-base-content/70 dark:text-base-content/70">
                               <span>Crowdfunding: 60%</span>
                               <span>Task & DAO: 25%</span>
                               <span>Ecosystem: 15%</span>
                             </div>
-                            <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50 mt-4">
-                              <p className="text-xs opacity-70 sm:text-sm">
+                            <div className="p-3 rounded-lg bg-base-200/50 dark:bg-base-300/30 border border-base-300/50 dark:border-base-300/20 mt-4">
+                              <p className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">
                                 <span className="material-icons text-primary text-xs align-text-bottom mr-1">inventory_2</span>
                                 Total Supply
                               </p>
-                              <p className="mt-1 text-base font-semibold sm:text-lg">{formatAmount(tokenInfo.totalSupply)} Tokens</p>
+                              <p className="mt-1 text-base font-semibold sm:text-lg text-base-content dark:text-base-content">{formatAmount(tokenInfo.totalSupply)} Tokens</p>
                             </div>
                           </div>
                         )}
@@ -665,7 +665,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                         <div className="space-y-4 mt-4">
                           {tokenContribution > 0n ? (
                             <>
-                              <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
+                              <div className="p-3 rounded-lg bg-base-200/50 dark:bg-base-300/30 border border-base-300/50">
                                 <p className="text-xs opacity-70 sm:text-sm">
                                   <span className="material-icons text-primary text-xs align-text-bottom mr-1">account_balance_wallet</span>
                                   Your Token Allocation
@@ -684,7 +684,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                                     </p>
                                     <span className="text-xs font-medium">{unlockPercentage}%</span>
                                   </div>
-                                  <div className="w-full bg-base-200 rounded-full h-2.5">
+                                  <div className="w-full bg-base-200 dark:bg-base-300/50 rounded-full h-2.5">
                                     <div
                                       className="bg-primary h-2.5 rounded-full transition-all duration-500"
                                       style={{ width: `${unlockPercentage}%` }}
@@ -701,7 +701,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                               )}
 
                               {claimedAmount > 0n && (
-                                <div className="p-3 rounded-lg bg-success/10 border border-success/20">
+                                <div className="p-3 rounded-lg bg-success/10 dark:bg-success/5 border border-success/20">
                                   <p className="text-xs opacity-70 sm:text-sm">
                                     <span className="material-icons text-success text-xs align-text-bottom mr-1">check_circle</span>
                                     Already Claimed
@@ -753,9 +753,9 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
           )}
 
           {activeTab === "roadmap" && (
-            <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+            <div className="p-4 shadow-lg card bg-base-100 dark:bg-base-200 sm:p-6 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
               <div className="relative z-10">
-                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4 text-base-content dark:text-base-content">
                   <span className="material-icons text-primary text-sm align-text-bottom mr-1">map</span>
                   Project Roadmap
                 </h2>
@@ -769,9 +769,9 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
           )}
 
           {activeTab === "tasks" && (
-            <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+            <div className="p-4 shadow-lg card bg-base-100 dark:bg-base-200 sm:p-6 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
               <div className="relative z-10">
-                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4 text-base-content dark:text-base-content">
                   <span className="material-icons text-primary text-sm align-text-bottom mr-1">assignment</span>
                   Project Tasks
                 </h2>
@@ -787,7 +787,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                       const statusLabel = taskStatusMap[task.status]?.label || "Unknown";
 
                       return (
-                        <div key={task.id} className="p-4 rounded-lg bg-base-200/50 border border-base-300/50 hover:bg-base-200/70 transition-all">
+                        <div key={task.id} className="p-4 rounded-lg bg-base-200/50 hover:bg-base-200/70 dark:bg-base-300/30 dark:hover:bg-base-300/40 border border-base-300/50 dark:border-base-300/20 transition-all">
                           <div className="flex justify-between items-start">
                             <h3 className="text-base font-semibold sm:text-lg">{task.title}</h3>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusStyle} border-0`}>
@@ -837,27 +837,27 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
         <div className="space-y-8">
           {/* Funding info card */}
           {fundingInfo && (
-            <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+            <div className="p-4 shadow-lg card bg-base-100 dark:bg-base-200 sm:p-6 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
               {/* Add aurora effect */}
-              <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
+              <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse dark:opacity-30"></div>
 
               <div className="relative z-10">
-                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+                <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4 text-base-content dark:text-base-content">
                   <span className="material-icons text-primary text-sm align-text-bottom mr-1">payments</span>
                   Funding Information
                 </h2>
 
                 <div className="flex justify-between items-center mb-3">
-                  <span className="text-xs opacity-70 sm:text-sm">Funding Progress</span>
+                  <span className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">Funding Progress</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs sm:text-sm font-medium">{daysLeft} days{daysLeft > 0 ? " remaining" : " ended"}</span>
+                    <span className="text-xs sm:text-sm font-medium text-base-content dark:text-base-content">{daysLeft} days{daysLeft > 0 ? " remaining" : " ended"}</span>
                     {isFundingClosed && (
                       <span className="badge badge-sm badge-success text-xs border-0">Funding Completed</span>
                     )}
                   </div>
                 </div>
 
-                <div className="w-full bg-base-200 rounded-full h-2.5 mb-2 sm:h-3">
+                <div className="w-full bg-base-200 dark:bg-base-300/50 rounded-full h-2.5 mb-2 sm:h-3">
                   <div
                     className="bg-primary h-2.5 rounded-full transition-all duration-500 sm:h-3"
                     style={{ width: `${Math.min(100, fundingProgress)}%` }}
@@ -865,12 +865,12 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                 </div>
 
                 <div className="flex justify-between text-xs sm:text-sm mb-4">
-                  <span className="font-medium">{formatAmount(fundingInfo.raisedAmount)} USDC</span>
-                  <span className="opacity-70">Goal: {formatAmount(fundingInfo.fundingGoal)} USDC</span>
+                  <span className="font-medium text-base-content dark:text-base-content">{formatAmount(fundingInfo.raisedAmount)} USDC</span>
+                  <span className="text-base-content/70 dark:text-base-content/70">Goal: {formatAmount(fundingInfo.fundingGoal)} USDC</span>
                 </div>
 
-                <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50 mb-4">
-                  <p className="text-xs opacity-70 sm:text-sm">
+                <div className="p-3 rounded-lg bg-base-200/50 dark:bg-base-300/30 border border-base-300/50 dark:border-base-300/20 mb-4">
+                  <p className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">
                     <span className="material-icons text-primary text-xs align-text-bottom mr-1">trending_up</span>
                     Funding Status
                   </p>
@@ -878,7 +878,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                     {fundingProgress >= 100 ? (
                       <span className="text-success">Funding Goal Achieved!</span>
                     ) : (
-                      <span>Completed {fundingProgress.toFixed(1)}%</span>
+                      <span className="text-base-content dark:text-base-content">Completed {fundingProgress.toFixed(1)}%</span>
                     )}
                   </p>
                 </div>
@@ -886,7 +886,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                 <div className="mt-4">
                   <div className="form-control">
                     <label className="flex justify-between mb-2">
-                      <span className="text-xs opacity-70 sm:text-sm">Contribution Amount (USDC)</span>
+                      <span className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">Contribution Amount (USDC)</span>
                       {isFundingClosed && (
                         <span className="text-xs text-error">Funding Completed</span>
                       )}
@@ -921,7 +921,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                       </button>
                     </div>
                     <label className="label">
-                      <span className="text-xs opacity-60">Minimum Amount: 0.01 USDC</span>
+                      <span className="text-xs text-base-content/60 dark:text-base-content/60">Minimum Amount: 0.01 USDC</span>
                     </label>
                   </div>
                 </div>
@@ -930,19 +930,19 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
           )}
 
           {/* Project evaluation card */}
-          <div className="p-4 shadow-lg card bg-base-100 sm:p-6 relative overflow-hidden border border-transparent before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-base-100 after:-z-10">
+          <div className="p-4 shadow-lg card bg-base-100 dark:bg-base-200 sm:p-6 relative overflow-hidden border border-base-200 dark:border-base-300 before:absolute before:inset-0 before:p-[1px] before:rounded-2xl before:bg-gradient-to-r before:from-primary/30 before:via-secondary/30 before:to-accent/30 before:-z-10 after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-b after:from-base-100 after:to-base-100 dark:after:from-base-200 dark:after:to-base-200 after:-z-10">
             {/* Add aurora effect */}
-            <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse"></div>
+            <div className="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 rounded-full blur-xl opacity-60 animate-pulse dark:opacity-30"></div>
 
             <div className="relative z-10">
-              <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4">
+              <h2 className="mb-3 text-lg font-bold sm:text-xl sm:mb-4 text-base-content dark:text-base-content">
                 <span className="material-icons text-primary text-sm align-text-bottom mr-1">analytics</span>
                 Project Evaluation
               </h2>
 
               <div className="space-y-4 sm:space-y-5">
                 <div>
-                  <p className="text-xs opacity-70 sm:text-sm">Market Score</p>
+                  <p className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">Market Score</p>
                   <div className="flex items-center mt-1">
                     <div className="rating rating-sm">
                       {[...Array(10)].map((_, i) => (
@@ -951,25 +951,25 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                           type="radio"
                           name="rating-2"
                           title={`Rating ${i+1}`}
-                          className={`mask mask-star-2 ${i < project.metadata.marketScore ? 'bg-primary' : 'bg-base-300'}`}
+                          className={`mask mask-star-2 ${i < project.metadata.marketScore ? 'bg-primary' : 'bg-base-300 dark:bg-base-content/20'}`}
                           disabled
                         />
                       ))}
                     </div>
-                    <span className="ml-2 text-base font-semibold sm:text-lg">{project.metadata.marketScore}/10</span>
+                    <span className="ml-2 text-base font-semibold sm:text-lg text-base-content dark:text-base-content">{project.metadata.marketScore}/10</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
-                  <p className="text-xs opacity-70 sm:text-sm">
+                <div className="p-3 rounded-lg bg-base-200/50 dark:bg-base-300/30 border border-base-300/50 dark:border-base-300/20">
+                  <p className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">
                     <span className="material-icons text-primary text-xs align-text-bottom mr-1">build</span>
                     Technical Feasibility
                   </p>
-                  <p className="mt-1 text-base font-semibold sm:text-lg">{project.metadata.techFeasibility}</p>
+                  <p className="mt-1 text-base font-semibold sm:text-lg text-base-content dark:text-base-content">{project.metadata.techFeasibility}</p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-base-200/50 border border-base-300/50">
-                  <p className="text-xs opacity-70 sm:text-sm">
+                <div className="p-3 rounded-lg bg-base-200/50 dark:bg-base-300/30 border border-base-300/50 dark:border-base-300/20">
+                  <p className="text-xs text-base-content/70 dark:text-base-content/70 sm:text-sm">
                     <span className="material-icons text-primary text-xs align-text-bottom mr-1">attach_money</span>
                     Valuation Range
                   </p>
@@ -978,7 +978,7 @@ export function ProjectDetailsClient({ projectId }: { projectId: string }) {
                   </p>
                 </div>
 
-                <div className="text-xs italic opacity-60 sm:text-sm">
+                <div className="text-xs italic text-base-content/60 dark:text-base-content/50 sm:text-sm">
                   AI-powered evaluation based on market trends, technical complexity, and potential ROI.
                 </div>
               </div>

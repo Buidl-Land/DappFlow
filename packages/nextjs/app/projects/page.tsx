@@ -78,23 +78,29 @@ const ProjectsContent = () => {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col gap-3 mb-2 delay-200 sm:gap-8 sm:mb-4 sm:flex-row animate-slide-up">
+          <div className="flex flex-col sm:flex-row w-full gap-3 mb-2 delay-200 sm:gap-4 sm:mb-4 animate-slide-up">
             {/* Filter Group */}
-            <div className="overflow-x-auto flex-nowrap rounded-lg shadow-md join bg-base-100">
+            <div className="w-full sm:w-2/5 rounded-lg shadow-md join bg-base-100">
               <button
-                className={`btn join-item btn-sm sm:btn-md ${filter === "all" ? "btn-primary" : ""}`}
+                className={`flex-1 btn join-item btn-sm sm:btn-md hover:bg-primary/30 ${
+                  filter === "all" ? "bg-primary/20 text-primary font-semibold" : ""
+                }`}
                 onClick={() => setFilter("all")}
               >
                 All Projects
               </button>
               <button
-                className={`btn join-item btn-sm sm:btn-md ${filter === "funding" ? "btn-primary" : ""}`}
+                className={`flex-1 btn join-item btn-sm sm:btn-md hover:bg-primary/30 ${
+                  filter === "funding" ? "bg-primary/20 text-primary font-semibold" : ""
+                }`}
                 onClick={() => setFilter("funding")}
               >
                 Funding Open
               </button>
               <button
-                className={`btn join-item btn-sm sm:btn-md ${filter === "tasks" ? "btn-primary" : ""}`}
+                className={`flex-1 btn join-item btn-sm sm:btn-md hover:bg-primary/30 ${
+                  filter === "tasks" ? "bg-primary/20 text-primary font-semibold" : ""
+                }`}
                 onClick={() => setFilter("tasks")}
               >
                 Tasks Available
@@ -102,21 +108,27 @@ const ProjectsContent = () => {
             </div>
 
             {/* Status Group */}
-            <div className="overflow-x-auto flex-nowrap rounded-lg shadow-md join bg-base-100">
+            <div className="w-full sm:w-1/3 rounded-lg shadow-md join bg-base-100">
               <button
-                className={`btn join-item btn-sm sm:btn-md ${status === "all" ? "btn-secondary" : ""}`}
+                className={`flex-1 btn join-item btn-sm sm:btn-md hover:bg-accent/30 ${
+                  status === "all" ? "bg-accent/20 text-accent font-semibold" : ""
+                }`}
                 onClick={() => setStatus("all")}
               >
                 All Status
               </button>
               <button
-                className={`btn join-item btn-sm sm:btn-md ${status === "active" ? "btn-secondary" : ""}`}
+                className={`flex-1 btn join-item btn-sm sm:btn-md hover:bg-accent/30 ${
+                  status === "active" ? "bg-accent/20 text-accent font-semibold" : ""
+                }`}
                 onClick={() => setStatus("active")}
               >
                 Active
               </button>
               <button
-                className={`btn join-item btn-sm sm:btn-md ${status === "completed" ? "btn-secondary" : ""}`}
+                className={`flex-1 btn join-item btn-sm sm:btn-md hover:bg-accent/30 ${
+                  status === "completed" ? "bg-accent/20 text-accent font-semibold" : ""
+                }`}
                 onClick={() => setStatus("completed")}
               >
                 Completed
@@ -127,7 +139,7 @@ const ProjectsContent = () => {
             <input
               type="text"
               placeholder="Search projects..."
-              className="w-full shadow-md input input-sm sm:input-md input-bordered bg-base-100 sm:max-w-xs"
+              className="w-full sm:w-1/4 shadow-md input input-sm sm:input-md input-bordered bg-base-100 focus:border-primary/50"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />

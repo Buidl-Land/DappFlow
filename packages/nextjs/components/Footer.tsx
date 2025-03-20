@@ -130,9 +130,15 @@ export const Footer = () => {
               Subscribe to our newsletter for updates
             </p>
             <div className="mt-2 flex justify-center md:justify-start">
-              <div className="join">
-                <input className="input input-sm join-item" placeholder="Email" />
-                <button className="btn btn-sm btn-primary join-item">Subscribe</button>
+              <div className="relative flex">
+                <input className="input input-sm rounded-l-full min-h-0 h-10" placeholder="Email" />
+                <button className="btn btn-sm btn-primary rounded-r-full p-0 min-h-0 h-10">
+                  <div className="flex items-center justify-center gap-2 px-4 h-full">
+                    <span className="relative inline-block leading-tight text-center">
+                      Subscribe
+                    </span>
+                  </div>
+                </button>
               </div>
             </div>
           </div>

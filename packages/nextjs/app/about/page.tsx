@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { ParticlesBackground } from "../../components/particles/ParticlesBackground";
 
 const AboutPage = () => {
+  const { resolvedTheme } = useTheme();
+
   return (
     <div className="relative min-h-screen">
       {/* Particles Background */}
@@ -66,11 +69,11 @@ const AboutPage = () => {
           <section className="mb-16">
             <div className="flex items-center mb-6">
               <div className="h-10 w-2 bg-primary rounded-full mr-4"></div>
-              <h2 className="text-3xl font-bold">📋 Project Overview</h2>
+              <h2 className="text-3xl font-bold text-base-content">📋 Project Overview</h2>
             </div>
             
             <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-8 backdrop-blur-sm">
-              <h3 className="text-2xl font-semibold mb-4 text-primary dark:text-primary-content">Vision and Core Values</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-base-content">Vision and Core Values</h3>
               <p className="mb-4">
                 IdeaPulse is committed to breaking the centralized monopoly of traditional VCs, exploring new paths for innovative 
                 projects through community-driven, fully transparent processes. We&apos;re building a &quot;Product Hunt+DAO&quot; model where:
@@ -106,7 +109,7 @@ const AboutPage = () => {
                 </div>
               </div>
 
-              <h3 className="text-2xl font-semibold mb-4 text-primary dark:text-primary-content">Core Project Objectives</h3>
+              <h3 className="text-2xl font-semibold mb-4 text-base-content">Core Project Objectives</h3>
               <div className="space-y-3">
                 <div className="flex items-start">
                   <span className="material-icons text-secondary mr-3 mt-1">check_circle</span>
@@ -158,14 +161,14 @@ const AboutPage = () => {
           <section className="mb-16">
             <div className="flex items-center mb-6">
               <div className="h-10 w-2 bg-secondary rounded-full mr-4"></div>
-              <h2 className="text-3xl font-bold">🔍 Core Problems Solved</h2>
+              <h2 className="text-3xl font-bold text-base-content">🔍 Core Problems Solved</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3">1</div>
-                  <h3 className="text-xl font-bold">Preventing Post-Token Issuance Stagnation</h3>
+                  <h3 className="text-xl font-bold text-base-content">Preventing Post-Token Issuance Stagnation</h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-sm">
                   <li>Dynamic staking mechanism ensures continuous development</li>
@@ -177,7 +180,7 @@ const AboutPage = () => {
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3">2</div>
-                  <h3 className="text-xl font-bold">Increasing Participation Opportunities</h3>
+                  <h3 className="text-xl font-bold text-base-content">Increasing Participation Opportunities</h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-sm">
                   <li>Low barrier idea submission through AI agents</li>
@@ -189,7 +192,7 @@ const AboutPage = () => {
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3">3</div>
-                  <h3 className="text-xl font-bold">Empowering Communities Through Tokens</h3>
+                  <h3 className="text-xl font-bold text-base-content">Empowering Communities Through Tokens</h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-sm">
                   <li>Multi-level token ecosystem with governance rights</li>
@@ -201,7 +204,7 @@ const AboutPage = () => {
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3">4</div>
-                  <h3 className="text-xl font-bold">Solving Centralization and Transparency Issues</h3>
+                  <h3 className="text-xl font-bold text-base-content">Solving Centralization and Transparency Issues</h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-sm">
                   <li>Open fund allocation and governance processes</li>
@@ -212,7 +215,7 @@ const AboutPage = () => {
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3">5</div>
-                  <h3 className="text-xl font-bold">Lowering Entry Barriers for New Projects</h3>
+                  <h3 className="text-xl font-bold text-base-content">Lowering Entry Barriers for New Projects</h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-sm">
                   <li>Support for projects at the idea stage</li>
@@ -223,7 +226,7 @@ const AboutPage = () => {
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm">
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-3">6</div>
-                  <h3 className="text-xl font-bold">Improving Project Management Efficiency</h3>
+                  <h3 className="text-xl font-bold text-base-content">Improving Project Management Efficiency</h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-sm">
                   <li>AI for idea generation, proposal structuring, and task auditing</li>
@@ -237,13 +240,16 @@ const AboutPage = () => {
           <section className="mb-16">
             <div className="flex items-center mb-6">
               <div className="h-10 w-2 bg-primary rounded-full mr-4"></div>
-              <h2 className="text-3xl font-bold">🔄 Project Flowchart</h2>
+              <h2 className="text-3xl font-bold text-base-content">🔄 Project Flowchart</h2>
             </div>
             
             <div className="bg-white/80 dark:bg-gray-800/80 rounded-xl shadow-xl p-6 mb-8 backdrop-blur-sm">
               <div className="flex justify-center">
                 <Image 
-                  src="https://www.mermaidchart.com/raw/fa1e92a8-4188-4d36-a8a3-fb42acf5345d?theme=light&version=v0.1&format=svg" 
+                  src={resolvedTheme === 'dark' 
+                    ? "https://www.mermaidchart.com/raw/937f4abc-fd01-4ca4-9bbc-e1d9ae619597?theme=dark&version=v0.1&format=svg"
+                    : "https://www.mermaidchart.com/raw/fa1e92a8-4188-4d36-a8a3-fb42acf5345d?theme=light&version=v0.1&format=svg"
+                  }
                   alt="Project Workflow Diagram" 
                   width={1200}
                   height={800}
@@ -257,13 +263,13 @@ const AboutPage = () => {
           <section>
             <div className="flex items-center mb-6">
               <div className="h-10 w-2 bg-secondary rounded-full mr-4"></div>
-              <h2 className="text-3xl font-bold">🛣️ Development Roadmap</h2>
+              <h2 className="text-3xl font-bold text-base-content">🛣️ Development Roadmap</h2>
             </div>
             
             <div className="space-y-8">
               {/* Phase 1 */}
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm border-l-4 border-primary">
-                <h3 className="text-2xl font-semibold mb-4 text-primary dark:text-primary-content">Phase 1: AI Collaborative Creation</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-base-content">Phase 1: AI Collaborative Creation</h3>
                 <div className="space-y-6">
                   <div className="bg-base-100/90 dark:bg-gray-700/90 p-4 rounded-lg shadow-md backdrop-blur-sm">
                     <h4 className="font-bold mb-2 flex items-center">
@@ -303,7 +309,7 @@ const AboutPage = () => {
               
               {/* Phase 2 */}
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm border-l-4 border-secondary">
-                <h3 className="text-2xl font-semibold mb-4 text-secondary dark:text-secondary-content">Phase 2: Community Governance</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-base-content">Phase 2: Community Governance</h3>
                 <div className="space-y-6">
                   <div className="bg-base-100/90 dark:bg-gray-700/90 p-4 rounded-lg shadow-md backdrop-blur-sm">
                     <h4 className="font-bold mb-2 flex items-center">
@@ -345,7 +351,7 @@ const AboutPage = () => {
               
               {/* Phase 3 */}
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm border-l-4 border-primary">
-                <h3 className="text-2xl font-semibold mb-4 text-primary dark:text-primary-content">Phase 3: Token Economy Deepening</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-base-content">Phase 3: Token Economy Deepening</h3>
                 <div className="space-y-6">
                   <div className="bg-base-100/90 dark:bg-gray-700/90 p-4 rounded-lg shadow-md backdrop-blur-sm">
                     <h4 className="font-bold mb-2 flex items-center">
@@ -386,7 +392,7 @@ const AboutPage = () => {
               
               {/* Phase 4 */}
               <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-6 backdrop-blur-sm border-l-4 border-secondary">
-                <h3 className="text-2xl font-semibold mb-4 text-secondary dark:text-secondary-content">Phase 4: Ecosystem Optimization</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-base-content">Phase 4: Ecosystem Optimization</h3>
                 <div className="space-y-6">
                   <div className="bg-base-100/90 dark:bg-gray-700/90 p-4 rounded-lg shadow-md backdrop-blur-sm">
                     <h4 className="font-bold mb-2 flex items-center">

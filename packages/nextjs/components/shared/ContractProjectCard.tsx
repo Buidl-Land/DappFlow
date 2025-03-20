@@ -217,35 +217,35 @@ export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) =
           
           <div className="flex flex-wrap gap-1 mb-2">
             {project.tags.map((tag, index) => (
-              <span key={index} className="badge badge-sm bg-primary/10 text-primary border-0">
+              <span key={index} className="badge badge-sm bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-0">
                 {tag}
               </span>
             ))}
           </div>
           
-          <p className="overflow-hidden text-sm text-gray-700 mb-2" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', maxHeight: '4.5em' }}>{project.description}</p>
+          <p className="overflow-hidden text-sm text-base-content mb-2" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', maxHeight: '4.5em' }}>{project.description}</p>
           
           {/* Funding Progress */}
           {fundingInfo && (
-            <div className="bg-base-200 p-3 rounded-lg mb-2">
+            <div className="bg-base-300 p-3 rounded-lg mb-2">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-medium text-sm text-primary">Funding Progress</h3>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs font-medium">{daysLeft} {daysLeft > 0 ? "days left" : "days ended"}</span>
+                  <span className="text-xs font-medium text-base-content">{daysLeft} {daysLeft > 0 ? "days left" : "days ended"}</span>
                   {isFundingClosed && (
                     <span className="badge badge-success badge-xs">Completed</span>
                   )}
                 </div>
               </div>
               
-              <div className="w-full bg-base-300 rounded-full h-2 mb-2">
+              <div className="w-full bg-base-200 rounded-full h-2 mb-2">
                 <div 
                   className="bg-primary h-2 rounded-full" 
                   style={{ width: `${Math.min(100, fundingProgress)}%` }}
                 ></div>
               </div>
               
-              <div className="flex justify-between text-xs font-medium">
+              <div className="flex justify-between text-xs font-medium text-base-content">
                 <span>{formatAmount(fundingInfo.raisedAmount)} USDC</span>
                 <span>Target: {formatAmount(fundingInfo.fundingGoal)} USDC</span>
               </div>
@@ -261,24 +261,24 @@ export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) =
           )}
           
           {/* AI Evaluation */}
-          <div className="bg-base-200 p-3 rounded-lg mb-3">
+          <div className="bg-base-300 p-3 rounded-lg mb-3">
             <p className="text-sm font-medium mb-1 text-secondary">AI Evaluation</p>
-            <p className="text-xs text-gray-700 line-clamp-2">{project.metadata.aiEvaluation}</p>
+            <p className="text-xs text-base-content line-clamp-2">{project.metadata.aiEvaluation}</p>
           </div>
           
           {/* Metrics */}
           <div className="grid grid-cols-3 gap-2 mb-2 text-center">
-            <div className="bg-primary/10 rounded p-2">
+            <div className="bg-primary/20 rounded p-2">
               <div className="text-xs text-primary font-medium">Score</div>
-              <div className="font-bold text-sm text-gray-800">{project.metadata.marketScore}/10</div>
+              <div className="font-bold text-sm text-base-content">{project.metadata.marketScore}/10</div>
             </div>
-            <div className="bg-secondary/10 rounded p-2">
+            <div className="bg-secondary/20 rounded p-2">
               <div className="text-xs text-secondary font-medium">Tech</div>
-              <div className="font-bold text-sm text-gray-800">{project.metadata.techFeasibility}</div>
+              <div className="font-bold text-sm text-base-content">{project.metadata.techFeasibility}</div>
             </div>
-            <div className="bg-accent/10 rounded p-2">
+            <div className="bg-accent/20 rounded p-2">
               <div className="text-xs text-accent font-medium">Value</div>
-              <div className="font-bold text-sm text-gray-800">${(project.metadata.maxValuation / 1000).toFixed(1)}K</div>
+              <div className="font-bold text-sm text-base-content">${(project.metadata.maxValuation / 1000).toFixed(1)}K</div>
             </div>
           </div>
         </div>

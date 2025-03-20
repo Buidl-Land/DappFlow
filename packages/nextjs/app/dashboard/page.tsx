@@ -1034,110 +1034,100 @@ const DashboardPage = () => {
               </div>
             </div>
 
-            {/* Middle column - Stats Cards (moved from right) */}
+            {/* Middle column - Stats Cards */}
             <div className="md:col-span-1 flex flex-col h-full">
               <div className="grid grid-rows-3 gap-3 h-full">
-              {/* Projects Backed Card */}
-              <div className="card bg-gradient-to-br from-primary/80 to-primary text-primary-content shadow-sm">
-                  <div className="card-body p-3 flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-base font-medium opacity-80">Projects Backed</h2>
-                      <p className="text-2xl font-bold">{projectsCount}</p>
+                {/* Projects Backed Card */}
+                <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-primary/10 hover:to-primary/20 border border-primary/20 transition-all duration-300 group">
+                  <div className="card-body p-3 flex flex-row items-center justify-between h-full">
+                    <div className="flex flex-col justify-between h-full">
+                      <h2 className="text-base font-medium text-base-content/70">Projects Backed</h2>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-2xl font-bold text-primary">{projectsCount}</p>
+                        <div className="badge badge-sm badge-primary">Active</div>
+                      </div>
                     </div>
-                    <div className="rounded-full bg-primary-content/20 p-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-xl bg-primary/10 p-2.5 group-hover:bg-primary/20 transition-colors duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
                   </div>
-                  <div className="mt-2 text-xs text-black">
-                    <span className="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                      </svg>
-                      Investment activity
-                    </span>
-                  </div>
                 </div>
-              </div>
 
-              {/* Tasks Participated Card */}
-              <div className="card bg-gradient-to-br from-secondary/80 to-secondary text-secondary-content shadow-sm">
-                  <div className="card-body p-3 flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-base font-medium opacity-80">Tasks Participated</h2>
-                      <p className="text-2xl font-bold">{tasksCount}</p>
-                    </div>
-                    <div className="rounded-full bg-secondary-content/20 p-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                  </div>
-                  <div className="mt-2 text-xs text-secondary-content">
-                    <span className="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Project contributions
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Token Balance Card */}
-              <div className="card bg-gradient-to-br from-accent/80 to-accent text-accent-content shadow-sm">
-                  <div className="card-body p-3 flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-base font-medium opacity-80">Token Balance</h2>
-                      <div className="flex items-baseline gap-1">
-                        <p className="text-2xl font-bold">{tokenBalance.unlocked.toLocaleString()}</p>
-                        <p className="text-xs opacity-80">/ {tokenBalance.total.toLocaleString()}</p>
+                {/* Tasks Participated Card */}
+                <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-secondary/10 hover:to-secondary/20 border border-secondary/20 transition-all duration-300 group">
+                  <div className="card-body p-3 flex flex-row items-center justify-between h-full">
+                    <div className="flex flex-col justify-between h-full">
+                      <h2 className="text-base font-medium text-base-content/70">Tasks Participated</h2>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-2xl font-bold text-secondary">{tasksCount}</p>
+                        <div className="badge badge-sm badge-secondary">Total</div>
                       </div>
                     </div>
-                    <div className="rounded-full bg-accent-content/20 p-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <div className="rounded-xl bg-secondary/10 p-2.5 group-hover:bg-secondary/20 transition-colors duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-                  <div className="mt-2">
-                    <div className="w-full bg-accent-content/30 h-1.5 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-accent-content h-full rounded-full" 
-                        style={{ width: `${tokenBalance.total > 0 ? (tokenBalance.unlocked / tokenBalance.total) * 100 : 0}%` }}
-                      ></div>
-                    </div>
-                    <div className="flex justify-between text-xs mt-1 text-accent-content">
-                      <span>Unlocked</span>
-                      <span>{tokenBalance.total > 0 ? Math.round((tokenBalance.unlocked / tokenBalance.total) * 100) : 0}%</span>
+
+                {/* Token Balance Card */}
+                <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-accent/10 hover:to-accent/20 border border-accent/20 transition-all duration-300 group">
+                  <div className="card-body p-3 flex flex-row items-center justify-between h-full">
+                    <div className="flex flex-col justify-between h-full">
+                      <h2 className="text-base font-medium text-base-content/70">Token Balance</h2>
+                      <div>
+                        <div className="flex flex-col">
+                          <p className="text-2xl font-bold text-accent leading-none mb-1">{tokenBalance.unlocked.toLocaleString()}</p>
+                          <p className="text-xs text-base-content/60">of {tokenBalance.total.toLocaleString()}</p>
+                        </div>
+                        <div className="w-24 bg-base-300 h-1.5 rounded-full overflow-hidden mt-1.5">
+                          <div 
+                            className="bg-accent h-full rounded-full transition-all duration-500 ease-out"
+                            style={{ 
+                              width: `${tokenBalance.total > 0 ? (tokenBalance.unlocked / tokenBalance.total) * 100 : 0}%`,
+                              boxShadow: "0 0 8px rgba(var(--accent), 0.4)"
+                            }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
+                    <div className="rounded-xl bg-accent/10 p-2.5 group-hover:bg-accent/20 transition-colors duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
 
-            {/* Right column - Recent Activity (moved from middle) */}
+            {/* Right column - Recent Activity */}
             <div className="md:col-span-1">
-              {/* Recent Activity Card */}
-              <div className="card bg-base-200/50 shadow-sm h-full">
-                <div className="card-body p-3 sm:p-4 flex flex-col h-full">
-                  <h3 className="card-title text-sm">Recent Activity</h3>
-                  <div className="space-y-3 mt-1 flex-grow">
-                    {/* Default state - No activity */}
-                    <div className="flex flex-col items-center justify-center h-full py-8">
-                      <div className="w-12 h-12 rounded-full bg-base-300 flex items-center justify-center text-base-content/60 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h4 className="font-medium text-sm text-center">No Recent Activity</h4>
-                      <p className="text-xs opacity-70 text-center mt-1">Your activity will appear here once you start interacting with projects</p>
+              <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-base-200/50 hover:to-base-300/50 border border-base-300/50 transition-all duration-300 h-full group">
+                <div className="card-body p-4 flex flex-col h-full">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-base font-medium text-base-content/70">Recent Activity</h3>
+                    <div className="rounded-xl bg-base-300/30 p-2 group-hover:bg-base-300/40 transition-colors duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-base-content/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </div>
+                  </div>
+                  
+                  {/* Default state - No activity */}
+                  <div className="flex flex-col items-center justify-center flex-grow py-8">
+                    <div className="w-16 h-16 rounded-2xl bg-base-300/50 flex items-center justify-center text-base-content/40 mb-4 group-hover:bg-base-300/70 transition-colors duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-medium text-sm text-base-content/70 text-center mb-2">No Recent Activity</h4>
+                    <p className="text-xs text-base-content/50 text-center max-w-[200px]">
+                      Your activity will appear here once you start interacting with projects
+                    </p>
                   </div>
                 </div>
               </div>
