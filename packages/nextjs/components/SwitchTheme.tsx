@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 
@@ -10,13 +10,15 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
 
   const isDarkMode = resolvedTheme === "dark";
 
-  const handleToggle = () => {
-    if (isDarkMode) {
-      setTheme("light");
-    } else {
-      setTheme("dark");
-    }
-  };
+  const handleToggle = useCallback(() => {
+    setTimeout(() => {
+      if (isDarkMode) {
+        setTheme("light");
+      } else {
+        setTheme("dark");
+      }
+    }, 0);
+  }, [isDarkMode, setTheme]);
 
   useEffect(() => {
     setMounted(true);

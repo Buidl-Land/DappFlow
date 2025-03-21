@@ -6,12 +6,14 @@ import { motion } from "framer-motion";
 import type { NextPage } from "next";
 import { FaChartLine, FaCode, FaCoins, FaLightbulb, FaRobot, FaUsers } from "react-icons/fa";
 import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { IdeaPulseLogo } from "~~/components/assets/IdeaPulseLogo";
 import { ParticlesBackground } from "~~/components/particles/ParticlesBackground";
 import { ContractProjectCard } from "~~/components/shared/ContractProjectCard";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
+  const { openConnectModal } = useConnectModal();
 
   const totalProjects = 5; // Using fixed values or fetch from contract
   const totalRaised = 100000; // Using fixed values or fetch from contract
@@ -174,7 +176,10 @@ const Home: NextPage = () => {
                 Explore Projects
               </Link>
               {!connectedAddress && (
-                <button className="px-10 font-semibold rounded-full transition-transform md:px-12 btn btn-outline btn-lg hover:scale-105 border-primary/30 hover:border-primary/60">
+                <button 
+                  onClick={openConnectModal}
+                  className="px-10 font-semibold rounded-full transition-transform md:px-12 btn btn-outline btn-lg hover:scale-105 border-primary/30 hover:border-primary/60"
+                >
                   Connect Wallet
                 </button>
               )}

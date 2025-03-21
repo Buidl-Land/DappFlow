@@ -27,7 +27,12 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
             /* Smooth theme transition */
             * {
               transition-property: color, background-color, border-color;
-              transition-duration: 0.3s;
+              transition-duration: 0.2s;
+              transition-timing-function: ease-out;
+            }
+            /* Selectively exclude wallet connection components to prevent theme switch lag */
+            [data-rk], [class*='rainbowkit'] {
+              transition: none !important;
             }
           `
         }} />
