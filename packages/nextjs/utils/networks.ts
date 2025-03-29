@@ -1,34 +1,33 @@
 import { defineChain } from "viem";
 
-export const monadTestnet = defineChain({
-  id: 10_143,
-  name: "Monad Testnet",
-  network: "monad-testnet",
+
+export const lineaSepolia = defineChain({
+  id: 59141,
+  name: "Linea Sepolia Testnet",
+  network: "linea-sepolia",
   nativeCurrency: {
     decimals: 18,
-    name: "Monad",
-    symbol: "MON",
+    name: "Ethereum",
+    symbol: "ETH",
   },
   rpcUrls: {
     default: {
-      http: ["https://testnet-rpc.monad.xyz"],
-      webSocket: ["wss://testnet-rpc.monad.xyz/ws"],
+      http: ["https://rpc.sepolia.linea.build"],
     },
     public: {
-      http: ["https://testnet-rpc.monad.xyz"],
-      webSocket: ["wss://testnet-rpc.monad.xyz/ws"],
+      http: ["https://rpc.sepolia.linea.build"],
     },
   },
   blockExplorers: {
     default: {
-      name: "Monad Explorer",
-      url: "https://testnet.monadexplorer.com",
+      name: "Linea Explorer",
+      url: "https://sepolia.lineascan.build",
     },
   },
   contracts: {
     multicall3: {
       address: "0xcA11bde05977b3631167028862bE2a173976CA11",
-      blockCreated: 1234,
+      blockCreated: 138793,
     },
   },
 });

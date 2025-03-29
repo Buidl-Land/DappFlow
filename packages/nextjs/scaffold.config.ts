@@ -1,4 +1,4 @@
-import { monadTestnet } from "./utils/networks";
+import { lineaSepolia } from "./utils/networks";
 import * as chains from "viem/chains";
 
 export type ScaffoldConfig = {
@@ -14,8 +14,7 @@ export const DEFAULT_ALCHEMY_API_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 const scaffoldConfig = {
   // The networks on which your DApp is live
   targetNetworks: [
-
-    monadTestnet,
+    lineaSepolia,
     // Add mainnet support later
     // chains.mainnet,
   ],

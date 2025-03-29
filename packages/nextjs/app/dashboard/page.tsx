@@ -1140,7 +1140,7 @@ const DashboardContent = () => {
 
             {/* Right column - Recent Activity */}
             <div className="md:col-span-1">
-              <div className="card bg-gradient-to-br from-base-100 to-base-200 dark:from-base-900 dark:to-base-800 hover:from-base-200/50 hover:to-base-300/50 dark:hover:from-base-800/50 dark:hover:to-base-700/50 border border-base-300/50 dark:border-base-700/50 transition-all duration-300 h-full group shadow-md hover:shadow-xl">
+              <div className="card bg-gradient-to-br from-base-100 to-base-200 dark:from-base-900 dark:to-base-800 hover:from-base-200/50 hover:to-base-300/50 dark:hover:from-base-800/50 dark:hover:to-base-700/50 border border-base-300/50 dark:border-base-700/50 transition-all duration-300 h-full group shadow-md hover:shadow-xl flex flex-col">
                 <div className="card-body p-4 flex flex-col h-full">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-medium text-base-content/70 dark:text-base-content/60">Recent Activity</h3>
@@ -1151,17 +1151,71 @@ const DashboardContent = () => {
                     </div>
                   </div>
                   
-                  {/* Default state - No activity with enhanced styling for dark mode */}
-                  <div className="flex flex-col items-center justify-center flex-grow py-8">
-                    <div className="w-16 h-16 rounded-2xl bg-base-300/50 dark:bg-base-700/50 flex items-center justify-center text-base-content/40 dark:text-base-content/30 mb-4 group-hover:bg-base-300/70 dark:group-hover:bg-base-700/70 transition-colors duration-300 shadow-inner">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
-                      </svg>
+                  {/* Activity list with enhanced styling for dark mode */}
+                  <div className="flex flex-col flex-1 space-y-3 overflow-y-auto pr-1 min-h-[300px]">
+                    {/* Activity 1 - Most recent */}
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-all duration-300 border border-base-200/50 dark:border-base-700/50">
+                      <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-2 shadow-inner">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary dark:text-primary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium">Started Development task</p>
+                          <span className="text-2xs opacity-60 whitespace-nowrap">Just now</span>
+                        </div>
+                        <p className="text-2xs opacity-70 truncate mt-0.5">You started working on a new development task</p>
+                      </div>
                     </div>
-                    <h4 className="font-medium text-sm text-base-content/70 dark:text-base-content/60 text-center mb-2">No Recent Activity</h4>
-                    <p className="text-xs text-base-content/50 dark:text-base-content/40 text-center max-w-[200px]">
-                      Your activity will appear here once you start interacting with projects
-                    </p>
+                    
+                    {/* Activity 2 */}
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-all duration-300 border border-base-200/50 dark:border-base-700/50">
+                      <div className="rounded-lg bg-secondary/10 dark:bg-secondary/20 p-2 shadow-inner">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-secondary dark:text-secondary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium">Applied for Operations task</p>
+                          <span className="text-2xs opacity-60 whitespace-nowrap">Just now</span>
+                        </div>
+                        <p className="text-2xs opacity-70 truncate mt-0.5">Your application for Operations role is under review</p>
+                      </div>
+                    </div>
+                    
+                    {/* Activity 3 */}
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-all duration-300 border border-base-200/50 dark:border-base-700/50">
+                      <div className="rounded-lg bg-accent/10 dark:bg-accent/20 p-2 shadow-inner">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-accent dark:text-accent/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium">Contributed to GenomeGuard</p>
+                          <span className="text-2xs opacity-60 whitespace-nowrap">1 minute ago</span>
+                        </div>
+                        <p className="text-2xs opacity-70 truncate mt-0.5">You contributed 50,000 USDC to GenomeGuard project</p>
+                      </div>
+                    </div>
+                    
+                    {/* Activity 4 */}
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-all duration-300 border border-base-200/50 dark:border-base-700/50">
+                      <div className="rounded-lg bg-success/10 dark:bg-success/20 p-2 shadow-inner">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-success dark:text-success/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-medium">Completed Social Media Challenge</p>
+                          <span className="text-2xs opacity-60 whitespace-nowrap">10 minutes ago</span>
+                        </div>
+                        <p className="text-2xs opacity-70 truncate mt-0.5">You successfully completed the Social Media Challenge task</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

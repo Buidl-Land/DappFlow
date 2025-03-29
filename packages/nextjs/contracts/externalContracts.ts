@@ -12,10 +12,10 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
  * } as const;
  */
 const externalContracts = {
-  // Arbitrum Sepolia
-  10143: {
+  // Linea Sepolia
+  59141: {
     MockUSDC: {
-      address: "0x3856Eee08189d63c9DBd1D415789566Cc87357f5",
+      address: "0x8b7BE7f3b892a57B9723FAD693D83100F9bdA909",
       abi: [
         {
           "inputs": [],

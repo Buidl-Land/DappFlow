@@ -6,9 +6,9 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
 
-  10143: {
+  59141: {
     DiamondCutFacet: {
-      address: "0x986323916eebef9b6d208f0464cbf0e0cc46708d",
+      address: "0x530b2ae89c4811075c96490df147bb931fc6b512",
       abi: [
         {
           type: "function",
@@ -94,11 +94,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
     Diamond: {
-      address: "0xbe59257f2b60900c3fca123dd0f91c5c1eb98501",
+      address: "0x7a31d7e91ce3228ee394812d8f773846f3dbf004",
       abi: [
         {
           type: "constructor",
@@ -187,11 +187,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
     AccessControlFacet: {
-      address: "0x3d3411c5fecb1e4d0e2ab65832e94e0e6eb9eed3",
+      address: "0x66bdc24e5c296169ba3940e773e762e23997c7e5",
       abi: [
         {
           type: "function",
@@ -466,11 +466,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
     ProjectFacet: {
-      address: "0x5e2eac26ee244e6f17a9370bd9e7448654089581",
+      address: "0x48e1ad8b0ee9921b3081f41383c14c594fb5bc89",
       abi: [
         {
           type: "function",
@@ -855,11 +855,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
     CrowdfundingFacet: {
-      address: "0x71c7932ce8367d4a20ca9702e68bb7c0a72e934b",
+      address: "0xa3bc2edb1aa9192247ee24f4cee872dee819ee5a",
       abi: [
         {
           type: "function",
@@ -1135,11 +1135,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
     ProjectTokenFacet: {
-      address: "0x74f09a500616b01fb9927fa53aec71b57683de2a",
+      address: "0xffc608211bf5977191df07919f53253b9ca32498",
       abi: [
         {
           type: "function",
@@ -1356,11 +1356,11 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
     TaskMarketFacet: {
-      address: "0xfb1bbfe788f960455d646683f3e333a06f84a4cd",
+      address: "0x1110dc1df7b3036fa9a3ecbfdd41e4f149fdd3cf",
       abi: [
         {
           type: "function",
@@ -1819,11 +1819,10 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deploymentFile: "run-1741160622.json",
+      deploymentFile: "run-1743237586.json",
       deploymentScript: "Deploy.s.sol",
     },
   },
-
 } as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;

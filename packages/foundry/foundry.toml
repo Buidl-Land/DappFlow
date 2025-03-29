@@ -24,12 +24,11 @@ solc_version = "0.8.27"
 optimizer = true
 optimizer_runs = 1000
 verifier = "blockscout"
-verifier_url = "https://testnet.monadexplorer.com/api"
 
 [rpc_endpoints]
 default_network = "http://127.0.0.1:8545"
 localhost = "http://127.0.0.1:8545"
-monadTestnet = "https://testnet-rpc.monad.xyz/"
+lineaSepolia = "https://rpc.sepolia.linea.build"
 
 mainnet = "https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}"
 sepolia = "https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
@@ -53,7 +52,7 @@ pgnTestnet = "https://sepolia.publicgoods.network"
 [etherscan]
 polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
-monadTestnet = { key = "", url = "https://testnet.monadexplorer.com/api", chain = 10143 }
+lineaSepolia = { key = "${ETHERSCAN_API_KEY}", url = "https://sepolia.lineascan.build/api", chain = 59141 }
 
 [fmt]
 line_length = 120
