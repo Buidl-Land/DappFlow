@@ -1,3 +1,3 @@
 export * from "./useDiamondContract";
 export * from "./useContractRead";
-export * from "./useContractWrite"; 
+export * from "./useContractWrite";

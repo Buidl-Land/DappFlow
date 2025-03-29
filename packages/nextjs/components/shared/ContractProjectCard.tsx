@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatDistanceToNow, differenceInDays } from "date-fns";
-import { useContractRead } from "~~/hooks/contracts";
+import { useDiamondRead } from "~~/hooks/diamond/useDiamondRead";
 
 // Define project data type, matching the contract return structure
 type ProjectData = {
@@ -83,79 +82,62 @@ const formatAmount = (amount: bigint): string => {
   return usdcAmount.toLocaleString(undefined, { maximumFractionDigits: 2 });
 };
 
+// Safe timestamp handling
+const getFormattedTime = (timestamp: number) => {
+  const timestampMs = timestamp < 1e12 ? timestamp * 1000 : timestamp;
+  return formatDistanceToNow(new Date(timestampMs), { addSuffix: true });
+};
+
 export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) => {
-  const { readMethod, isLoading } = useContractRead();
-  const [project, setProject] = useState<ProjectData | null>(() => projectCache[projectId] || null);
-  const [fundingInfo, setFundingInfo] = useState<FundingInfo | null>(() => fundingCache[projectId] || null);
-  const [taskCount, setTaskCount] = useState<number | null>(() => taskCountCache[projectId] || null);
-
-  useEffect(() => {
-    // If cache data exists, use it directly
-    if (projectCache[projectId]) {
-      setProject(projectCache[projectId]);
+  // Use the new Diamond Read hook for project data
+  const { 
+    data: rawProject, 
+    isLoading: isProjectLoading
+  } = useDiamondRead(
+    "getProject",
+    [projectId],
+    {
+      watch: true,
+      enabled: Boolean(projectId)
     }
+  );
 
-    if (fundingCache[projectId]) {
-      setFundingInfo(fundingCache[projectId]);
+  // Parse raw project data
+  const project = rawProject ? parseProjectData(rawProject as any[]) : undefined;
+
+  // Use the new Diamond Read hook for funding info
+  const {
+    data: rawFundingInfo,
+    isLoading: isFundingLoading
+  } = useDiamondRead(
+    "getFundingInfo",
+    [projectId],
+    {
+      watch: true,
+      enabled: Boolean(projectId)
     }
+  );
 
-    if (taskCountCache[projectId]) {
-      setTaskCount(taskCountCache[projectId]);
+  // Parse raw funding info
+  const fundingInfo = rawFundingInfo ? parseFundingInfo(rawFundingInfo as any[]) : undefined;
+
+  // Use the new Diamond Read hook for task count
+  const {
+    data: taskCount,
+    isLoading: taskCountLoading
+  } = useDiamondRead(
+    "getProjectTaskCount",
+    [projectId],
+    {
+      watch: true,
+      enabled: Boolean(projectId)
     }
+  );
 
-    const fetchData = async () => {
-      try {
-        // Get project data
-        if (!project) {
-          const projectResult = await readMethod("getProject", [projectId]);
-          
-          if (projectResult) {
-            const parsedProject = parseProjectData(projectResult as any[]);
-            
-            // Update cache
-            projectCache[projectId] = parsedProject;
-            
-            setProject(parsedProject);
-          }
-        }
+  // Combined loading state
+  const isLoading = isProjectLoading || isFundingLoading || taskCountLoading;
 
-        // Get funding information
-        if (!fundingInfo) {
-          const fundingResult = await readMethod("getFundingInfo", [projectId]);
-          
-          if (fundingResult) {
-            const parsedFunding = parseFundingInfo(fundingResult as any[]);
-            
-            // Update cache
-            fundingCache[projectId] = parsedFunding;
-            
-            setFundingInfo(parsedFunding);
-          }
-        }
-
-        // Get task count
-        if (taskCount === null) {
-          const taskCountResult = await readMethod("getProjectTaskCount", [projectId]);
-          
-          if (taskCountResult !== null && taskCountResult !== undefined) {
-            const count = Number(taskCountResult);
-            
-            // Update cache
-            taskCountCache[projectId] = count;
-            
-            setTaskCount(count);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      }
-    };
-
-    if (!isLoading) {
-      fetchData();
-    }
-  }, [readMethod, projectId, isLoading, project, fundingInfo, taskCount]);
-
+  // Loading state UI
   if (isLoading || !project) {
     return (
       <div className="card w-full sm:w-[32%] bg-base-100 shadow-xl animate-pulse">
@@ -175,7 +157,7 @@ export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) =
   }
 
   const status = statusMap[project.status] || { label: "Unknown", color: "bg-gray-100 text-gray-800" };
-  const createdTime = formatDistanceToNow(new Date(project.createdAt * 1000), { addSuffix: true });
+  const createdTime = getFormattedTime(project.createdAt);
 
   // Calculate funding progress and days left
   let fundingProgress = 0;
@@ -183,17 +165,14 @@ export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) =
   let isFundingClosed = false;
 
   if (fundingInfo) {
-    // Calculate funding progress percentage
     fundingProgress = fundingInfo.fundingGoal > 0n 
       ? Number((fundingInfo.raisedAmount * 100n) / fundingInfo.fundingGoal) 
       : 0;
     
-    // Calculate days left
     const now = new Date();
-    const endDate = new Date(fundingInfo.endTime * 1000);
+    const endTimeMs = fundingInfo.endTime < 1e12 ? fundingInfo.endTime * 1000 : fundingInfo.endTime;
+    const endDate = new Date(endTimeMs);
     daysLeft = Math.max(0, differenceInDays(endDate, now));
-    
-    // Check if funding is closed
     isFundingClosed = fundingInfo.hasMetFundingGoal || now > endDate;
   }
 
@@ -202,28 +181,33 @@ export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) =
       <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 h-full hover:scale-[1.02]">
         <div className="card-body p-4">
           <div className="flex justify-between items-start mb-2">
-            <h2 className="card-title text-base md:text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">{project.title}</h2>
+            <h2 className="card-title text-base md:text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              {project?.title || 'Untitled Project'}
+            </h2>
             <div className="flex items-center gap-1">
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
                 {status.label}
               </span>
-              {taskCount !== null && (
+              {taskCount !== undefined && (
                 <span className="badge badge-outline badge-secondary badge-sm">
-                  {taskCount} tasks
+                  {Number(taskCount)} tasks
                 </span>
               )}
             </div>
           </div>
           
           <div className="flex flex-wrap gap-1 mb-2">
-            {project.tags.map((tag, index) => (
+            {Array.isArray(project?.tags) ? project.tags.map((tag, index) => (
               <span key={index} className="badge badge-sm bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-0">
                 {tag}
               </span>
-            ))}
+            )) : null}
           </div>
           
-          <p className="overflow-hidden text-sm text-base-content mb-2" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', maxHeight: '4.5em' }}>{project.description}</p>
+          <p className="overflow-hidden text-sm text-base-content mb-2" 
+             style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', maxHeight: '4.5em' }}>
+            {project?.description || 'No description available'}
+          </p>
           
           {/* Funding Progress */}
           {fundingInfo && (
@@ -263,22 +247,30 @@ export const ContractProjectCard = ({ projectId = 2 }: { projectId?: number }) =
           {/* AI Evaluation */}
           <div className="bg-base-300 p-3 rounded-lg mb-3">
             <p className="text-sm font-medium mb-1 text-secondary">AI Evaluation</p>
-            <p className="text-xs text-base-content line-clamp-2">{project.metadata.aiEvaluation}</p>
+            <p className="text-xs text-base-content line-clamp-2">
+              {project?.metadata?.aiEvaluation || 'No evaluation available'}
+            </p>
           </div>
           
           {/* Metrics */}
           <div className="grid grid-cols-3 gap-2 mb-2 text-center">
             <div className="bg-primary/20 rounded p-2">
               <div className="text-xs text-primary font-medium">Score</div>
-              <div className="font-bold text-sm text-base-content">{project.metadata.marketScore}/10</div>
+              <div className="font-bold text-sm text-base-content">
+                {project?.metadata?.marketScore ?? 0}/10
+              </div>
             </div>
             <div className="bg-secondary/20 rounded p-2">
               <div className="text-xs text-secondary font-medium">Tech</div>
-              <div className="font-bold text-sm text-base-content">{project.metadata.techFeasibility}</div>
+              <div className="font-bold text-sm text-base-content">
+                {project?.metadata?.techFeasibility || 'N/A'}
+              </div>
             </div>
             <div className="bg-accent/20 rounded p-2">
               <div className="text-xs text-accent font-medium">Value</div>
-              <div className="font-bold text-sm text-base-content">${(project.metadata.maxValuation / 1000).toFixed(1)}K</div>
+              <div className="font-bold text-sm text-base-content">
+                ${((project?.metadata?.maxValuation ?? 0) / 1000).toFixed(1)}K
+              </div>
             </div>
           </div>
         </div>

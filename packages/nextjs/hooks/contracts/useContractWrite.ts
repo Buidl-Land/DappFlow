@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import { Abi, Address } from "abitype";
+import { Address } from "abitype";
 import { useWalletClient } from "wagmi";
 import { usePublicClient } from "wagmi";
-import { useFacetsAbi, getFunctionAbiByName } from "./useDiamondContract";
+import { useDiamondWithFacets, getFunctionAbiByName } from "./useDiamondContract";
 
 /**
  * Hook for writing to Diamond contract
@@ -10,7 +10,7 @@ import { useFacetsAbi, getFunctionAbiByName } from "./useDiamondContract";
 export const useContractWrite = () => {
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
-  const { combinedAbi, diamondAddress, isLoading } = useFacetsAbi();
+  const { combinedAbi, diamondAddress, isLoading } = useDiamondWithFacets();
 
   /**
    * Write contract method

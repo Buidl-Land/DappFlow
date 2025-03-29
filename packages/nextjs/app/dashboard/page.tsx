@@ -177,22 +177,27 @@ const isCacheExpired = (): boolean => {
   return Date.now() - globalCache.timestamp > CACHE_EXPIRY;
 };
 
-// User investments table component
+// User investments table component - Enhanced with better visuals for dark mode
 const UserInvestmentsTable = ({ userInvestments, isLoadingData }: { userInvestments: UserInvestment[], isLoadingData: boolean }) => {
   if (isLoadingData) {
     return (
       <div className="flex justify-center items-center py-8">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary dark:text-primary/90"></span>
       </div>
     );
   }
   
   if (userInvestments.length === 0) {
     return (
-      <div className="py-6 text-center rounded-lg sm:py-8 bg-base-200/50">
-        <h3 className="mb-2 text-lg font-bold sm:text-xl">No investments yet</h3>
-        <p className="mb-4 text-xs opacity-80 sm:text-sm">You haven&apos;t invested in any projects.</p>
-        <Link href="/projects" className="btn btn-primary btn-sm sm:btn-md">
+      <div className="py-6 text-center rounded-lg sm:py-8 bg-base-200/50 dark:bg-base-800/50 shadow-inner">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-base-300/50 dark:bg-base-700/50 flex items-center justify-center text-base-content/40 dark:text-base-content/30 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h3 className="mb-2 text-lg font-bold sm:text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-secondary/90 dark:from-primary/80 dark:to-secondary/80">No investments yet</h3>
+        <p className="mb-4 text-xs opacity-80 dark:opacity-60 sm:text-sm">You haven&apos;t invested in any projects.</p>
+        <Link href="/projects" className="btn btn-primary dark:bg-primary/90 dark:hover:bg-primary/80 dark:text-primary-content/90 btn-sm sm:btn-md hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg">
           Browse Projects
         </Link>
       </div>
@@ -203,36 +208,38 @@ const UserInvestmentsTable = ({ userInvestments, isLoadingData }: { userInvestme
     <div className="overflow-x-auto -mx-4 sm:mx-0">
       <table className="table w-full table-sm sm:table-md">
         <thead>
-          <tr>
-            <th className="text-xs sm:text-sm">Project</th>
-            <th className="text-xs sm:text-sm">Contribution</th>
-            <th className="text-xs sm:text-sm">Funding Progress</th>
-            <th className="text-xs sm:text-sm">Status</th>
-            <th className="text-xs sm:text-sm">Actions</th>
+          <tr className="bg-base-300/30 dark:bg-base-700/30">
+            <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Project</th>
+            <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Contribution</th>
+            <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Funding Progress</th>
+            <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Status</th>
+            <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Actions</th>
           </tr>
         </thead>
         <tbody>
           {userInvestments.map((investment) => (
-            <tr key={investment.projectId}>
+            <tr key={investment.projectId} className="hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-colors duration-300">
               <td>
                 <div className="font-medium text-xs sm:text-sm truncate max-w-[100px] sm:max-w-none">
                   {investment.projectTitle}
                 </div>
               </td>
-              <td className="text-xs sm:text-sm">${formatAmount(investment.contributionAmount)}</td>
+              <td className="text-xs sm:text-sm font-semibold text-accent dark:text-accent/90">${formatAmount(investment.contributionAmount)}</td>
               <td>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <progress 
                       className={`progress w-20 sm:w-24 ${
-                        investment.fundingProgress >= 100 ? "progress-success" : "progress-primary"
+                        investment.fundingProgress >= 100 
+                          ? "progress-success dark:bg-success/80 dark:text-success-content/90" 
+                          : "progress-primary dark:bg-primary/80 dark:text-primary-content/90"
                       }`} 
                       value={investment.fundingProgress} 
                       max="100"
                     ></progress>
-                    <span className="text-xs">{investment.fundingProgress}%</span>
+                    <span className="text-xs font-semibold">{investment.fundingProgress}%</span>
                   </div>
-                  <div className="text-xs opacity-70">
+                  <div className="text-xs opacity-70 dark:opacity-60">
                     ${formatAmount(investment.raisedAmount)} / ${formatAmount(investment.fundingGoal)}
                   </div>
                 </div>
@@ -241,10 +248,10 @@ const UserInvestmentsTable = ({ userInvestments, isLoadingData }: { userInvestme
                 <span
                   className={`badge badge-xs sm:badge-sm ${
                     investment.status === "Active"
-                      ? "badge-success"
+                      ? "badge-success dark:bg-success/80 dark:text-success-content/90"
                       : investment.status === "Funded"
-                        ? "badge-info"
-                        : "badge-error"
+                        ? "badge-info dark:bg-info/80 dark:text-info-content/90"
+                        : "badge-error dark:bg-error/80 dark:text-error-content/90"
                   }`}
                 >
                   {investment.status}
@@ -253,7 +260,7 @@ const UserInvestmentsTable = ({ userInvestments, isLoadingData }: { userInvestme
               <td>
                 <Link
                   href={`/projects/${investment.projectId}`}
-                  className="btn btn-xs sm:btn-sm btn-outline"
+                  className="btn btn-xs sm:btn-sm btn-outline dark:border-base-600 dark:text-base-content dark:hover:bg-base-700 hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center justify-center h-full">
                     <span className="inline-block">Details</span>
@@ -268,21 +275,26 @@ const UserInvestmentsTable = ({ userInvestments, isLoadingData }: { userInvestme
   );
 };
 
-// Token unlock progress component
+// Token unlock progress component - Enhanced with better visuals for dark mode
 const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleaseInfo: TokenReleaseInfo[], isLoadingData: boolean }) => {
   if (isLoadingData) {
     return (
       <div className="flex justify-center items-center py-8">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary dark:text-primary/90"></span>
       </div>
     );
   }
   
   if (tokenReleaseInfo.length === 0) {
     return (
-      <div className="py-6 text-center rounded-lg sm:py-8 bg-base-200/50">
-        <h3 className="mb-2 text-lg font-bold sm:text-xl">No token releases yet</h3>
-        <p className="mb-4 text-xs opacity-80 sm:text-sm">You don&apos;t have any tokens being released.</p>
+      <div className="py-6 text-center rounded-lg sm:py-8 bg-base-200/50 dark:bg-base-800/50 shadow-inner">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-base-300/50 dark:bg-base-700/50 flex items-center justify-center text-base-content/40 dark:text-base-content/30 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 className="mb-2 text-lg font-bold sm:text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-secondary/90 dark:from-primary/80 dark:to-secondary/80">No token releases yet</h3>
+        <p className="mb-4 text-xs opacity-80 dark:opacity-60 sm:text-sm">You don&apos;t have any tokens being released.</p>
       </div>
     );
   }
@@ -293,18 +305,18 @@ const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleas
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <table className="table w-full table-sm sm:table-md">
           <thead>
-            <tr>
-              <th className="text-xs sm:text-sm">Release Date</th>
-              <th className="text-xs sm:text-sm">Project</th>
-              <th className="text-xs sm:text-sm">Percentage</th>
-              <th className="text-xs sm:text-sm">Tokens</th>
-              <th className="text-xs sm:text-sm">Status</th>
-              <th className="text-xs sm:text-sm">Actions</th>
+            <tr className="bg-base-300/30 dark:bg-base-700/30">
+              <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Release Date</th>
+              <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Project</th>
+              <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Percentage</th>
+              <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Tokens</th>
+              <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Status</th>
+              <th className="text-xs sm:text-sm font-bold text-primary dark:text-primary/90">Actions</th>
             </tr>
           </thead>
           <tbody>
             {tokenReleaseInfo.map((info) => (
-              <tr key={`${info.projectId}-${info.vestingStartDate}`}>
+              <tr key={`${info.projectId}-${info.vestingStartDate}`} className="hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-colors duration-300">
                 <td className="text-xs sm:text-sm">
                   {new Date(info.vestingEndDate * 1000).toLocaleDateString()}
                 </td>
@@ -316,27 +328,31 @@ const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleas
                 <td className="text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
                     <progress 
-                      className="progress w-16 sm:w-20" 
+                      className={`progress w-16 sm:w-20 ${
+                        info.percentUnlocked >= 100 
+                          ? "progress-success dark:bg-success/80 dark:text-success-content/90" 
+                          : "progress-primary dark:bg-primary/80 dark:text-primary-content/90"
+                      }`} 
                       value={info.percentUnlocked} 
                       max="100"
                     ></progress>
-                    <span className="text-xs">{info.percentUnlocked}%</span>
+                    <span className="text-xs font-semibold">{info.percentUnlocked}%</span>
                   </div>
                 </td>
                 <td className="text-xs sm:text-sm">
                   <div className="flex flex-col">
-                    <span>{formatTokenAmount(info.unlockedTokens)} / {formatTokenAmount(info.totalTokens)}</span>
-                    <span className="text-2xs opacity-70">{info.tokenSymbol}</span>
+                    <span className="font-semibold text-accent dark:text-accent/90">{formatTokenAmount(info.unlockedTokens)} / {formatTokenAmount(info.totalTokens)}</span>
+                    <span className="text-2xs opacity-70 dark:opacity-60">{info.tokenSymbol}</span>
                   </div>
                 </td>
                 <td>
                   <span
                     className={`badge badge-xs sm:badge-sm ${
                       info.percentUnlocked >= 100
-                        ? "badge-success"
+                        ? "badge-success dark:bg-success/80 dark:text-success-content/90"
                         : info.percentUnlocked > 0
-                          ? "badge-info"
-                          : "badge-warning"
+                          ? "badge-info dark:bg-info/80 dark:text-info-content/90"
+                          : "badge-warning dark:bg-warning/80 dark:text-warning-content/90"
                     }`}
                   >
                     {info.percentUnlocked >= 100
@@ -348,7 +364,7 @@ const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleas
                 </td>
                 <td>
                   <button
-                    className="btn btn-xs sm:btn-sm btn-outline"
+                    className="btn btn-xs sm:btn-sm btn-outline dark:border-base-600 dark:text-base-content dark:hover:bg-base-700 hover:scale-105 transition-all duration-300 shadow-sm hover:shadow-md"
                     onClick={() => {
                       // Show release schedule
                       const modal = document.getElementById(`modal-${info.projectId}`) as HTMLDialogElement;
@@ -360,36 +376,38 @@ const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleas
                     </div>
                   </button>
                   
-                  {/* Release Schedule Modal */}
+                  {/* Release Schedule Modal - Enhanced styling for dark mode */}
                   <dialog id={`modal-${info.projectId}`} className="modal modal-bottom sm:modal-middle">
-                    <div className="modal-box">
-                      <h3 className="font-bold text-lg mb-4">Token Release Schedule</h3>
-                      <p className="text-sm mb-4">Project: {info.projectTitle}</p>
+                    <div className="modal-box bg-base-100 dark:bg-base-900 shadow-2xl border border-base-300 dark:border-base-700">
+                      <h3 className="font-bold text-lg mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90">Token Release Schedule</h3>
+                      <p className="text-sm mb-4">Project: <span className="font-semibold">{info.projectTitle}</span></p>
                       
                       <div className="overflow-x-auto">
                         <table className="table table-sm w-full">
-                          <thead>
+                          <thead className="bg-base-300/30 dark:bg-base-700/30">
                             <tr>
-                              <th>Date</th>
-                              <th>Percentage</th>
-                              <th>Tokens</th>
-                              <th>Status</th>
+                              <th className="text-xs font-bold text-primary dark:text-primary/90">Date</th>
+                              <th className="text-xs font-bold text-primary dark:text-primary/90">Percentage</th>
+                              <th className="text-xs font-bold text-primary dark:text-primary/90">Tokens</th>
+                              <th className="text-xs font-bold text-primary dark:text-primary/90">Status</th>
                             </tr>
                           </thead>
                           <tbody>
                             {info.releaseSchedule.map((item, index) => (
-                              <tr key={index} className={item.isUnlocked ? "bg-success/10" : ""}>
+                              <tr key={index} className={`${item.isUnlocked ? "bg-success/10 dark:bg-success/5" : ""} hover:bg-base-200/50 dark:hover:bg-base-800/50 transition-colors duration-300`}>
                                 <td>{new Date(item.date * 1000).toLocaleDateString()}</td>
                                 <td>{item.percentage}%</td>
                                 <td>
-                                  <span className={item.isUnlocked ? "text-success" : ""}>
+                                  <span className={item.isUnlocked ? "text-success dark:text-success/90 font-semibold" : ""}>
                                     {formatTokenAmount(item.tokenAmount)}
                                   </span>
                                 </td>
                                 <td>
                                   <span
                                     className={`badge badge-xs ${
-                                      item.isUnlocked ? "badge-success" : "badge-warning"
+                                      item.isUnlocked 
+                                        ? "badge-success dark:bg-success/80 dark:text-success-content/90" 
+                                        : "badge-warning dark:bg-warning/80 dark:text-warning-content/90"
                                     }`}
                                   >
                                     {item.isUnlocked ? "Unlocked" : "Locked"}
@@ -402,7 +420,7 @@ const TokenReleaseSchedule = ({ tokenReleaseInfo, isLoadingData }: { tokenReleas
                       </div>
                       
                       <div className="modal-action">
-                        <button className="btn" onClick={() => (document.getElementById(`modal-${info.projectId}`) as HTMLDialogElement)?.close()}>
+                        <button className="btn btn-outline dark:border-base-600 dark:text-base-content dark:hover:bg-base-700 hover:scale-105 transition-transform duration-300" onClick={() => (document.getElementById(`modal-${info.projectId}`) as HTMLDialogElement)?.close()}>
                           Close
                         </button>
                       </div>
@@ -927,8 +945,8 @@ const DashboardContent = () => {
 
   return (
     <div className="flex flex-col pt-20 min-h-screen sm:pt-24 animate-fade-in">
-      {/* SVG Background */}
-      <div className="fixed inset-0 z-[-1] opacity-5">
+      {/* SVG Background with subtle pattern */}
+      <div className="fixed inset-0 z-[-1] opacity-5 dark:opacity-10">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="dashboardGrid" width="50" height="50" patternUnits="userSpaceOnUse">
@@ -950,24 +968,26 @@ const DashboardContent = () => {
       </div>
 
       <div className="container px-4 mx-auto">
-        {/* Header with glass effect */}
-        <div className="mb-10 backdrop-blur-sm bg-base-100/40 p-6 rounded-2xl shadow-xl border border-base-200">
+        {/* Header with enhanced glass effect - Dark mode improved */}
+        <div className="mb-8 backdrop-blur-sm bg-base-100/40 dark:bg-base-900/40 p-6 rounded-2xl shadow-xl border border-base-200 dark:border-base-800 hover:shadow-2xl transition-all duration-300">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="relative">
-              <h1 className="text-3xl font-bold sm:text-4xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Dashboard Overview</h1>
-            <div className="absolute -bottom-2 left-0 w-1/2 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
-          </div>
-            <div className="flex items-center gap-2 bg-base-200/50 rounded-full px-4 py-2 text-sm">
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-            <span>Last updated: {new Date().toLocaleDateString()}</span>
+            <div className="relative">
+              <h1 className="text-3xl font-bold sm:text-4xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent dark:from-primary/90 dark:to-secondary/90">
+                Dashboard Overview
+              </h1>
+              <div className="absolute -bottom-2 left-0 w-1/2 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            </div>
+            <div className="flex items-center gap-2 bg-base-200/50 dark:bg-base-800/50 rounded-full px-4 py-2 text-sm shadow-sm hover:shadow transition-all duration-300">
+              <div className="w-2.5 h-2.5 bg-success dark:bg-success/80 rounded-full animate-pulse"></div>
+              <span>Last updated: {new Date().toLocaleDateString()}</span>
             </div>
           </div>
         </div>
 
-        {/* Portfolio Analytics Section - Moved to top */}
-        <div className="mb-8 card bg-base-100 shadow-xl p-4 sm:p-6">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {/* Portfolio Analytics Section - Dark mode improved */}
+        <div className="mb-8 card bg-base-100 dark:bg-base-900 shadow-xl p-4 sm:p-6 border border-base-200/50 dark:border-base-700/50 hover:border-base-300/50 dark:hover:border-base-600/50 transition-all duration-300">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary dark:text-primary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             Portfolio Analytics
@@ -976,17 +996,17 @@ const DashboardContent = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Left column - Investment Breakdown */}
             <div className="md:col-span-1">
-              {/* Investment Breakdown Card - Enhanced with charts */}
-              <div className="card bg-base-200/50 shadow-sm h-full">
+              {/* Investment Breakdown Card - Enhanced with better visuals for dark mode */}
+              <div className="card bg-base-200/50 dark:bg-base-800/50 shadow-xl h-full hover:shadow-2xl transition-all duration-300 hover:scale-[1.01]">
                 <div className="card-body p-3 sm:p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h3 className="card-title text-base">Investment Breakdown by Tags</h3>
+                    <h3 className="card-title text-base bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-secondary/90 dark:from-primary/80 dark:to-secondary/80">Investment Breakdown by Tags</h3>
                     
                     <div className="flex flex-col gap-3 mt-4">
                       {/* Horizontal Bar Chart */}
                       <div className="space-y-3">
                         {Object.keys(investmentDistribution).length === 0 ? (
-                          <div className="text-sm text-center py-4 opacity-70">No tag data available</div>
+                          <div className="text-sm text-center py-4 opacity-70 dark:opacity-60">No tag data available</div>
                         ) : (
                           <>
                             {/* Calculate total for percentage */}
@@ -1009,14 +1029,14 @@ const DashboardContent = () => {
                                 <div key={tag}>
                                   <div className="flex justify-between items-center mb-1.5">
                                     <span className="text-sm font-medium flex items-center gap-1.5">
-                                      <span className={`w-3 h-3 rounded-full ${colors[index % colors.length]} inline-block`}></span>
+                                      <span className={`w-3 h-3 rounded-full ${colors[index % colors.length]} inline-block shadow-sm`}></span>
                                       {tag.charAt(0).toUpperCase() + tag.slice(1)}
                                     </span>
                                     <span className="text-sm">{count}</span>
                                   </div>
-                                  <div className="w-full bg-base-300 rounded-full h-3 overflow-hidden">
+                                  <div className="w-full bg-base-300 dark:bg-base-700 rounded-full h-3 overflow-hidden shadow-inner">
                                     <div 
-                                      className={`${colors[index % colors.length]} h-3 rounded-full shadow-inner`}
+                                      className={`${colors[index % colors.length]} h-3 rounded-full shadow-inner transition-all duration-500`}
                                       style={{ width: `${(count / totalTags) * 100}%` }}
                                     ></div>
                                   </div>
@@ -1031,19 +1051,17 @@ const DashboardContent = () => {
                   
                   {/* Summary Stats - Moved to bottom for alignment */}
                   <div className="flex justify-between items-center mt-auto pt-3 text-sm text-center">
-                    <div>
-                      <div className="font-bold text-lg">{projectsCount}</div>
-                      <div className="opacity-70">Total</div>
+                    <div className="bg-base-300/50 dark:bg-base-700/50 rounded-lg px-3 py-2 hover:bg-base-300/70 dark:hover:bg-base-700/70 transition-colors duration-300">
+                      <div className="font-bold text-lg text-primary dark:text-primary/90">{projectsCount}</div>
+                      <div className="opacity-70 dark:opacity-60">Total</div>
                     </div>
-                    <div className="divider divider-horizontal mx-0"></div>
-                    <div>
-                      <div className="font-bold text-lg">{investmentStatusDistribution.funded}</div>
-                      <div className="opacity-70">Funded</div>
+                    <div className="bg-base-300/50 dark:bg-base-700/50 rounded-lg px-3 py-2 hover:bg-base-300/70 dark:hover:bg-base-700/70 transition-colors duration-300">
+                      <div className="font-bold text-lg text-success dark:text-success/90">{investmentStatusDistribution.funded}</div>
+                      <div className="opacity-70 dark:opacity-60">Funded</div>
                     </div>
-                    <div className="divider divider-horizontal mx-0"></div>
-                    <div>
-                      <div className="font-bold text-lg">{investmentStatusDistribution.active}</div>
-                      <div className="opacity-70">Active</div>
+                    <div className="bg-base-300/50 dark:bg-base-700/50 rounded-lg px-3 py-2 hover:bg-base-300/70 dark:hover:bg-base-700/70 transition-colors duration-300">
+                      <div className="font-bold text-lg text-info dark:text-info/90">{investmentStatusDistribution.active}</div>
+                      <div className="opacity-70 dark:opacity-60">Active</div>
                     </div>
                   </div>
                 </div>
@@ -1053,55 +1071,55 @@ const DashboardContent = () => {
             {/* Middle column - Stats Cards */}
             <div className="md:col-span-1 flex flex-col h-full">
               <div className="grid grid-rows-3 gap-3 h-full">
-                {/* Projects Backed Card */}
-                <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-primary/10 hover:to-primary/20 border border-primary/20 transition-all duration-300 group">
+                {/* Projects Backed Card - Enhanced with better visuals for dark mode */}
+                <div className="card bg-gradient-to-br from-base-100 to-base-200 dark:from-base-900 dark:to-base-800 hover:from-primary/10 hover:to-primary/20 dark:hover:from-primary/20 dark:hover:to-primary/10 border border-primary/20 dark:border-primary/10 transition-all duration-300 group shadow-md hover:shadow-xl">
                   <div className="card-body p-3 flex flex-row items-center justify-between h-full">
                     <div className="flex flex-col justify-between h-full">
-                      <h2 className="text-base font-medium text-base-content/70">Projects Backed</h2>
+                      <h2 className="text-base font-medium text-base-content/70 dark:text-base-content/60">Projects Backed</h2>
                       <div className="flex items-baseline gap-2">
-                        <p className="text-2xl font-bold text-primary">{projectsCount}</p>
-                        <div className="badge badge-sm badge-primary">Active</div>
+                        <p className="text-2xl font-bold text-primary dark:text-primary/90">{projectsCount}</p>
+                        <div className="badge badge-sm badge-primary dark:bg-primary/90 dark:text-primary-content/90">Active</div>
                       </div>
                     </div>
-                    <div className="rounded-xl bg-primary/10 p-2.5 group-hover:bg-primary/20 transition-colors duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-xl bg-primary/10 dark:bg-primary/20 p-2.5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors duration-300 shadow-inner">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary dark:text-primary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
                   </div>
                 </div>
 
-                {/* Tasks Participated Card */}
-                <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-secondary/10 hover:to-secondary/20 border border-secondary/20 transition-all duration-300 group">
+                {/* Tasks Participated Card - Enhanced with better visuals for dark mode */}
+                <div className="card bg-gradient-to-br from-base-100 to-base-200 dark:from-base-900 dark:to-base-800 hover:from-secondary/10 hover:to-secondary/20 dark:hover:from-secondary/20 dark:hover:to-secondary/10 border border-secondary/20 dark:border-secondary/10 transition-all duration-300 group shadow-md hover:shadow-xl">
                   <div className="card-body p-3 flex flex-row items-center justify-between h-full">
                     <div className="flex flex-col justify-between h-full">
-                      <h2 className="text-base font-medium text-base-content/70">Tasks Participated</h2>
+                      <h2 className="text-base font-medium text-base-content/70 dark:text-base-content/60">Tasks Participated</h2>
                       <div className="flex items-baseline gap-2">
-                        <p className="text-2xl font-bold text-secondary">{tasksCount}</p>
-                        <div className="badge badge-sm badge-secondary">Total</div>
+                        <p className="text-2xl font-bold text-secondary dark:text-secondary/90">{tasksCount}</p>
+                        <div className="badge badge-sm badge-secondary dark:bg-secondary/90 dark:text-secondary-content/90">Total</div>
                       </div>
                     </div>
-                    <div className="rounded-xl bg-secondary/10 p-2.5 group-hover:bg-secondary/20 transition-colors duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-xl bg-secondary/10 dark:bg-secondary/20 p-2.5 group-hover:bg-secondary/20 dark:group-hover:bg-secondary/30 transition-colors duration-300 shadow-inner">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-secondary dark:text-secondary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
                     </div>
                   </div>
                 </div>
 
-                {/* Token Balance Card */}
-                <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-accent/10 hover:to-accent/20 border border-accent/20 transition-all duration-300 group">
+                {/* Token Balance Card - Enhanced with better visuals for dark mode */}
+                <div className="card bg-gradient-to-br from-base-100 to-base-200 dark:from-base-900 dark:to-base-800 hover:from-accent/10 hover:to-accent/20 dark:hover:from-accent/20 dark:hover:to-accent/10 border border-accent/20 dark:border-accent/10 transition-all duration-300 group shadow-md hover:shadow-xl">
                   <div className="card-body p-3 flex flex-row items-center justify-between h-full">
                     <div className="flex flex-col justify-between h-full">
-                      <h2 className="text-base font-medium text-base-content/70">Token Balance</h2>
+                      <h2 className="text-base font-medium text-base-content/70 dark:text-base-content/60">Token Balance</h2>
                       <div>
                         <div className="flex flex-col">
-                          <p className="text-2xl font-bold text-accent leading-none mb-1">{tokenBalance.unlocked.toLocaleString()}</p>
-                          <p className="text-xs text-base-content/60">of {tokenBalance.total.toLocaleString()}</p>
+                          <p className="text-2xl font-bold text-accent dark:text-accent/90 leading-none mb-1">{tokenBalance.unlocked.toLocaleString()}</p>
+                          <p className="text-xs text-base-content/60 dark:text-base-content/50">of {tokenBalance.total.toLocaleString()}</p>
                         </div>
-                        <div className="w-24 bg-base-300 h-1.5 rounded-full overflow-hidden mt-1.5">
+                        <div className="w-24 bg-base-300 dark:bg-base-700 h-1.5 rounded-full overflow-hidden mt-1.5 shadow-inner">
                           <div 
-                            className="bg-accent h-full rounded-full transition-all duration-500 ease-out"
+                            className="bg-accent dark:bg-accent/90 h-full rounded-full transition-all duration-500 ease-out"
                             style={{ 
                               width: `${tokenBalance.total > 0 ? (tokenBalance.unlocked / tokenBalance.total) * 100 : 0}%`,
                               boxShadow: "0 0 8px rgba(var(--accent), 0.4)"
@@ -1110,8 +1128,8 @@ const DashboardContent = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-xl bg-accent/10 p-2.5 group-hover:bg-accent/20 transition-colors duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-xl bg-accent/10 dark:bg-accent/20 p-2.5 group-hover:bg-accent/20 dark:group-hover:bg-accent/30 transition-colors duration-300 shadow-inner">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-accent dark:text-accent/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -1122,26 +1140,26 @@ const DashboardContent = () => {
 
             {/* Right column - Recent Activity */}
             <div className="md:col-span-1">
-              <div className="card bg-gradient-to-br from-base-100 to-base-200 hover:from-base-200/50 hover:to-base-300/50 border border-base-300/50 transition-all duration-300 h-full group">
+              <div className="card bg-gradient-to-br from-base-100 to-base-200 dark:from-base-900 dark:to-base-800 hover:from-base-200/50 hover:to-base-300/50 dark:hover:from-base-800/50 dark:hover:to-base-700/50 border border-base-300/50 dark:border-base-700/50 transition-all duration-300 h-full group shadow-md hover:shadow-xl">
                 <div className="card-body p-4 flex flex-col h-full">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-base font-medium text-base-content/70">Recent Activity</h3>
-                    <div className="rounded-xl bg-base-300/30 p-2 group-hover:bg-base-300/40 transition-colors duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-base-content/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <h3 className="text-base font-medium text-base-content/70 dark:text-base-content/60">Recent Activity</h3>
+                    <div className="rounded-xl bg-base-300/30 dark:bg-base-700/30 p-2 group-hover:bg-base-300/40 dark:group-hover:bg-base-700/40 transition-colors duration-300 shadow-inner">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-base-content/70 dark:text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                   </div>
                   
-                  {/* Default state - No activity */}
+                  {/* Default state - No activity with enhanced styling for dark mode */}
                   <div className="flex flex-col items-center justify-center flex-grow py-8">
-                    <div className="w-16 h-16 rounded-2xl bg-base-300/50 flex items-center justify-center text-base-content/40 mb-4 group-hover:bg-base-300/70 transition-colors duration-300">
+                    <div className="w-16 h-16 rounded-2xl bg-base-300/50 dark:bg-base-700/50 flex items-center justify-center text-base-content/40 dark:text-base-content/30 mb-4 group-hover:bg-base-300/70 dark:group-hover:bg-base-700/70 transition-colors duration-300 shadow-inner">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
                       </svg>
                     </div>
-                    <h4 className="font-medium text-sm text-base-content/70 text-center mb-2">No Recent Activity</h4>
-                    <p className="text-xs text-base-content/50 text-center max-w-[200px]">
+                    <h4 className="font-medium text-sm text-base-content/70 dark:text-base-content/60 text-center mb-2">No Recent Activity</h4>
+                    <p className="text-xs text-base-content/50 dark:text-base-content/40 text-center max-w-[200px]">
                       Your activity will appear here once you start interacting with projects
                     </p>
                   </div>
@@ -1151,36 +1169,36 @@ const DashboardContent = () => {
           </div>
         </div>
 
-        {/* Main Content with Tabs */}
-        <div className="card bg-base-100 shadow-xl overflow-hidden">
-          {/* Custom Tabs with Animated Indicator */}
-          <div className="bg-base-200/50 p-1 rounded-t-2xl border-b border-base-300">
+        {/* Main Content with Tabs - Enhanced styling for dark mode */}
+        <div className="card bg-base-100 dark:bg-base-900 shadow-xl overflow-hidden border border-base-200/50 dark:border-base-700/50 hover:border-base-300/50 dark:hover:border-base-600/50 transition-all duration-300">
+          {/* Custom Tabs with Animated Indicator - Improved version for dark mode */}
+          <div className="bg-base-200/50 dark:bg-base-800/50 p-1.5 rounded-t-2xl border-b border-base-300 dark:border-base-700">
             <div className="flex relative">
               <button
-                className={`flex-1 py-3 px-4 text-center relative z-10 transition-all duration-300 ${activeTab === "projects" ? "text-primary font-medium" : "text-base-content/70 hover:text-base-content"}`}
+                className={`flex-1 py-3.5 px-4 text-center relative z-10 transition-all duration-300 ${activeTab === "projects" ? "text-primary dark:text-primary/90 font-medium" : "text-base-content/70 dark:text-base-content/60 hover:text-base-content dark:hover:text-base-content/90"}`}
                 onClick={() => setActiveTab("projects")}
               >
                 <div className="flex justify-center items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${activeTab === "projects" ? "text-primary dark:text-primary/90" : "text-base-content/70 dark:text-base-content/60"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                   <span>My Investments</span>
                 </div>
               </button>
               <button
-                className={`flex-1 py-3 px-4 text-center relative z-10 transition-all duration-300 ${activeTab === "tasks" ? "text-primary font-medium" : "text-base-content/70 hover:text-base-content"}`}
+                className={`flex-1 py-3.5 px-4 text-center relative z-10 transition-all duration-300 ${activeTab === "tasks" ? "text-primary dark:text-primary/90 font-medium" : "text-base-content/70 dark:text-base-content/60 hover:text-base-content dark:hover:text-base-content/90"}`}
                 onClick={() => setActiveTab("tasks")}
               >
                 <div className="flex justify-center items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${activeTab === "tasks" ? "text-primary dark:text-primary/90" : "text-base-content/70 dark:text-base-content/60"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                   <span>My Tasks</span>
                 </div>
               </button>
-              {/* Animated Tab Indicator */}
+              {/* Animated Tab Indicator - Enhanced for dark mode */}
               <div 
-                className={`absolute bottom-0 h-0.5 bg-primary transition-all duration-300 rounded-full`}
+                className={`absolute bottom-0 h-0.5 bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90 transition-all duration-300 rounded-full`}
                 style={{ 
                   left: activeTab === "projects" ? "0%" : "50%", 
                   width: "50%",
@@ -1188,23 +1206,23 @@ const DashboardContent = () => {
                 }}
               ></div>
             </div>
-            </div>
+          </div>
 
-          {/* Content Area */}
+          {/* Content Area - Enhanced styling for dark mode */}
           <div className="p-6">
             {/* Projects Tab Content */}
             {activeTab === "projects" && (
               <div className="space-y-8">
-                {/* Investments Section */}
+                {/* Investments Section - Enhanced styling for dark mode */}
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <h2 className="text-xl font-bold flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary dark:text-primary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       My Investments
                     </h2>
-                    <Link href="/projects" className="btn btn-primary btn-sm">
+                    <Link href="/projects" className="btn btn-primary dark:bg-primary/90 dark:hover:bg-primary/80 dark:text-primary-content/90 btn-sm sm:btn-md hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg">
                       <div className="flex items-center justify-center gap-2 h-full">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -1213,7 +1231,7 @@ const DashboardContent = () => {
                       </div>
                     </Link>
                   </div>
-                  <div className="bg-base-200/30 rounded-xl p-1">
+                  <div className="bg-base-200/30 dark:bg-base-800/30 rounded-xl p-1 shadow-inner">
                     <UserInvestmentsTable 
                       userInvestments={userInvestments} 
                       isLoadingData={isLoadingData} 
@@ -1221,17 +1239,17 @@ const DashboardContent = () => {
                   </div>
                 </div>
 
-                {/* Token Release Schedule Section */}
+                {/* Token Release Schedule Section - Enhanced styling for dark mode */}
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <h2 className="text-xl font-bold flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary dark:text-primary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       Token Release Schedule
                     </h2>
                     <button 
-                      className="btn btn-outline btn-sm"
+                      className="btn btn-outline dark:border-base-600 dark:text-base-content dark:hover:bg-base-700 btn-sm hover:scale-105 transition-transform duration-300 shadow-sm hover:shadow-md"
                       onClick={() => {
                         const modal = document.getElementById('vesting-info-modal') as HTMLDialogElement;
                         if (modal) modal.showModal();
@@ -1245,18 +1263,18 @@ const DashboardContent = () => {
                       </div>
                     </button>
                     
-                    {/* Vesting Info Modal */}
+                    {/* Vesting Info Modal - Enhanced styling for dark mode */}
                     <dialog id="vesting-info-modal" className="modal modal-bottom sm:modal-middle">
-                      <div className="modal-box">
-                        <h3 className="font-bold text-lg mb-4">How Token Vesting Works</h3>
+                      <div className="modal-box bg-base-100 dark:bg-base-900 shadow-2xl border border-base-300 dark:border-base-700">
+                        <h3 className="font-bold text-lg mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90">How Token Vesting Works</h3>
                         
                         <div className="space-y-4">
                           <p className="text-sm">
                             Token vesting is a process where tokens are gradually released over time according to a predetermined schedule.
                           </p>
                           
-                          <div className="bg-base-200 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2">Key Concepts:</h4>
+                          <div className="bg-base-200 dark:bg-base-800 p-4 rounded-lg shadow-inner">
+                            <h4 className="font-semibold mb-2 text-primary dark:text-primary/90">Key Concepts:</h4>
                             <ul className="list-disc list-inside space-y-2 text-sm">
                               <li><span className="font-medium">Vesting Period:</span> The total time over which your tokens will be released.</li>
                               <li><span className="font-medium">Release Schedule:</span> The specific dates and percentages of tokens to be unlocked.</li>
@@ -1264,8 +1282,8 @@ const DashboardContent = () => {
                             </ul>
                           </div>
                           
-                          <div className="bg-base-200 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2">Example Schedule:</h4>
+                          <div className="bg-base-200 dark:bg-base-800 p-4 rounded-lg shadow-inner">
+                            <h4 className="font-semibold mb-2 text-secondary dark:text-secondary/90">Example Schedule:</h4>
                             <div className="overflow-x-auto">
                               <table className="table table-sm w-full">
                                 <thead>
@@ -1276,22 +1294,22 @@ const DashboardContent = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr>
+                                  <tr className="hover:bg-base-300/30 dark:hover:bg-base-700/30 transition-colors duration-300">
                                     <td>TGE (Token Generation Event)</td>
                                     <td>10%</td>
                                     <td>10%</td>
                                   </tr>
-                                  <tr>
+                                  <tr className="hover:bg-base-300/30 dark:hover:bg-base-700/30 transition-colors duration-300">
                                     <td>3 months after TGE</td>
                                     <td>15%</td>
                                     <td>25%</td>
                                   </tr>
-                                  <tr>
+                                  <tr className="hover:bg-base-300/30 dark:hover:bg-base-700/30 transition-colors duration-300">
                                     <td>6 months after TGE</td>
                                     <td>25%</td>
                                     <td>50%</td>
                                   </tr>
-                                  <tr>
+                                  <tr className="hover:bg-base-300/30 dark:hover:bg-base-700/30 transition-colors duration-300">
                                     <td>12 months after TGE</td>
                                     <td>50%</td>
                                     <td>100%</td>
@@ -1303,14 +1321,14 @@ const DashboardContent = () => {
                         </div>
                         
                         <div className="modal-action">
-                          <button className="btn" onClick={() => (document.getElementById('vesting-info-modal') as HTMLDialogElement)?.close()}>
+                          <button className="btn btn-outline dark:border-base-600 dark:text-base-content dark:hover:bg-base-700 hover:scale-105 transition-transform duration-300" onClick={() => (document.getElementById('vesting-info-modal') as HTMLDialogElement)?.close()}>
                             Close
                           </button>
                         </div>
                       </div>
                     </dialog>
                   </div>
-                  <div className="bg-base-200/30 rounded-xl p-1">
+                  <div className="bg-base-200/30 dark:bg-base-800/30 rounded-xl p-1 shadow-inner">
                     <TokenReleaseSchedule 
                       tokenReleaseInfo={tokenReleaseInfo}
                       isLoadingData={isLoadingTokenData}
@@ -1320,17 +1338,17 @@ const DashboardContent = () => {
               </div>
             )}
 
-            {/* Tasks Tab Content */}
+            {/* Tasks Tab Content - Enhanced styling for dark mode */}
             {activeTab === "tasks" && (
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <h2 className="text-xl font-bold flex items-center gap-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-primary/90 dark:to-secondary/90">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary dark:text-primary/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     My Tasks
                   </h2>
-                  <Link href="/projects" className="btn btn-primary btn-sm">
+                  <Link href="/projects" className="btn btn-primary dark:bg-primary/90 dark:hover:bg-primary/80 dark:text-primary-content/90 btn-sm sm:btn-md hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg">
                     <div className="flex items-center justify-center gap-2 h-full">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1339,7 +1357,7 @@ const DashboardContent = () => {
                     </div>
                   </Link>
                 </div>
-                <div className="bg-base-200/30 rounded-xl p-1">
+                <div className="bg-base-200/30 dark:bg-base-800/30 rounded-xl p-1 shadow-inner">
                   <UserTasksTable />
                 </div>
               </div>
@@ -1354,8 +1372,11 @@ const DashboardContent = () => {
 const DashboardPage = () => {
   return (
     <Suspense fallback={
-      <div className="flex justify-center items-center min-h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex justify-center items-center min-h-screen bg-base-100 dark:bg-base-900">
+        <div className="flex flex-col items-center gap-4">
+          <span className="loading loading-spinner loading-lg text-primary dark:text-primary/90"></span>
+          <p className="text-sm text-base-content/70 dark:text-base-content/60 animate-pulse">Loading your dashboard...</p>
+        </div>
       </div>
     }>
       <DashboardContent />

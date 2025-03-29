@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { Abi, AbiFunction, Address } from "abitype";
 import { usePublicClient } from "wagmi";
-import { useFacetsAbi, getFunctionAbiByName } from "./useDiamondContract";
+import { useDiamondWithFacets, getFunctionAbiByName } from "./useDiamondContract";
 
 // Create a simple result cache
 const resultCache: Record<string, { data: any; timestamp: number }> = {};
@@ -13,7 +13,7 @@ const CACHE_EXPIRY = 30000; // 30 seconds
  */
 export const useContractRead = () => {
   const publicClient = usePublicClient();
-  const { combinedAbi, diamondAddress, isLoading } = useFacetsAbi();
+  const { combinedAbi, diamondAddress, isLoading } = useDiamondWithFacets();
 
   /**
    * Generate cache key
