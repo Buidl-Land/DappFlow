@@ -1,4 +1,4 @@
-name = "idea-pulse-evm"
+name = "idea-pulse-linea"
 compatibility_date = "2025-03-02"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
