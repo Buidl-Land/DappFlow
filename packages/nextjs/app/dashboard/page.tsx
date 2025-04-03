@@ -1220,17 +1220,20 @@ const DashboardContent = () => {
                     </div>
                   ) : (
                     // Wallet not connected state
-                    <div className="flex flex-col items-center justify-center flex-grow py-8">
-                      <div className="w-16 h-16 rounded-2xl bg-base-300/50 dark:bg-base-700/50 flex items-center justify-center text-base-content/40 dark:text-base-content/30 mb-4 group-hover:bg-base-300/70 dark:group-hover:bg-base-700/70 transition-colors duration-300 shadow-inner">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="flex flex-col items-center justify-center flex-grow py-8">
+                    <div className="w-16 h-16 rounded-2xl bg-base-300/50 dark:bg-base-700/50 flex items-center justify-center text-base-content/40 dark:text-base-content/30 mb-4 group-hover:bg-base-300/70 dark:group-hover:bg-base-700/70 transition-colors duration-300 shadow-inner">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                      </div>
+                      </svg>
+                    </div>
                       <h4 className="font-medium text-sm text-base-content/70 dark:text-base-content/60 text-center mb-2">Connect Wallet to View Activities</h4>
-                      <p className="text-xs text-base-content/50 dark:text-base-content/40 text-center max-w-[200px]">
+                      <p className="text-xs text-base-content/50 dark:text-base-content/40 text-center max-w-[200px] mb-3">
                         Your recent activities will appear here once you connect your wallet
                       </p>
-                    </div>
+                      <button className="btn btn-primary btn-sm dark:bg-primary/90 dark:hover:bg-primary/80 dark:text-primary-content/90 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg">
+                        Connect Wallet
+                      </button>
+                  </div>
                   )}
                 </div>
               </div>
