@@ -23,7 +23,7 @@
     "pages:build": "next build",
     "pages:clean": "rimraf .next/cache",
     "pages:preview": "npx wrangler pages dev out",
-    "pages:deploy": "yarn build && npx wrangler pages deploy out --project-name=idea-pulse-linea --commit-dirty=true"
+    "pages:deploy": "yarn build && npx wrangler pages deploy out --project-name=buidl-land-flow --commit-dirty=true"
   },
   "dependencies": {
     "@heroicons/react": "~2.1.5",

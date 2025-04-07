@@ -12,8 +12,8 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
  * } as const;
  */
 const externalContracts = {
-  // Linea Sepolia
-  59141: {
+  // Flow Testnet
+  545: {
     MockUSDC: {
       address: "0x8b7BE7f3b892a57B9723FAD693D83100F9bdA909",
       abi: [

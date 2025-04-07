@@ -28,7 +28,7 @@ verifier = "blockscout"
 [rpc_endpoints]
 default_network = "http://127.0.0.1:8545"
 localhost = "http://127.0.0.1:8545"
-lineaSepolia = "https://rpc.sepolia.linea.build"
+flowTestnet = "https://testnet.evm.nodes.onflow.org"
 
 mainnet = "https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}"
 sepolia = "https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
@@ -52,7 +52,7 @@ pgnTestnet = "https://sepolia.publicgoods.network"
 [etherscan]
 polygonMumbai = { key = "${ETHERSCAN_API_KEY}" }
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
-lineaSepolia = { key = "${ETHERSCAN_API_KEY}", url = "https://sepolia.lineascan.build/api", chain = 59141 }
+flowTestnet = { key = "${ETHERSCAN_API_KEY}", url = "https://evm-testnet.flowscan.io/api", chain = 545 }
 
 [fmt]
 line_length = 120
