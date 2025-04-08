@@ -136,7 +136,7 @@ export const Header = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-sm sm:text-lg font-bold tracking-wide leading-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-                  IdeaPulse
+                  BuidlLand
                 </span>
                 <span className="text-[8px] sm:text-xs tracking-widest opacity-75 dark:text-gray-300">INNOVATION HUB</span>
               </div>

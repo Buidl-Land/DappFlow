@@ -295,7 +295,7 @@ const Home: NextPage = () => {
               transition={{ delay: 0.2 }}
               className="[&>a]:!w-full [&>a>div]:!w-full [&>a]:h-full [&>a>div]:h-full"
             >
-              <ContractProjectCard projectId={2} />
+              <ContractProjectCard projectId={1} />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 50 }}

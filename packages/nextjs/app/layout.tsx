@@ -34,8 +34,41 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
             [data-rk], [class*='rainbowkit'] {
               transition: none !important;
             }
+            /* Dify聊天机器人自定义样式 */
+            #dify-chatbot-bubble-button {
+              background-color: #8B5CF6 !important;
+              border-radius: 50% !important;
+            }
+            #dify-chatbot-bubble-window {
+              width: 95vw !important;
+              height: 95vh !important;
+              border-radius: 1rem !important;
+              bottom: 70px !important;
+            }
+            @media (max-width: 640px) {
+              #dify-chatbot-bubble-window {
+                width: 100vw !important;
+                height: 85vh !important;
+              }
+            }
           `
         }} />
+        {/* Dify聊天机器人脚本 */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.difyChatbotConfig = { 
+              token: 'gBN2A7uHX3miRs1O',
+              baseUrl: 'https://udify.app',
+              containerProps: {
+                style: {
+                  boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.3)',
+                  borderRadius: '50%'
+                }
+              }
+            }
+          `
+        }}></script>
+        <script src="https://udify.app/embed.min.js" id="gBN2A7uHX3miRs1O" defer></script>
       </head>
       <body>
         <ThemeProvider enableSystem>

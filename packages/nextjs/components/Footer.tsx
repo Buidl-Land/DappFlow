@@ -45,7 +45,7 @@ export const Footer = () => {
           <div className="md:col-span-1">
             <div className="flex flex-col items-center md:items-start">
               <IdeaPulseLogo className="w-16 h-16 mb-4" />
-              <h3 className="text-lg font-bold mb-2">IdeaPulse</h3>
+              <h3 className="text-lg font-bold mb-2">BuidlLand</h3>
               <p className="text-sm opacity-70 text-center md:text-left">
                 Build with AI, Grow with Community, Tokenize with DAO
               </p>
@@ -147,7 +147,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-6 pt-4 border-t border-base-300 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm opacity-70 mb-4 md:mb-0">
-            © {new Date().getFullYear()} IdeaPulse. All rights reserved.
+            © {new Date().getFullYear()} BuidlLand. All rights reserved.
           </div>
           <div className="flex gap-4 text-sm">
             <Link href="/privacy" className="hover:text-primary transition-colors">

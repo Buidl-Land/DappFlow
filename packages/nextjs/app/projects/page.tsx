@@ -51,7 +51,7 @@ const ProjectsContent = () => {
 
             <h1 className="mb-4 text-3xl font-bold sm:mb-6 sm:text-5xl animate-slide-up relative z-10">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary font-extrabold">
-                Idea Pulse
+                BuidlLand
               </span>
               <span className="block sm:inline"> Ecosystem</span>
             </h1>
