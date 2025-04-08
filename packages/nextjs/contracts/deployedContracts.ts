@@ -6,9 +6,9 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
 
-  59141: {
+  545: {
     DiamondCutFacet: {
-      address: "0x530b2ae89c4811075c96490df147bb931fc6b512",
+      address: "0x234DC1d8548655980055dCa81Bc3c0b4AadD3A68",
       abi: [
         {
           type: "function",
@@ -98,7 +98,7 @@ const deployedContracts = {
       deploymentScript: "Deploy.s.sol",
     },
     Diamond: {
-      address: "0x7a31d7e91ce3228ee394812d8f773846f3dbf004",
+      address: "0x062618eCed9140c206f4240827440B53Ad1Bb230",
       abi: [
         {
           type: "constructor",
@@ -191,7 +191,7 @@ const deployedContracts = {
       deploymentScript: "Deploy.s.sol",
     },
     AccessControlFacet: {
-      address: "0x66bdc24e5c296169ba3940e773e762e23997c7e5",
+      address: "0x230aD1a12896b29d009f8E5D452492b916635BA4",
       abi: [
         {
           type: "function",
@@ -470,7 +470,7 @@ const deployedContracts = {
       deploymentScript: "Deploy.s.sol",
     },
     ProjectFacet: {
-      address: "0x48e1ad8b0ee9921b3081f41383c14c594fb5bc89",
+      address: "0x4842fF88AD518F272F095b947B74a55387D04890",
       abi: [
         {
           type: "function",
@@ -859,7 +859,7 @@ const deployedContracts = {
       deploymentScript: "Deploy.s.sol",
     },
     CrowdfundingFacet: {
-      address: "0xa3bc2edb1aa9192247ee24f4cee872dee819ee5a",
+      address: "0x187E34a55DC3aB19256B421Cd3d435a70B3F11f9",
       abi: [
         {
           type: "function",
@@ -1139,7 +1139,7 @@ const deployedContracts = {
       deploymentScript: "Deploy.s.sol",
     },
     ProjectTokenFacet: {
-      address: "0xffc608211bf5977191df07919f53253b9ca32498",
+      address: "0x8244f8E2ECE7D0761D9F778F08FA3602e7574608",
       abi: [
         {
           type: "function",
@@ -1360,7 +1360,7 @@ const deployedContracts = {
       deploymentScript: "Deploy.s.sol",
     },
     TaskMarketFacet: {
-      address: "0x1110dc1df7b3036fa9a3ecbfdd41e4f149fdd3cf",
+      address: "0x1e9227C2b2fbFd1b8DDb342eCAF8EEEA23e1D50d",
       abi: [
         {
           type: "function",

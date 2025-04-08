@@ -15,7 +15,7 @@ const externalContracts = {
   // Flow Testnet
   545: {
     MockUSDC: {
-      address: "0x8b7BE7f3b892a57B9723FAD693D83100F9bdA909",
+      address: "0xFd96B9fe317Dc8C2f9aE99a8aCB436EFBBAfe39E",
       abi: [
         {
           "inputs": [],
